@@ -22,6 +22,7 @@ import net.minecraft.core.sound.SoundCategory;
 import net.minecraft.core.util.helper.Direction;
 import net.minecraft.core.util.helper.Side;
 import net.minecraft.core.world.World;
+import net.minecraft.core.world.pos.TilePosc;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import teamport.aether.achievements.AetherAchievements;
@@ -74,7 +75,10 @@ public class BlockLogicChestMimic extends BlockLogicRotatable {
 
     @SuppressWarnings("java:S128")
     @Override
-    public @Nullable ItemStack[] getBreakResult(World world, EnumDropCause dropCause, int x, int y, int z, int meta, TileEntity tileEntity) {
+    public @Nullable ItemStack[] getBreakResult(World world, EnumDropCause dropCause, TilePosc pos, int meta, TileEntity tileEntity) {
+        int x = pos.x();
+        int y = pos.y();
+        int z = pos.z();
         if (tileEntity == null) {
             tileEntity = world.getTileEntity(x, y, z);
         }

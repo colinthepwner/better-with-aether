@@ -24,7 +24,7 @@ public class BlockLogicCloudBase extends BlockLogicTransparent {
     }
 
     @Override
-    public int getPistonPushReaction(World world, int x, int y, int z) {
+    public int getPistonPushReaction(World world, TilePosc pos) {
         return 1;
     }
 
