@@ -1,12 +1,17 @@
 package teamport.aether.block.terrain;
 
+import net.minecraft.core.world.pos.TilePosc;
+import org.joml.primitives.AABBdc;
+import org.joml.primitives.AABBd;
 import net.minecraft.core.block.Block;
 import net.minecraft.core.block.BlockLogicTransparent;
 import net.minecraft.core.block.material.Material;
+import net.minecraft.core.block.material.Materials;
 import net.minecraft.core.entity.Entity;
 import net.minecraft.core.entity.projectile.Projectile;
 import net.minecraft.core.util.helper.Side;
 import net.minecraft.core.util.phys.AABB;
+import org.joml.primitives.AABBdc;
 import net.minecraft.core.util.phys.HitResult;
 import net.minecraft.core.util.phys.Vec3;
 import net.minecraft.core.world.World;
@@ -15,7 +20,7 @@ import teamport.aether.entity.monster.zephyr.MobZephyr;
 
 public class BlockLogicCloudBase extends BlockLogicTransparent {
     public BlockLogicCloudBase(Block<?> block) {
-        super(block, Material.air);
+        super(block, Materials.AIR);
     }
 
     @Override
@@ -33,13 +38,13 @@ public class BlockLogicCloudBase extends BlockLogicTransparent {
         return false;
     }
 
-    @Override
-    public boolean getIsBlockSolid(WorldSource blockAccess, int x, int y, int z, Side side) {
-        return false;
-    }
+    
 
     @Override
-    public void handleEntityInside(World world, int x, int y, int z, Entity entity, Vec3 entityVelocity) {
+    public void onEntityInside(World world, TilePosc pos, Entity entity, org.joml.Vector3d entityVelocity) {
+		int x = pos.x();
+		int y = pos.y();
+		int z = pos.z();
         this.onEntityCollidedWithBlock(world, x, y, z, entity);
     }
 
@@ -49,13 +54,15 @@ public class BlockLogicCloudBase extends BlockLogicTransparent {
     }
 
     @Override
-    public boolean collidesWithEntity(Entity entity, World world, int x, int y, int z) {
+    public boolean collidesWithEntity(Entity entity, World world, TilePosc pos) {
+        int x = pos.x(); int y = pos.y(); int z = pos.z();
         if (entity instanceof Projectile || entity instanceof MobZephyr) return false;
         return super.collidesWithEntity(entity, world, x, y, z);
     }
 
     @Override
-    public HitResult collisionRayTrace(World world, int x, int y, int z, Vec3 start, Vec3 end, boolean useSelectorBoxes) {
+    public HitResult collisionRayTrace(World world, TilePosc pos, org.joml.Vector3dc start, org.joml.Vector3dc end, boolean useSelectorBoxes) {
+        int x = pos.x(); int y = pos.y(); int z = pos.z();
         StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
         boolean isProjectile = false;
 
@@ -66,12 +73,15 @@ public class BlockLogicCloudBase extends BlockLogicTransparent {
             }
         }
 
-        return isProjectile ? null : super.collisionRayTrace(world, x, y, z, start, end, useSelectorBoxes);
+        return isProjectile ? null : super.collisionRayTrace(world, pos, start, end, useSelectorBoxes);
     }
 
     @Override
-    public AABB getCollisionBoundingBoxFromPool(WorldSource world, int x, int y, int z) {
-        return AABB.getPermanentBB(x, y, z, x + 1.0, y + 0.01, z + 1.0);
+    public AABBdc getCollisionAABB(WorldSource world, TilePosc pos) {
+		int x = pos.x();
+		int y = pos.y();
+		int z = pos.z();
+        return new AABBd(x, y, z, x + 1.0, y + 0.01, z + 1.0);
     }
 
     @Override

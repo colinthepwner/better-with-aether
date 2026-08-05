@@ -1,0 +1,48 @@
+package teamport.aether.helper;
+
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import net.minecraft.client.render.TextureManager;
+import net.minecraft.client.render.renderer.GLRenderer;
+import net.minecraft.client.render.tessellator.TessellatorGeneral;
+import org.lwjgl.opengl.GL11;
+
+/// Rendering helpers for client-only mixins.
+///
+/// Kept apart from [MixinHelper] on purpose. That class is reached from common code -- notably
+/// `WorldGetCubesMixin`, which runs on every entity move -- and holding a single method that
+/// touches `TessellatorGeneral` was enough to make the dedicated server throw
+/// "Cannot load class ... in environment type SERVER" the first time an entity moved, because
+/// linking the helper resolves every type it mentions.
+@Environment(EnvType.CLIENT)
+public final class ClientRenderHelper {
+    private ClientRenderHelper() {
+    }
+
+    public static void renderShieldVignette(TextureManager textureManager, int xSize, int ySize) {
+        GL11.glPushMatrix();
+        GL11.glEnable(GL11.GL_BLEND);
+        GL11.glDisable(GL11.GL_DEPTH_TEST);
+        GL11.glDepthMask(false);
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+        GL11.glDisable(GL11.GL_ALPHA_TEST);
+
+        textureManager.loadTexture("/assets/aether/textures/other/shieldvignette.png").bind();
+
+        TessellatorGeneral tessellator = GLRenderer.getTessellator();
+        tessellator.startDrawingQuads();
+        tessellator.addVertexWithUV(0.0, ySize, -90.0, 0.0, 1.0);
+        tessellator.addVertexWithUV(xSize, ySize, -90.0, 1.0, 1.0);
+        tessellator.addVertexWithUV(xSize, 0.0, -90.0, 1.0, 0.0);
+        tessellator.addVertexWithUV(0.0, 0.0, -90.0, 0.0, 0.0);
+        tessellator.draw();
+
+        GL11.glDepthMask(true);
+        GL11.glEnable(GL11.GL_DEPTH_TEST);
+        GL11.glEnable(GL11.GL_ALPHA_TEST);
+        GL11.glDisable(GL11.GL_BLEND);
+        GL11.glPopMatrix();
+        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+    }
+}

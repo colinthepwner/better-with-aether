@@ -3,7 +3,7 @@ package teamport.aether.entity.renderer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.render.entity.EntityRenderer;
-import net.minecraft.client.render.tessellator.Tessellator;
+import net.minecraft.client.render.tessellator.TessellatorGeneral;
 import net.minecraft.core.util.helper.MathHelper;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
@@ -14,7 +14,7 @@ public class EntityRendererArrowFlaming extends EntityRenderer<ProjectileArrowFl
     public EntityRendererArrowFlaming() {}
 
     @Override
-    public void render(Tessellator tessellator, ProjectileArrowFlaming arrow, double x, double y, double z, float yaw, float partialTick) {
+    public void render(TessellatorGeneral tessellator, ProjectileArrowFlaming arrow, double x, double y, double z, float yaw, float partialTick) {
         this.bindTexture("/assets/aether/textures/other/FlamingArrows.png");
         GL11.glPushMatrix();
         GL11.glTranslatef((float) x, (float) y, (float) z);

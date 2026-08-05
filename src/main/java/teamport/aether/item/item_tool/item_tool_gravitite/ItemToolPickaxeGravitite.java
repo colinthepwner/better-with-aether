@@ -39,14 +39,8 @@ public class ItemToolPickaxeGravitite extends ItemToolPickaxeAether implements A
     }
 
     @Override
-    public boolean onUseItemOnBlock(
-        ItemStack itemstack,
-        Player player,
-        World world,
-        int blockX, int blockY, int blockZ,
-        Side side,
-        double xPlaced, double yPlaced
-    ) {
+    public boolean onUseOnBlock(ItemStack itemstack, World world, Player player, net.minecraft.core.world.pos.TilePosc pos, Side side, double xPlaced, double yPlaced) {
+        int blockX = pos.x(); int blockY = pos.y(); int blockZ = pos.z();
         Block<?> block = world.getBlock(blockX, blockY, blockZ);
         Block<?> nextBlock = world.getBlock(blockX, blockY + 1, blockZ);
         if (block == null

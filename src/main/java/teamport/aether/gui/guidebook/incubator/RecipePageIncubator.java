@@ -1,5 +1,6 @@
 package teamport.aether.gui.guidebook.incubator;
 
+import net.minecraft.client.option.GameSettings;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ItemElement;
 import net.minecraft.client.gui.TooltipElement;
@@ -7,7 +8,7 @@ import net.minecraft.client.gui.guidebook.*;
 import net.minecraft.client.gui.guidebook.mobs.MobInfoRegistry;
 import net.minecraft.client.gui.guidebook.search.GuidebookPageSearch;
 import net.minecraft.client.option.enums.DescriptionPromptEnum;
-import net.minecraft.client.render.Font;
+import net.minecraft.client.render.font.FontRenderer;
 import net.minecraft.client.render.TextureManager;
 import net.minecraft.core.data.registry.recipe.SearchQuery;
 import net.minecraft.core.entity.Entity;
@@ -49,7 +50,7 @@ public class RecipePageIncubator extends RecipePage<RecipeEntryIncubator> {
     }
 
     @Override
-    public void renderForeground(TextureManager re, Font fr, int x, int y, int mouseX, int mouseY, float partialTicks) {
+    public void renderForeground(TextureManager re, FontRenderer fr, int x, int y, int mouseX, int mouseY, float partialTicks) {
         if (this.recipes.isEmpty()) {
             this.drawStringCenteredNoShadow(fr, I18n.getInstance().translateKey("guidebook.section.search.error.no_recipes"), x + 79, y + 110, -8355712);
         }
@@ -102,7 +103,7 @@ public class RecipePageIncubator extends RecipePage<RecipeEntryIncubator> {
     }
 
     private static @NonNull String getEntityTitle(RecipeEntryIncubator recipe) {
-        Class<? extends Entity> entity = EntityDispatcher.classForId(recipe.getOutput().getEntity());
+        Class<? extends Entity> entity = EntityDispatcher.getInstance().entryForId(recipe.getOutput().getEntity()).entityClass;
         MobInfoRegistry.MobInfo mobInfo = MobInfoRegistry.getMobInfo(entity);
         String translationKey = mobInfo.getNameTranslationKey();
         return "Hatch " + AetherMod.TRANSLATOR.translateKey(translationKey);
@@ -113,7 +114,7 @@ public class RecipePageIncubator extends RecipePage<RecipeEntryIncubator> {
     }
 
     @Override
-    public void renderOverlay(TextureManager re, Font fr, int x, int y, int mouseX, int mouseY, float partialTicks) {
+    public void renderOverlay(TextureManager re, FontRenderer fr, int x, int y, int mouseX, int mouseY, float partialTicks) {
         super.renderOverlay(re, fr, x, y, mouseX, mouseY, partialTicks);
         SlotGuidebook mouseOverSlot = null;
 
@@ -124,7 +125,7 @@ public class RecipePageIncubator extends RecipePage<RecipeEntryIncubator> {
 
             GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
             if (mouseOverSlot != null && mouseOverSlot.hasItem()) {
-                boolean showDescription = DescriptionPromptEnum.showDescription(mc);
+                boolean showDescription = DescriptionPromptEnum.showDescription();
                 String str = this.tooltipElement.getTooltipText(mouseOverSlot.getItemStack(), showDescription, mouseOverSlot);
                 if (!str.isEmpty()) {
                     this.tooltipElement.render(str, mouseX, mouseY, 8, -8);
@@ -133,13 +134,13 @@ public class RecipePageIncubator extends RecipePage<RecipeEntryIncubator> {
         }
     }
 
-    public static String[] createDescLines(Font fr, String languageKey) {
+    public static String[] createDescLines(FontRenderer fr, String languageKey) {
         String[] words = I18n.getInstance().translateKey(languageKey).split(" ");
         List<String> lines = new ArrayList<>();
         StringBuilder line = new StringBuilder();
 
         for (String word : words) {
-            if (fr.getStringWidth(line + " " + word) > 100) {
+            if (fr.stringWidth(line + " " + word) > 100) {
                 lines.add(line.toString());
                 line = new StringBuilder();
             }
@@ -168,7 +169,7 @@ public class RecipePageIncubator extends RecipePage<RecipeEntryIncubator> {
     @Override
     public boolean keyTyped(char c, int key, int x, int y, int mouseX, int mouseY) {
         super.keyTyped(c, key, x, y, mouseX, mouseY);
-        if (mc.gameSettings.keyShowRecipe.isKeyboardKey(key)) {
+        if (GameSettings.KEY_SHOW_RECIPE.isKeyboardKey(key)) {
             SlotGuidebook hoveringSlot = null;
 
             for (SlotGuidebook slot : this.slots) {
@@ -185,7 +186,7 @@ public class RecipePageIncubator extends RecipePage<RecipeEntryIncubator> {
                 ScreenGuidebook.getPageManager().setCurrentPage(ScreenGuidebook.getPageManager().getSectionIndex(GuidebookSections.CRAFTING), true);
                 return true;
             }
-        } else if (mc.gameSettings.keyShowUsage.isKeyboardKey(key)) {
+        } else if (GameSettings.KEY_SHOW_USAGE.isKeyboardKey(key)) {
             SlotGuidebook hoveringSlot = null;
 
             for (SlotGuidebook slot : this.slots) {

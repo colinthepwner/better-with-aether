@@ -13,6 +13,7 @@ import net.minecraft.core.player.inventory.menu.*;
 import net.minecraft.core.player.inventory.slot.Slot;
 import net.minecraft.core.player.inventory.slot.SlotCreative;
 import net.minecraft.core.player.inventory.slot.SlotResult;
+import net.minecraft.client.option.GameSettings;
 import org.lwjgl.input.Keyboard;
 import teamport.aether.mixin.accessors.ScreenContainerAbstractAccessor;
 
@@ -42,7 +43,7 @@ public abstract class ScreenAetherMachine extends ScreenContainerAbstract {
                 }
 
                 this.mc.playerController.handleInventoryMouseClick(this.inventorySlots.containerId, action, null, this.mc.thePlayer);
-            } else if (!this.mc.thePlayer.getGamemode().consumeBlocks() && mouseButton == 2) {
+            } else if (!this.mc.thePlayer.getGamemode().hasBlockConsumption() && mouseButton == 2) {
                 Slot slot = this.inventorySlots.getSlot(slotId);
                 if (slot.getItemStack() == null) {
                     this.mc.playerController.handleInventoryMouseClick(this.inventorySlots.containerId, InventoryAction.SORT, new int[]{slotId, 64}, this.mc.thePlayer);
@@ -61,7 +62,7 @@ public abstract class ScreenAetherMachine extends ScreenContainerAbstract {
                     mouseButton = 0;
                 }
 
-                if (this.mc.gameSettings.keySortInventory.isMouseButton(mouseButton)) {
+                if (GameSettings.KEY_SORT_INVENTORY.isMouseButton(mouseButton)) {
                     action = InventoryAction.SORT;
                 }
 
@@ -75,7 +76,7 @@ public abstract class ScreenAetherMachine extends ScreenContainerAbstract {
                 }
 
                 if (slot instanceof SlotResult) {
-                    if (Boolean.TRUE.equals(this.mc.gameSettings.swapCraftingButtons.value)) {
+                    if (Boolean.TRUE.equals(GameSettings.SWAP_CRAFTING_BUTTONS.value)) {
                         if (shiftPressed && ctrlPressed) {
                             action = InventoryAction.MOVE_SIMILAR;
                         } else if (shiftPressed) {
@@ -131,30 +132,36 @@ public abstract class ScreenAetherMachine extends ScreenContainerAbstract {
                     /// ------------------------------------------------------------------------------------------------
                     target = this.getTargetSlot(stackInSlot, clickedItemId);
 
-                    if (this.inventorySlots instanceof MenuFurnace) {
-                        MenuFurnace furnace = (MenuFurnace) this.inventorySlots;
-                        boolean isBlastFurnace = furnace.furnace instanceof TileEntityFurnaceBlast;
+                    if (this.inventorySlots instanceof net.minecraft.core.player.inventory.menu.MenuFurnaceBlast) {
+                        net.minecraft.core.player.inventory.menu.MenuFurnaceBlast furnace = (net.minecraft.core.player.inventory.menu.MenuFurnaceBlast) this.inventorySlots;
                         boolean isIngredient = false;
                         boolean isFuel;
-                        if (isBlastFurnace) {
-                            for (RecipeEntryBlastFurnace recipe : Registries.RECIPES.getAllBlastFurnaceRecipes()) {
-                                isIngredient = recipe.matches(stackInSlot);
-                                if (isIngredient) {
-                                    break;
-                                }
+                        for (RecipeEntryBlastFurnace recipe : Registries.RECIPES.getAllBlastFurnaceRecipes()) {
+                            isIngredient = recipe.matches(stackInSlot, null) || recipe.matches(null, stackInSlot);
+                            if (isIngredient) {
+                                break;
                             }
-
-                            isFuel = LookupFuelFurnaceBlast.instance.getFuelYield(clickedItemId) > 0;
-                        } else {
-                            for (RecipeEntryFurnace recipe : Registries.RECIPES.getAllFurnaceRecipes()) {
-                                isIngredient = recipe.matches(stackInSlot);
-                                if (isIngredient) {
-                                    break;
-                                }
-                            }
-
-                            isFuel = LookupFuelFurnace.instance.getFuelYield(clickedItemId) > 0;
                         }
+
+                        isFuel = LookupFuelFurnaceBlast.instance.getFuelYield(clickedItemId) > 0;
+
+                        if (isIngredient) {
+                            target = 1;
+                        } else if (isFuel) {
+                            target = 2;
+                        }
+                    } else if (this.inventorySlots instanceof MenuFurnace) {
+                        MenuFurnace furnace = (MenuFurnace) this.inventorySlots;
+                        boolean isIngredient = false;
+                        boolean isFuel;
+                        for (RecipeEntryFurnace recipe : Registries.RECIPES.getAllFurnaceRecipes()) {
+                            isIngredient = recipe.matches(stackInSlot);
+                            if (isIngredient) {
+                                break;
+                            }
+                        }
+
+                        isFuel = LookupFuelFurnace.instance.getFuelYield(clickedItemId) > 0;
 
                         if (isIngredient) {
                             target = 1;

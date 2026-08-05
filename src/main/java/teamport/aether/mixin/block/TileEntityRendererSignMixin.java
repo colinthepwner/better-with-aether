@@ -5,7 +5,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.render.tessellator.Tessellator;
+import net.minecraft.client.render.tessellator.TessellatorGeneral;
 import net.minecraft.client.render.tileentity.TileEntityRenderer;
 import net.minecraft.client.render.tileentity.TileEntityRendererSign;
 import net.minecraft.core.block.Block;
@@ -33,9 +33,12 @@ public abstract class TileEntityRendererSignMixin extends TileEntityRenderer<Til
         }
     }
 
-    @WrapOperation(method = "doRender(Lnet/minecraft/client/render/tessellator/Tessellator;Lnet/minecraft/core/block/entity/TileEntitySign;DDDF)V",
-        at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/tileentity/TileEntityRendererSign;loadTexture(Ljava/lang/String;)V"))
-    private void wrapSignTextureLoad(TileEntityRendererSign renderer, String originalTexture, Operation<Void> original, Tessellator t, TileEntitySign tileEntity, double x, double y, double z, float partialTick) {
+    // 8.0 dropped TileEntityRendererSign.loadTexture; doRender now calls the inherited
+    // bindTexture(String) directly. Both call sites are wrapped -- the painted-sign branch and the
+    // default sign.png branch -- and non-skyroot signs fall through to the original texture.
+    @WrapOperation(method = "doRender(Lnet/minecraft/client/render/tessellator/TessellatorGeneral;Lnet/minecraft/core/block/entity/TileEntitySign;DDDF)V",
+        at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/tileentity/TileEntityRendererSign;bindTexture(Ljava/lang/String;)V"))
+    private void wrapSignTextureLoad(TileEntityRendererSign renderer, String originalTexture, Operation<Void> original, TessellatorGeneral t, TileEntitySign tileEntity, double x, double y, double z, float partialTick) {
         Block<?> block = tileEntity.getBlock();
         int meta = tileEntity.getBlockMeta();
         String newTexture = null;
@@ -50,20 +53,13 @@ public abstract class TileEntityRendererSignMixin extends TileEntityRenderer<Til
         }
 
         String textureToUse = (newTexture != null) ? newTexture : originalTexture;
-        this.loadTexture(textureToUse);
+        this.bindTexture(textureToUse);
     }
 
-    @ModifyArg(method = "doRender(Lnet/minecraft/client/render/tessellator/Tessellator;Lnet/minecraft/core/block/entity/TileEntitySign;DDDF)V",
-        at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/tileentity/TileEntityRendererSign;drawTexturedModalRect(DDILnet/minecraft/client/render/texture/stitcher/IconCoordinate;)V"), index = 2)
-    private int modifySkyrootSignColor(int originalColor, @Local(argsOnly = true) TileEntitySign tileEntity) {
-        Block<?> block = tileEntity.getBlock();
-        int meta = tileEntity.getBlockMeta();
-
-        if (block != null && Block.hasLogicClass(block, BlockLogicPaintedSignSkyroot.class)) {
-            DyeColor dye = ((IPainted) block.getLogic()).fromMetadata(meta);
-            return dye.color.getARGB();
-        }
-
-        return originalColor;
-    }
+    // modifySkyrootSignColor is deliberately gone. In 7.3 the sign picture was drawn via
+    // drawTexturedModalRect(double, double, int color, IconCoordinate) and this tinted that colour
+    // to the dye. 8.0 changed the third argument from a colour to an isBlended() flag and dropped
+    // picture tinting entirely -- vanilla painted signs now select a per-dye *texture* instead. The
+    // wrapSignTextureLoad hook above already does exactly that for skyroot, so the behaviour is
+    // preserved by the texture swap and there is nothing left for this injector to modify.
 }

@@ -21,12 +21,17 @@ public abstract class MobWolfMixinZaniteResistance extends MobAnimal {
     @SuppressWarnings("java:S1161")
     @Shadow
     public abstract int getMaxHealth();
-    @WrapOperation(method = "damageEntity", at = @At(value = "INVOKE", target = "Lnet/minecraft/core/item/material/ArmorMaterial;getProtection(Lnet/minecraft/core/util/helper/DamageType;)F"))
-    private float reduceWolfDamage(ArmorMaterial instance, DamageType damageType, Operation<Float> original) {
-        if (instance != AetherArmorMaterial.ZANITE) {
-            return original.call(instance, damageType);
+    @WrapOperation(method = {"damageEntity", "lavaHurt", "fireHurt"}, at = @At(value = "INVOKE", target = "Lnet/minecraft/core/entity/animal/MobWolf;getTotalProtectionAmount(Lnet/minecraft/core/util/helper/DamageType;)F"))
+    private float reduceWolfDamage(MobWolf instance, DamageType damageType, Operation<Float> original) {
+        float originalProtection = original.call(instance, damageType);
+        net.minecraft.core.item.ItemStack armorStack = instance.getArmorItem();
+        if (armorStack != null && armorStack.getItem() instanceof net.minecraft.core.item.IArmorItem) {
+            ArmorMaterial armorMaterial = ((net.minecraft.core.item.IArmorItem) armorStack.getItem()).getArmorMaterial();
+            if (armorMaterial == AetherArmorMaterial.ZANITE) {
+                float healthPercentage = (float) instance.getHealth() / instance.getMaxHealth();
+                return MathHelper.lerp(AetherArmorMaterial.ZANITE_BROKEN.getProtection(damageType) * 1.5f, originalProtection, healthPercentage);
+            }
         }
-        float healthPercentage = (float) this.getHealth() / this.getMaxHealth();
-        return MathHelper.lerp(AetherArmorMaterial.ZANITE_BROKEN.getProtection(damageType) * 1.5f, instance.getProtection(damageType), healthPercentage);
+        return originalProtection;
     }
 }

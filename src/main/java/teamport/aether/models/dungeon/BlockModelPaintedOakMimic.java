@@ -23,10 +23,10 @@ public class BlockModelPaintedOakMimic<T extends BlockLogicChestMimic> extends B
     }
 
     @Override
-    public IconCoordinate getBlockTexture(WorldSource blockAccess, int x, int y, int z, Side side) {
-        int meta = blockAccess.getBlockMetadata(x, y, z);
+    public IconCoordinate getBlockTexture(WorldSource blockAccess, net.minecraft.core.world.pos.TilePosc pos, Side side) {
+        int meta = blockAccess.getBlockMetadata(pos.x(), pos.y(), pos.z());
         int color = meta >> 4;
-        Side facing = BlockLogicChest.getDirectionFromMeta(meta).getSide();
+        Side facing = BlockLogicChest.getDirectionFromMeta(meta).side();
         if (side == Side.TOP || side == Side.BOTTOM) {
             return TOP_TEXTURES[color];
         }

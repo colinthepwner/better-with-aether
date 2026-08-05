@@ -7,7 +7,7 @@ import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.useless.dragonfly.models.entity.BoneTransform;
 import org.useless.dragonfly.models.entity.StaticEntityModel;
-import org.useless.dragonfly.renderer.MobRenderer;
+import net.minecraft.client.render.entity.MobRenderer;
 
 @Environment(EnvType.CLIENT)
 public class MobRendererSentry extends MobRenderer<MobSentry> {
@@ -20,9 +20,7 @@ public class MobRendererSentry extends MobRenderer<MobSentry> {
     protected @Nullable StaticEntityModel getAndSetupModelForLayer(@NonNull MobSentry entity, float brightness, float partialTick, int layer) {
         if (layer == 1 && entity.isActivated()) {
             this.bindTexture("/assets/aether/textures/entity/sentry/glow/" + entity.getTextureReference() + ".png");
-            if (LightmapHelper.isLightmapEnabled()) {
-                LightmapHelper.setLightmapCoord(LightmapHelper.getLightmapCoord(15, 15));
-            }
+            net.minecraft.client.render.renderer.GLRenderer.setLightmapCoord2i(255, 255);
         }
 
         StaticEntityModel model = this.getModel("main");

@@ -3,7 +3,7 @@ package teamport.aether.entity.renderer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.render.entity.EntityRenderer;
-import net.minecraft.client.render.tessellator.Tessellator;
+import net.minecraft.client.render.tessellator.TessellatorGeneral;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 import teamport.aether.entity.projectile.ProjectileKnifeLightning;
@@ -13,7 +13,7 @@ public class EntityRendererKnifeLightning extends EntityRenderer<ProjectileKnife
     public EntityRendererKnifeLightning() {}
 
     @Override
-    public void render(Tessellator tessellator, ProjectileKnifeLightning knife, double x, double y, double z, float yaw, float partialTick) {
+    public void render(TessellatorGeneral tessellator, ProjectileKnifeLightning knife, double x, double y, double z, float yaw, float partialTick) {
         this.doRenderKnife(knife, x, y, z, yaw, partialTick);
     }
 
@@ -29,7 +29,7 @@ public class EntityRendererKnifeLightning extends EntityRenderer<ProjectileKnife
         GL11.glRotatef(45.0F, 0.0F, 1.0F, 0.0F);
 
         this.bindTexture("/assets/aether/textures/item/tool_knife_lightning.png");
-        Tessellator tessellator = Tessellator.instance;
+        TessellatorGeneral tessellator = net.minecraft.client.render.renderer.GLRenderer.getTessellator();
         float size = 1.0F;
         float thickness = 0.0625F;
         GL11.glEnable(GL12.GL_RESCALE_NORMAL);

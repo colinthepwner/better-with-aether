@@ -118,17 +118,18 @@ dependencies {
     implementation(libs.modMenu)
     implementation(libs.legacyLwjgl)
 
-    implementation(libs.dragonfly)
+    // PORT-8.0.1: DragonFly is bundled inside BTA 8.0 itself (org.useless.dragonfly.* ships in the
+    // game jar), so the standalone mod dependency is gone. Its renderer moved into the vanilla
+    // package as net.minecraft.client.render.entity.MobRenderer.
     implementation(libs.catalyst.core)
     implementation(libs.catalyst.effects)
-    implementation(libs.uselessNumerical.get().let { "${it.group}:${it.name}:${it.version}-${libs.versions.bta.get()}" })
 
     implementation(libs.slf4jApi)
     implementation(libs.guava)
-    implementation(libs.log4j.slf4j2.impl)
-    implementation(libs.log4j.core)
-    implementation(libs.log4j.api)
-    implementation(libs.log4j.api12)
+    // PORT-8.0.1: no log4j here. BTA 8.0 and the Fabric loader already put log4j on the runtime
+    // classpath; declaring it again pulled a second copy in and the mismatched core/api pair threw
+    // NoSuchMethodError in LoggerContext before the game could even start loading mods. The mod
+    // does not reference log4j directly -- these were inherited from the 7.3 template.
     implementation(libs.gson)
 
     implementation(libs.commonsLang3)
@@ -164,6 +165,8 @@ val licenseFile = run {
 tasks {
     withType<JavaCompile>().configureEach {
         options.encoding = "UTF-8"
+        // PORT-8.0.1: raise javac's 100-error cap so a full port pass sees every break at once.
+        options.compilerArgs.addAll(listOf("-Xmaxerrs", "20000"))
         sourceCompatibility = javaVersion.get().toString()
         targetCompatibility = javaVersion.get().toString()
         if (javaVersion.get() > 8) options.release = javaVersion
@@ -186,13 +189,11 @@ tasks {
         val resourceMap = mapOf(
             "version" to modVersion.get(),
             "fabricloader" to libs.versions.loader.get(),
-            "dragonfly" to libs.versions.dragonfly.get(),
             "halplibe" to libs.versions.halplibe.get(),
             "java" to libs.versions.java.get(),
             "modmenu" to libs.versions.modMenu.get(),
             "catalystcore" to libs.versions.catalyst.core.get(),
             "catalysteffects" to libs.versions.catalyst.effects.get(),
-            "uselessnumerical" to libs.versions.uselessNumerical.get()
         )
         inputs.properties(resourceMap)
         filesMatching("fabric.mod.json") { expand(resourceMap) }

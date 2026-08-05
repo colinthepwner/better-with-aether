@@ -33,19 +33,22 @@ public class ItemSignSkyroot extends Item {
     }
 
     @Override
-    public boolean onUseItemOnBlock(ItemStack itemstack, Player entityplayer, World world, int blockX, int blockY, int blockZ, Side side, double xPlaced, double yPlaced) {
-        int sideHit = side.getId();
+    public boolean onUseOnBlock(ItemStack itemstack, World world, Player entityplayer, net.minecraft.core.world.pos.TilePosc pos, Side side, double xPlaced, double yPlaced) {
+        int blockX = pos.x();
+        int blockY = pos.y();
+        int blockZ = pos.z();
+        int sideHit = side.id;
         if (side == Side.BOTTOM) return false;
-        if (!world.getBlockMaterial(blockX, blockY, blockZ).isSolid()) return false;
+        if (!world.getBlockMaterial(pos.x(), pos.y(), pos.z()).isSolid()) return false;
 
-        if (!world.canPlaceInsideBlock(blockX, blockY, blockZ)) {
-            blockX += side.getOffsetX();
-            blockY += side.getOffsetY();
-            blockZ += side.getOffsetZ();
+        if (!world.canPlaceInsideBlock(pos.x(), pos.y(), pos.z())) {
+            blockX += side.offsetX();
+            blockY += side.offsetY();
+            blockZ += side.offsetZ();
         }
 
         if (!(blockY >= 0 && blockY < world.getHeightBlocks())) return false;
-        if (!AetherBlocks.SIGN_POST_PLANKS_SKYROOT.canPlaceBlockAt(world, blockX, blockY, blockZ)) return false;
+        if (!AetherBlocks.SIGN_POST_PLANKS_SKYROOT.canPlaceBlockAt(world, pos.x(), pos.y(), pos.z())) return false;
 
         Block<?> blockToPlace = sideHit == 1 ? getBlockPost() : getBlockWall();
         int meta = sideHit == 1 ? MathHelper.floor(((entityplayer.yRot + 180.0F) * 16.0F / 360.0F) + 0.5) & 15 : sideHit;
@@ -54,10 +57,10 @@ public class ItemSignSkyroot extends Item {
         }
 
         world.playBlockSoundEffect(entityplayer, blockX + 0.5F, blockY + 0.5F, blockZ + 0.5F, blockToPlace, EnumBlockSoundEffectType.PLACE);
-        world.setBlockAndMetadataWithNotify(blockX, blockY, blockZ, blockToPlace.id(), meta);
+        world.setBlockAndMetadataWithNotify(pos.x(), pos.y(), pos.z(), blockToPlace.id(), meta);
 
         itemstack.consumeItem(entityplayer);
-        TileEntitySign tileEntity = (TileEntitySign) world.getTileEntity(blockX, blockY, blockZ);
+        TileEntitySign tileEntity = (TileEntitySign) world.getTileEntity(pos.x(), pos.y(), pos.z());
 
         if (tileEntity != null) {
             tileEntity.setOwner(entityplayer);

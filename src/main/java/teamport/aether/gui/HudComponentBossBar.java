@@ -1,5 +1,6 @@
 package teamport.aether.gui;
 
+import net.minecraft.client.option.GameSettings;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
@@ -32,19 +33,13 @@ public class HudComponentBossBar extends HudComponentMovable {
     }
 
     @Override
-    public boolean isVisible(Minecraft minecraft) {
-        return !getBossesFromPlayer(minecraft).isEmpty() && minecraft.gameSettings.immersiveMode.drawHotbar();
+    public boolean isVisible() {
+        return !getBossesFromPlayer(mc).isEmpty() && GameSettings.IMMERSIVE_MODE.drawHotbar();
     }
 
-    @Override
-    public int getAnchorY(ComponentAnchor anchor) {
-        return (int) (anchor.yPosition * height);
-    }
+    
 
-    @Override
-    public int getYSize(Minecraft mc) {
-        return height;
-    }
+    
 
     public List<Mob> getBossesFromPlayer(Minecraft mc) {
         List<Mob> bossList = ((AetherBossList) mc.thePlayer).aether$getBossList();
@@ -53,7 +48,7 @@ public class HudComponentBossBar extends HudComponentMovable {
     }
 
     @Override
-    public void render(Minecraft mc, HudIngame hudIngame, int xSizeScreen, int ySizeScreen, float f) {
+    public void render(HudIngame hudIngame, int xSizeScreen, int ySizeScreen, float f) {
         int i = 0;
 
         List<Mob> mobList = getBossesFromPlayer(mc);
@@ -65,30 +60,30 @@ public class HudComponentBossBar extends HudComponentMovable {
     }
 
     @Override
-    public void renderPreview(Minecraft mc, Gui gui, Layout layout, int xSizeScreen, int ySizeScreen) {
+    public void renderPreview(Gui gui, Layout layout, int xSizeScreen, int ySizeScreen) {
         height = (BAR_HEIGHT + SPACING) * 3 + SPACING;
 
         for (int offset = 0; offset < 3; offset++) {
-            int barX = getLayout().getComponentX(mc, this, xSizeScreen);
-            int barY = getLayout().getComponentY(mc, this, ySizeScreen) + (BAR_HEIGHT + SPACING) * offset + SPACING;
+            int barX = getLayout().getComponentX(this, xSizeScreen);
+            int barY = getLayout().getComponentY(this, ySizeScreen) + (BAR_HEIGHT + SPACING) * offset + SPACING;
             int textX = barX + BAR_WIDTH / 2;
             int textY = barY + TEXT_OFFSET;
 
             drawProgressBar(mc, gui, barX, barY, 50, 100);
             String title = I18n.getInstance().translateKey("aether.menu.boss_bar.preview_name");
-            gui.drawStringCentered(mc.font, title, textX, textY, 0xFFFFFFFF);
+            gui.drawStringCenteredShadow(mc.font, title, textX, textY, 0xFFFFFFFF);
         }
     }
 
     void drawBossBar(Minecraft mc, Gui gui, Mob mob, int offset, int xSizeScreen, int ySizeScreen) {
-        int barX = getLayout().getComponentX(mc, this, xSizeScreen);
-        int barY = getLayout().getComponentY(mc, this, ySizeScreen) + (BAR_HEIGHT + SPACING) * offset + SPACING;
+        int barX = getLayout().getComponentX(this, xSizeScreen);
+        int barY = getLayout().getComponentY(this, ySizeScreen) + (BAR_HEIGHT + SPACING) * offset + SPACING;
         int textX = barX + BAR_WIDTH / 2;
         int textY = barY + TEXT_OFFSET;
 
         drawProgressBar(mc, gui, barX, barY, mob.getHealth(), mob.getMaxHealth());
         String entityName = (mob instanceof EnemyBoss) ? ((EnemyBoss) mob).getBossTitle() : mob.getDisplayName();
-        gui.drawStringCentered(mc.font, entityName, textX, textY, 0xFFFFFFFF);
+        gui.drawStringCenteredShadow(mc.font, entityName, textX, textY, 0xFFFFFFFF);
     }
 
     public void drawProgressBar(Minecraft mc, Gui gui, int barX, int barY, int health, int maxHealth) {

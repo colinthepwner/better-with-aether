@@ -1,5 +1,6 @@
 package teamport.aether.entity.projectile;
 
+import teamport.aether.util.HitResults;
 import net.minecraft.core.entity.Entity;
 import net.minecraft.core.entity.Mob;
 import net.minecraft.core.sound.SoundCategory;
@@ -47,10 +48,10 @@ public class ProjectileElementFire extends ProjectileElementBase implements Aeth
 
     @Override
     public void onHit(HitResult hitResult) {
-        if (this.world != null && !this.world.isClientSide && !(hitResult.entity instanceof MobBossSunspirit || hitResult.entity instanceof ProjectileElementBase || hitResult.entity instanceof MobFireMinion) && hitResult.entity instanceof Mob) {
-            hitResult.entity.hurt(this.owner, this.damage, DamageType.FIRE);
-            hitResult.entity.maxFireTicks = 200;
-            hitResult.entity.remainingFireTicks = 200;
+        if (this.world != null && !this.world.isClientSide && !(HitResults.entity(hitResult) instanceof MobBossSunspirit || HitResults.entity(hitResult) instanceof ProjectileElementBase || HitResults.entity(hitResult) instanceof MobFireMinion) && HitResults.entity(hitResult) instanceof Mob) {
+            HitResults.entity(hitResult).hurt(this.owner, this.damage, DamageType.FIRE);
+            HitResults.entity(hitResult).maxFireTicks = 200;
+            HitResults.entity(hitResult).remainingFireTicks = 200;
             this.remove();
             return;
         }

@@ -22,7 +22,7 @@ public class BlockModelPaintedSkyrootSlab<T extends BlockLogicSlab> extends Bloc
     }
 
     @Override
-    public IconCoordinate getBlockTexture(WorldSource blockAccess, int x, int y, int z, Side side) {
-        return this.getBlockTextureFromSideAndMetadata(side, blockAccess.getBlockMetadata(x, y, z));
+    public IconCoordinate getBlockTexture(WorldSource blockAccess, net.minecraft.core.world.pos.TilePosc pos, Side side) {
+        return this.getBlockTextureFromSideAndMetadata(side, blockAccess.getBlockMetadata(pos.x(), pos.y(), pos.z()));
     }
 }

@@ -1,5 +1,6 @@
 package teamport.aether.mixin.dimension;
 
+import net.minecraft.core.world.pos.TilePosc;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.core.achievement.stat.Stat;
@@ -15,11 +16,14 @@ import teamport.aether.world.AetherDimension;
 
 @Mixin(value = BlockLogicBed.class)
 public abstract class AetherBedMixin {
-    @WrapOperation(method = "onBlockRightClicked", at = @At(value = "INVOKE", target = "Lnet/minecraft/core/entity/player/Player;addStat(Lnet/minecraft/core/achievement/stat/Stat;I)V"))
-    private void onBlockRightClickedOne(Player instance, Stat statbase, int i, Operation<Void> original, World world, int x, int y, int z, Player player, Side side, double xPlaced, double yPlaced) {
+    @WrapOperation(method = "onInteracted", at = @At(value = "INVOKE", target = "Lnet/minecraft/core/entity/player/Player;addStat(Lnet/minecraft/core/achievement/stat/Stat;I)V"))
+    private void onBlockRightClickedOne(Player instance, Stat statbase, int i, Operation<Void> original, World world, TilePosc pos, Player player, Side side, double xPlaced, double yPlaced) {
+    	int x = pos.x();
+    	int y = pos.y();
+    	int z = pos.z();
         if (world.dimension.id != AetherDimension.getAether().id) original.call(instance, statbase, i);
     }
-    @WrapOperation(method = "onBlockRightClicked", at = @At(value = "INVOKE", target = "Lnet/minecraft/core/world/World;createExplosion(Lnet/minecraft/core/entity/Entity;DDDFZZ)Lnet/minecraft/core/world/Explosion;"))
+    @WrapOperation(method = "onInteracted", at = @At(value = "INVOKE", target = "Lnet/minecraft/core/world/World;createExplosion(Lnet/minecraft/core/entity/Entity;DDDFZZ)Lnet/minecraft/core/world/Explosion;"))
     private Explosion onBlockRightClickedTwo(World instance, Entity entity, double x, double y, double z, float explosionSize, boolean flaming, boolean isCannonBall, Operation<Explosion> original) {
         if (instance.dimension.id != AetherDimension.getAether().id) return original.call(instance, entity, x, y, z, explosionSize, flaming, isCannonBall);
         return original.call(instance, entity, x, y, z, explosionSize, false, isCannonBall);

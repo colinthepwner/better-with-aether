@@ -13,7 +13,12 @@ public class WorldTypeAetherRetro extends WorldTypeAether {
 
     @Override
     public BiomeProvider createBiomeProvider(World world) {
-        return new BiomeProviderSingleBiome(AetherBiomes.AETHER_PLAINS, 1.0F, 1.0F, 1.0F);
+        return new BiomeProviderSingleBiome(world, AetherBiomes.AETHER_PLAINS, 1.0D, 1.0D, 1.0D);
     }
 
+
+    @Override
+    public net.minecraft.core.world.biome.Biome[] allBiomes() {
+        return new net.minecraft.core.world.biome.Biome[]{teamport.aether.world.biome.AetherBiomes.AETHER_PLAINS};
+    }
 }

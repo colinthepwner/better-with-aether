@@ -11,7 +11,7 @@ import teamport.aether.entity.AetherMobOtherImmunities;
 
 @Mixin(value = BlockLogicCactus.class)
 public abstract class CactusSpikeImmunitiesMixin {
-    @WrapOperation(method = "onEntityCollidedWithBlock", at = @At(value = "INVOKE", target = "Lnet/minecraft/core/entity/Entity;hurt(Lnet/minecraft/core/entity/Entity;ILnet/minecraft/core/util/helper/DamageType;)Z"))
+    @WrapOperation(method = "onEntityCollision", at = @At(value = "INVOKE", target = "Lnet/minecraft/core/entity/Entity;hurt(Lnet/minecraft/core/entity/Entity;ILnet/minecraft/core/util/helper/DamageType;)Z"))
     private boolean monsterImmuneToSpikes(Entity instance, Entity attacker, int baseDamage, DamageType type, Operation<Boolean> original) {
         if (!(instance instanceof AetherMobOtherImmunities)) return original.call(instance, attacker, baseDamage, type);
         AetherMobOtherImmunities immune = (AetherMobOtherImmunities) instance;

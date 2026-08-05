@@ -6,6 +6,6 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 
 @Mixin(value = SlotArmor.class)
 public interface SlotArmorAccessor {
-    @Accessor
-    int getArmorType();
+    @Accessor("armorShape")
+    net.minecraft.core.enums.HumanArmorShape getArmorShape();
 }

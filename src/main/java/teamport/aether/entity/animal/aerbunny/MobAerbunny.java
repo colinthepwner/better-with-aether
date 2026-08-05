@@ -146,7 +146,7 @@ public class MobAerbunny extends MobAetherAnimal implements AetherRideable {
 
         Entity vehicle = (Entity) this.vehicle;
 
-        if (vehicle != null && vehicle.yd < -0.225F && isJumping && !vehicle.noPhysics) {
+        if (vehicle != null && vehicle.yd < -0.225F && isJumping && !vehicle.hasNoPhysics()) {
             (vehicle).yd = 0.125F;
 
             this.cloudPoop();
@@ -198,7 +198,7 @@ public class MobAerbunny extends MobAetherAnimal implements AetherRideable {
                 player.ejectRider();
             }
 
-            if (!player.onGround && !player.noPhysics) {
+            if (!player.onGround && !player.hasNoPhysics()) {
                 if (!player.isInWater()) player.yd += 0.05F;
                 ((EntityAccessor) player).setFallDistance(0.0F);
             }
@@ -215,7 +215,7 @@ public class MobAerbunny extends MobAetherAnimal implements AetherRideable {
                 new PacketSetRiding(this, (Entity) this.vehicle));
         }
 
-        this.noPhysics = beingRidden();
+        this.setNoPhysics(beingRidden());
         super.tick();
     }
 
@@ -236,7 +236,7 @@ public class MobAerbunny extends MobAetherAnimal implements AetherRideable {
 
             if (this.world != null) {
                 this.world.playSoundAtEntity(null, this, "aether:mob.aerbunny.land", 1.0F, (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F);
-                for (Entity entity : this.world.getEntitiesWithinAABBExcludingEntity(this, this.bb.expand(12.0, 12.0, 12.0))) {
+                for (Entity entity : this.world.getEntitiesWithinAABBExcludingEntity(this, new org.joml.primitives.AABBd(this.bb.minX() - 12.0, this.bb.minY() - 12.0, this.bb.minZ() - 12.0, this.bb.maxX() + 12.0, this.bb.maxY() + 12.0, this.bb.maxZ() + 12.0))) {
                     if (entity instanceof MobMonster) {
                         ((MobMonster) entity).setTarget(this);
                     }

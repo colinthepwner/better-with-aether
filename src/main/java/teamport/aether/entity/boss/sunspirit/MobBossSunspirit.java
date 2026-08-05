@@ -1,10 +1,12 @@
 package teamport.aether.entity.boss.sunspirit;
 
+
 import com.mojang.nbt.tags.CompoundTag;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.block.Block;
 import net.minecraft.core.block.Blocks;
 import net.minecraft.core.block.material.Material;
+import net.minecraft.core.block.material.Materials;
 import net.minecraft.core.entity.Entity;
 import net.minecraft.core.entity.EntityLightning;
 import net.minecraft.core.entity.player.Player;
@@ -102,8 +104,8 @@ public class MobBossSunspirit extends MobBossFlying {
             return;
         }
         double speed = DEFAULT_SPEED + MathHelper.lerp(0.0f, ADDED_MAX_SPEED, 1.0f - this.getHealth() / (double) this.getMaxHealth());
-        Vec3 currentPos = Vec3.getPermanentVec3(x, y, z);
-        Vec3 nextPos = Vec3.getPermanentVec3(
+        org.joml.Vector3d currentPos = new org.joml.Vector3d(x, y, z);
+        org.joml.Vector3d nextPos = new org.joml.Vector3d(
             x + xd + defaultVector.x * speed + (defaultVector.x > 0 ? bbWidth / 2 : -bbWidth / 2),
             y,
             z + zd + defaultVector.y * speed + (defaultVector.y > 0 ? bbWidth / 2 : -bbWidth / 2)
@@ -152,11 +154,11 @@ public class MobBossSunspirit extends MobBossFlying {
                 this.isAgro = false;
                 this.chatLog = 0;
                 this.returnToOriginalState();
-                this.evaporateMaterialWithEffect(Material.fire);
+                this.evaporateMaterialWithEffect(Materials.FIRE);
             }
         }
         super.tick();
-        this.evaporateMaterialWithEffect(Material.water);
+        this.evaporateMaterialWithEffect(Materials.WATER);
         if (this.chatCooldown > 0) {
             --this.chatCooldown;
             this.maxFireTicks = this.remainingFireTicks = 0;
@@ -325,7 +327,7 @@ public class MobBossSunspirit extends MobBossFlying {
     public Entity findPlayerToAttack() {
         if (this.world == null) return null;
         Player player = this.world.getClosestPlayerToEntity(this, 32.0);
-        if (player != null && canEntityBeSeen(player) && player.gamemode.areMobsHostile()) {
+        if (player != null && canEntityBeSeen(player) && player.gamemode.hasHostileMobs()) {
             ((AetherBossList) player).aether$TryAddBossList(this);
             return player;
         }
@@ -342,11 +344,6 @@ public class MobBossSunspirit extends MobBossFlying {
         return 1.0F;
     }
 
-    @Override
-    public int getLightmapCoord(float partialTick) {
-        if (this.world == null) return super.getLightmapCoord(partialTick);
-        return this.world.getLightmapCoord(15, 15);
-    }
 
     private void attackEntity() {
         int totalShots = 4;
@@ -360,14 +357,14 @@ public class MobBossSunspirit extends MobBossFlying {
         if (!this.world.isClientSide) {
             if (this.timesShot < totalShots) {
                 ProjectileElementFire elementFire = new ProjectileElementFire(this.world, this);
-                elementFire.setHeading(world.rand.nextDouble(), this.getLookAngle().y, world.rand.nextDouble(), fireballSpeed, 0.0F);
+                elementFire.setHeading(world.rand.nextDouble(), this.getViewVector(1.0F).y(), world.rand.nextDouble(), fireballSpeed, 0.0F);
                 this.world.playSoundAtEntity(null, this, "mob.ghast.fireball", this.getSoundVolume(), (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F);
                 this.world.entityJoinedWorld(elementFire);
                 this.timesShot++;
 
             } else {
                 ProjectileElementIce elementIce = new ProjectileElementIce(this.world, this);
-                elementIce.setHeading(this.getLookAngle().x, this.getLookAngle().y, this.getLookAngle().z, iceballSpeed, world.rand.nextFloat());
+                elementIce.setHeading(this.getViewVector(1.0F).x(), this.getViewVector(1.0F).y(), this.getViewVector(1.0F).z(), iceballSpeed, world.rand.nextFloat());
                 this.world.playSoundAtEntity(null, this, "mob.ghast.fireball", this.getSoundVolume(), (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 2.0F);
                 this.world.entityJoinedWorld(elementIce);
                 this.timesShot = 0;

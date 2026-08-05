@@ -21,19 +21,19 @@ public abstract class PlayerMixinDevDrops {
 
         switch (uuid) {
             case AetherGlobals.UUID_LUKEISSTUFF: // LukeisStuff
-                player.dropPlayerItemWithRandomChoice(new ItemStack(AetherItems.AMMO_WINDBALL, 1), true);
+                player.dropItem(new ItemStack(AetherItems.AMMO_WINDBALL, 1), true);
                 break;
             case AetherGlobals.UUID_OLYPOLYU: // Olypolyu / Kheprep
-                player.dropPlayerItemWithRandomChoice(new ItemStack(AetherItems.PARACHUTE_CLOUD, 1), true);
+                player.dropItem(new ItemStack(AetherItems.PARACHUTE_CLOUD, 1), true);
                 break;
             case AetherGlobals.UUID_TOCININ: // Tocinin
-                player.dropPlayerItemWithRandomChoice(new ItemStack(Items.FOOD_PORKCHOP_RAW, 1), true);
+                player.dropItem(new ItemStack(Items.FOOD_PORKCHOP_RAW, 1), true);
                 break;
             case AetherGlobals.UUID_REDART15: // Redart15
-                player.dropPlayerItemWithRandomChoice(new ItemStack(AetherBlocks.CARVED_STONE_LIGHT, 1), true);
+                player.dropItem(new ItemStack(AetherBlocks.CARVED_STONE_LIGHT, 1), true);
                 break;
             case AetherGlobals.UUID_SMUSHYTACO: // SmushyTaco
-                player.dropPlayerItemWithRandomChoice(new ItemStack(AetherItems.AMMO_HAMMER_HEAD, 1), true);
+                player.dropItem(new ItemStack(AetherItems.AMMO_HAMMER_HEAD, 1), true);
                 break;
             default:
                 break;

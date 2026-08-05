@@ -1,5 +1,8 @@
 package teamport.aether.entity.projectile;
 
+import org.joml.primitives.AABBdc;
+
+import teamport.aether.util.HitResults;
 import com.mojang.nbt.tags.CompoundTag;
 import net.minecraft.core.Global;
 import net.minecraft.core.block.Block;
@@ -12,6 +15,7 @@ import net.minecraft.core.net.packet.PacketAddEntity;
 import net.minecraft.core.util.helper.DamageType;
 import net.minecraft.core.util.helper.MathHelper;
 import net.minecraft.core.util.phys.AABB;
+import org.joml.primitives.AABBdc;
 import net.minecraft.core.util.phys.HitResult;
 import net.minecraft.core.util.phys.Vec3;
 import net.minecraft.core.world.World;
@@ -54,7 +58,7 @@ public class ProjectileDart extends Projectile implements ProjectileAether, Aeth
         this.inData = 0;
         if (dartType >= 2) {
             this.stack = new ItemStack(AetherItems.AMMO_DART_ENCHANTED);
-            this.noPhysics = true;
+            this.setNoPhysics(true);
             this.damage = 6;
         } else if (dartType == 1) {
             this.stack = new ItemStack(AetherItems.AMMO_DART_POISON);
@@ -76,7 +80,7 @@ public class ProjectileDart extends Projectile implements ProjectileAether, Aeth
         this.inData = 0;
         if (dartType >= 2) {
             this.stack = new ItemStack(AetherItems.AMMO_DART_ENCHANTED);
-            this.noPhysics = true;
+            this.setNoPhysics(true);
             this.damage = 6;
         } else if (dartType == 1) {
             this.stack = new ItemStack(AetherItems.AMMO_DART_POISON);
@@ -98,7 +102,7 @@ public class ProjectileDart extends Projectile implements ProjectileAether, Aeth
         this.inData = 0;
         if (dartType >= 2) {
             this.stack = new ItemStack(AetherItems.AMMO_DART_ENCHANTED);
-            this.noPhysics = true;
+            this.setNoPhysics(true);
             this.damage = 6;
         } else if (dartType == 1) {
             this.stack = new ItemStack(AetherItems.AMMO_DART_POISON);
@@ -194,8 +198,8 @@ public class ProjectileDart extends Projectile implements ProjectileAether, Aeth
 
         Block<?> block = this.world.getBlock(this.xTile, this.yTile, this.zTile);
         if (block != null) {
-            AABB aabb = block.getCollisionBoundingBoxFromPool(this.world, this.xTile, this.yTile, this.zTile);
-            if (aabb != null && aabb.contains(Vec3.getTempVec3(this.x, this.y, this.z))) {
+            AABBdc aabb = block.getCollisionBoundingBoxFromPool(this.world, this.xTile, this.yTile, this.zTile);
+            if (aabb != null && aabb.containsPoint(this.x, this.y, this.z)) {
                 this.setGrounded(true);
             }
         }
@@ -230,39 +234,39 @@ public class ProjectileDart extends Projectile implements ProjectileAether, Aeth
     @Override
     public HitResult getHitResult() {
         if (this.world == null) super.getHitResult();
-        Vec3 oldPosition = Vec3.getTempVec3(this.x, this.y, this.z);
-        Vec3 newPosition = Vec3.getTempVec3(this.x + this.xd, this.y + this.yd, this.z + this.zd);
+        org.joml.Vector3d oldPosition = new org.joml.Vector3d(this.x, this.y, this.z);
+        org.joml.Vector3d newPosition = new org.joml.Vector3d(this.x + this.xd, this.y + this.yd, this.z + this.zd);
         return this.world.checkBlockCollisionBetweenPoints(oldPosition, newPosition, false, true, false);
     }
 
     @Override
     public void onHit(HitResult hitResult) {
         if (this.world == null) return;
-        if (hitResult.entity != null) {
-            if (hitResult.entity instanceof MobZephyr) {
-                hitResult.entity.hurt(this.owner, 10, DamageType.COMBAT);
+        if (HitResults.entity(hitResult) != null) {
+            if (HitResults.entity(hitResult) instanceof MobZephyr) {
+                HitResults.entity(hitResult).hurt(this.owner, 10, DamageType.COMBAT);
                 if (this.owner instanceof Player) {
                     ((Player) this.owner).addStat(AetherAchievements.HIT_ZEPHYR, 1);
                 }
             }
-            if (hitResult.entity.hurt(this.owner, this.damage, DamageType.COMBAT)) {
+            if (HitResults.entity(hitResult).hurt(this.owner, this.damage, DamageType.COMBAT)) {
                 if (dartType == 1) {
-                    if (hitResult.entity instanceof IHasEffects) {
-                        AetherEffects.add(hitResult.entity, AetherEffects.poisonEffect, random.nextInt(1) + 1);
+                    if (HitResults.entity(hitResult) instanceof IHasEffects) {
+                        AetherEffects.add(HitResults.entity(hitResult), AetherEffects.poisonEffect, random.nextInt(1) + 1);
                     }
                 }
                 if (dartType >= 2) {
-                    if (hitResult.entity instanceof MobCockatrice || hitResult.entity instanceof MobAechorPlant) {
-                        hitResult.entity.hurt(this.owner, 12, AetherMod.HOLY);
+                    if (HitResults.entity(hitResult) instanceof MobCockatrice || HitResults.entity(hitResult) instanceof MobAechorPlant) {
+                        HitResults.entity(hitResult).hurt(this.owner, 12, AetherMod.HOLY);
                     }
-                    if (hitResult.entity instanceof IHasEffects) {
-                        IHasEffects<?> entity = (IHasEffects<?>) hitResult.entity;
-                        AetherEffects.add(hitResult.entity, new EffectStack(entity, AetherEffects.remedyEffect, 2 * Global.TICKS_PER_SECOND, 1));
+                    if (HitResults.entity(hitResult) instanceof IHasEffects) {
+                        IHasEffects<?> entity = (IHasEffects<?>) HitResults.entity(hitResult);
+                        AetherEffects.add(HitResults.entity(hitResult), new EffectStack(entity, AetherEffects.remedyEffect, 2 * Global.TICKS_PER_SECOND, 1));
                     }
                     // slight weaker remedy than the usual one
                 }
                 if (this.isOnFire()) {
-                    hitResult.entity.fireHurt();
+                    HitResults.entity(hitResult).fireHurt();
                 }
 
                 if (!this.world.isClientSide) {
@@ -279,14 +283,14 @@ public class ProjectileDart extends Projectile implements ProjectileAether, Aeth
             }
             this.remove();
         } else {
-            this.xTile = hitResult.x;
-            this.yTile = hitResult.y;
-            this.zTile = hitResult.z;
+            this.xTile = HitResults.x(hitResult);
+            this.yTile = HitResults.y(hitResult);
+            this.zTile = HitResults.z(hitResult);
             this.inTile = this.world.getBlockId(this.xTile, this.yTile, this.zTile);
             this.inData = this.world.getBlockMetadata(this.xTile, this.yTile, this.zTile);
-            this.xd = (float) (hitResult.location.x - this.x);
-            this.yd = (float) (hitResult.location.y - this.y);
-            this.zd = (float) (hitResult.location.z - this.z);
+            this.xd = (float) (hitResult.location.x() - this.x);
+            this.yd = (float) (hitResult.location.y() - this.y);
+            this.zd = (float) (hitResult.location.z() - this.z);
             float f1 = MathHelper.sqrt(this.xd * this.xd + this.yd * this.yd + this.zd * this.zd);
             this.x -= this.xd / f1 * 0.05;
             this.y -= this.yd / f1 * 0.05;

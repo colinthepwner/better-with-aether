@@ -5,7 +5,8 @@ import net.minecraft.core.world.biome.Biome;
 import net.minecraft.core.world.biome.data.BiomeRange;
 import net.minecraft.core.world.biome.data.BiomeRangeMap;
 import net.minecraft.core.world.biome.provider.BiomeProvider;
-import net.minecraft.core.world.noise.PerlinSimplexNoise;
+import net.minecraft.core.world.noise.FractalNoise2D;
+import net.minecraft.core.world.noise.SimplexNoise;
 import net.minecraft.core.world.type.WorldType;
 import teamport.aether.world.biome.AetherBiomes;
 
@@ -31,17 +32,20 @@ public final class BiomeProviderAether extends BiomeProvider {
     private static final double FUZZINESS_Z_SCALE = 0.25;
     private static final double FUZZINESS_EXPONENT = 1.0;
     private final WorldType worldType;
-    private final PerlinSimplexNoise temperatureNoise;
-    private final PerlinSimplexNoise humidityNoise;
-    private final PerlinSimplexNoise varietyNoise;
-    private final PerlinSimplexNoise fuzzinessNoise;
+    private final FractalNoise2D<SimplexNoise> temperatureNoise;
+    private final FractalNoise2D<SimplexNoise> humidityNoise;
+    private final FractalNoise2D<SimplexNoise> varietyNoise;
+    private final FractalNoise2D<SimplexNoise> fuzzinessNoise;
 
-    public BiomeProviderAether(long seed, WorldType worldType) {
+    public BiomeProviderAether(net.minecraft.core.world.World world) {
+        super(world);
+        long seed = world.getRandomSeed();
+        WorldType worldType = world.getWorldType();
         this.worldType = worldType;
-        this.temperatureNoise = new PerlinSimplexNoise(new Random(seed * 9871L), 4);
-        this.humidityNoise = new PerlinSimplexNoise(new Random(seed * 39811L), 4);
-        this.varietyNoise = new PerlinSimplexNoise(new Random(seed), 4);
-        this.fuzzinessNoise = new PerlinSimplexNoise(new Random(seed * 543321L), 2);
+        this.temperatureNoise = new FractalNoise2D<>(SimplexNoise.genOctaves(seed * 9871L, 4));
+        this.humidityNoise = new FractalNoise2D<>(SimplexNoise.genOctaves(seed * 39811L, 4));
+        this.varietyNoise = new FractalNoise2D<>(SimplexNoise.genOctaves(seed, 4));
+        this.fuzzinessNoise = new FractalNoise2D<>(SimplexNoise.genOctaves(seed * 543321L, 2));
     }
 
     @Override
@@ -69,7 +73,7 @@ public final class BiomeProviderAether extends BiomeProvider {
                 double variety = varieties[dx * zSize + dz];
 
                 for (int dy = 0; dy < ySize; ++dy) {
-                    double altitude = this.worldType.getYPercentage(y + dy << 3);
+                    double altitude = this.worldType.getYPercentage(world, y + dy << 3);
                     biomes[dy * xSize * zSize + dz * xSize + dx] = this.lookupBiome(temperature, humidity, variety, altitude);
                 }
             }
@@ -84,8 +88,8 @@ public final class BiomeProviderAether extends BiomeProvider {
             temperatures = new double[xSize * zSize];
         }
 
-        double[] tnResult = this.temperatureNoise.getValue(null, x, z, xSize, zSize, TEMPERATURE_X_SCALE, TEMPERATURE_Z_SCALE, TEMPERATURE_EXPONENT);
-        double[] fnResult = this.fuzzinessNoise.getValue(null, x, z, xSize, zSize, FUZZINESS_X_SCALE, FUZZINESS_Z_SCALE, FUZZINESS_EXPONENT);
+        double[] tnResult = this.temperatureNoise.addRegion(null, x, z, xSize, zSize, TEMPERATURE_X_SCALE, TEMPERATURE_Z_SCALE, TEMPERATURE_EXPONENT);
+        double[] fnResult = this.fuzzinessNoise.addRegion(null, x, z, xSize, zSize, FUZZINESS_X_SCALE, FUZZINESS_Z_SCALE, FUZZINESS_EXPONENT);
 
         for (int dx = 0; dx < xSize; ++dx) {
             for (int dz = 0; dz < zSize; ++dz) {
@@ -114,8 +118,8 @@ public final class BiomeProviderAether extends BiomeProvider {
             humidities = new double[xSize * zSize];
         }
 
-        double[] hnResult = this.humidityNoise.getValue(null, x, z, xSize, zSize, HUMIDITY_X_SCALE, HUMIDITY_Z_SCALE, HUMIDITY_EXPONENT);
-        double[] fnResult = this.fuzzinessNoise.getValue(null, x, z, xSize, zSize, FUZZINESS_X_SCALE, FUZZINESS_Z_SCALE, FUZZINESS_EXPONENT);
+        double[] hnResult = this.humidityNoise.addRegion(null, x, z, xSize, zSize, HUMIDITY_X_SCALE, HUMIDITY_Z_SCALE, HUMIDITY_EXPONENT);
+        double[] fnResult = this.fuzzinessNoise.addRegion(null, x, z, xSize, zSize, FUZZINESS_X_SCALE, FUZZINESS_Z_SCALE, FUZZINESS_EXPONENT);
 
         for (int dx = 0; dx < xSize; ++dx) {
             for (int dz = 0; dz < zSize; ++dz) {
@@ -144,8 +148,8 @@ public final class BiomeProviderAether extends BiomeProvider {
             varieties = new double[xSize * zSize];
         }
 
-        double[] vnResult = this.varietyNoise.getValue(null, x, z, xSize, zSize, VARIETY_X_SCALE, VARIETY_Z_SCALE, VARIETY_EXPONENT);
-        double[] fnResult = this.fuzzinessNoise.getValue(null, x, z, xSize, zSize, FUZZINESS_X_SCALE, FUZZINESS_Z_SCALE, FUZZINESS_EXPONENT);
+        double[] vnResult = this.varietyNoise.addRegion(null, x, z, xSize, zSize, VARIETY_X_SCALE, VARIETY_Z_SCALE, VARIETY_EXPONENT);
+        double[] fnResult = this.fuzzinessNoise.addRegion(null, x, z, xSize, zSize, FUZZINESS_X_SCALE, FUZZINESS_Z_SCALE, FUZZINESS_EXPONENT);
 
         for (int dx = 0; dx < xSize; ++dx) {
             for (int dz = 0; dz < zSize; ++dz) {
@@ -185,7 +189,7 @@ public final class BiomeProviderAether extends BiomeProvider {
                 for (int dz = 0; dz < zSize; ++dz) {
                     double temperature = MathHelper.clamp(temperatures[dx * zSize + dz], 0.0, 1.0);
                     double humidity = MathHelper.clamp(humidities[dx * zSize + dz], 0.0, 1.0);
-                    double altitude = MathHelper.clamp(this.worldType.getYPercentage(y + dy << 3), 0.0, 1.0);
+                    double altitude = MathHelper.clamp(this.worldType.getYPercentage(world, y + dy << 3), 0.0, 1.0);
                     double variety = MathHelper.clamp(varieties[dx * zSize + dz], 0.0, 1.0);
                     Biome biome = this.lookupBiome(temperature, humidity, variety, altitude);
                     Set<BiomeRange> ranges = BIOME_RANGE_MAP.getRanges(biome);

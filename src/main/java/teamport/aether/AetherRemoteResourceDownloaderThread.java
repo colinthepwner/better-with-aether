@@ -154,7 +154,7 @@ public class AetherRemoteResourceDownloaderThread extends Thread {
             SoundRepository.reload();
             mc.sndManager.destroy();
             mc.sndManager = new SoundEngine();
-            mc.sndManager.init(this.mc.gameSettings);
+            mc.sndManager.init();
 
             state = State.IDLE;
         }

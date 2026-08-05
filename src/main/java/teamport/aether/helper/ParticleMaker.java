@@ -31,7 +31,7 @@ public class ParticleMaker {
             return;
         }
 
-        world.spawnParticle(particleKey, x, y, z, motionX, motionY, motionZ, data, maxDistance);
+        world.spawnParticle(particleKey, x, y, z, motionX, motionY, motionZ, data, maxDistance, false);
     }
 
     public static void spawnParticle(World world, String particleKey, double x, double y, double z, double motionX, double motionY, double motionZ, int data) {
@@ -52,9 +52,9 @@ public class ParticleMaker {
             double faceY = blockY + 0.5 + (random.nextDouble() * 0.6 - 0.3);
             double faceZ = blockZ + 0.5 + (random.nextDouble() * 0.6 - 0.3);
 
-            double offX = face.getOffsetX() * (random.nextDouble() * 0.3);
-            double offY = face.getOffsetY() * (random.nextDouble() * 0.3);
-            double offZ = face.getOffsetZ() * (random.nextDouble() * 0.3);
+            double offX = face.offsetX() * (random.nextDouble() * 0.3);
+            double offY = face.offsetY() * (random.nextDouble() * 0.3);
+            double offZ = face.offsetZ() * (random.nextDouble() * 0.3);
 
             double spawnX = faceX + offX;
             double spawnY = faceY + offY;

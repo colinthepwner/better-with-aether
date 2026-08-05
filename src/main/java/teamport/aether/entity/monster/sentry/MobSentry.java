@@ -70,7 +70,7 @@ public class MobSentry extends MobMonsterAether implements Enemy, AetherDeathMes
         this.tryToDespawn();
         if (this.world == null) return;
         Player entityplayer = this.world.getClosestPlayerToEntity(this, 16.0);
-        boolean targetPlayer = entityplayer != null && entityplayer.getGamemode().areMobsHostile() && canEntityBeSeen(entityplayer);
+        boolean targetPlayer = entityplayer != null && entityplayer.getGamemode().hasHostileMobs() && canEntityBeSeen(entityplayer);
         if (entityplayer != null && targetPlayer) {
             this.target = entityplayer;
         }
@@ -126,7 +126,7 @@ public class MobSentry extends MobMonsterAether implements Enemy, AetherDeathMes
     ///  Sentries have true sight.
     protected Entity findPlayerToAttack() {
         Player entityplayer = this.world.getClosestPlayerToEntity(this, 16.0F);
-        return entityplayer != null && this.canEntityBeSeen(entityplayer) && entityplayer.getGamemode().areMobsHostile() ? entityplayer : null;
+        return entityplayer != null && this.canEntityBeSeen(entityplayer) && entityplayer.getGamemode().hasHostileMobs() ? entityplayer : null;
     }
 
     @Override

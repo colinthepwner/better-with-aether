@@ -7,6 +7,7 @@ import net.minecraft.core.WeightedRandomLootObject;
 import net.minecraft.core.block.Block;
 import net.minecraft.core.block.Blocks;
 import net.minecraft.core.block.material.Material;
+import net.minecraft.core.block.material.Materials;
 import net.minecraft.core.entity.Entity;
 import net.minecraft.core.entity.player.Player;
 import net.minecraft.core.item.ItemStack;
@@ -230,7 +231,7 @@ public class MobBossValkyrie extends MobBoss {
 
         Entity newTarget = this.world.players.stream()
             .filter(Objects::nonNull)
-            .filter(player -> player.getGamemode().areMobsHostile())
+            .filter(player -> player.getGamemode().hasHostileMobs())
             .filter(player -> player.distanceTo(this) <= AetherDimension.BOSS_DETECTION_RADIUS)
             .filter(this::canEntityBeSeen)
             .min(Comparator.comparingDouble(this::distanceTo))
@@ -351,7 +352,7 @@ public class MobBossValkyrie extends MobBoss {
         Block<?> block = this.world.getBlock(x, y, z);
         Block<?> blockTwo = Blocks.blocksList[p];
 
-        return p == 0 || blockTwo == null || blockTwo.getCollisionBoundingBoxFromPool(this.world, x, y, z) == null || block != null && block.getMaterial() == Material.water;
+        return p == 0 || blockTwo == null || blockTwo.getCollisionBoundingBoxFromPool(this.world, x, y, z) == null || block != null && block.getMaterial() == Materials.WATER;
     }
 
     public void swingArm() {
@@ -479,7 +480,7 @@ public class MobBossValkyrie extends MobBoss {
             if (this.attackTime == 0) {
                 if (this.world != null && !this.world.isClientSide) {
                     ProjectileElementLightning elementLightning = new ProjectileElementLightning(this.world, this);
-                    elementLightning.setHeading(world.rand.nextDouble(), this.getLookAngle().y + 5, world.rand.nextDouble(), 0.5f, 0.0f);
+                    elementLightning.setHeading(world.rand.nextDouble(), this.getViewVector(1.0F).y() + 5, world.rand.nextDouble(), 0.5f, 0.0f);
                     this.world.playSoundAtEntity(null, this, "mob.ghast.fireball", this.getSoundVolume(), (this.random.nextFloat() + this.random.nextFloat()) * 1.2F + 1.0F);
                     this.world.entityJoinedWorld(elementLightning);
                 }
@@ -537,7 +538,6 @@ public class MobBossValkyrie extends MobBoss {
         return 750;
     }
 
-    @Override
     public ItemStack getHeldItem() {
         return new ItemStack(AetherItems.TOOL_SWORD_HOLY, 1);
     }

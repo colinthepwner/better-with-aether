@@ -1,5 +1,6 @@
 package teamport.aether.item;
 
+import net.minecraft.core.enums.HumanArmorShape;
 import net.minecraft.core.block.Blocks;
 import net.minecraft.core.item.*;
 import net.minecraft.core.item.material.ArmorMaterial;
@@ -555,76 +556,76 @@ public final class AetherItems {
     public static void registerArmor() {
 
         ARMOR_HELMET_ZANITE = new ItemBuilder(MOD_ID)
-            .build(new ItemArmor("armor.helmet.zanite", itemKey("armor_helmet_zanite"), itemID("ARMOR_HELMET_ZANITE"), AetherArmorMaterial.ZANITE, 3));
+            .build(new ItemArmor("armor.helmet.zanite", itemKey("armor_helmet_zanite"), itemID("ARMOR_HELMET_ZANITE"), AetherArmorMaterial.ZANITE, HumanArmorShape.HEAD));
 
         ARMOR_CHESTPLATE_ZANITE = new ItemBuilder(MOD_ID)
-            .build(new ItemArmor("armor.chestplate.zanite", itemKey("armor_chestplate_zanite"), itemID("ARMOR_CHESTPLATE_ZANITE"), AetherArmorMaterial.ZANITE, 2));
+            .build(new ItemArmor("armor.chestplate.zanite", itemKey("armor_chestplate_zanite"), itemID("ARMOR_CHESTPLATE_ZANITE"), AetherArmorMaterial.ZANITE, HumanArmorShape.CHEST));
 
         ARMOR_LEGGINGS_ZANITE = new ItemBuilder(MOD_ID)
-            .build(new ItemArmor("armor.leggings.zanite", itemKey("armor_leggings_zanite"), itemID("ARMOR_LEGGINGS_ZANITE"), AetherArmorMaterial.ZANITE, 1));
+            .build(new ItemArmor("armor.leggings.zanite", itemKey("armor_leggings_zanite"), itemID("ARMOR_LEGGINGS_ZANITE"), AetherArmorMaterial.ZANITE, HumanArmorShape.LEGS));
 
         ARMOR_BOOTS_ZANITE = new ItemBuilder(MOD_ID)
-            .build(new ItemArmor("armor.boots.zanite", itemKey("armor_boots_zanite"), itemID("ARMOR_BOOTS_ZANITE"), AetherArmorMaterial.ZANITE, 0));
+            .build(new ItemArmor("armor.boots.zanite", itemKey("armor_boots_zanite"), itemID("ARMOR_BOOTS_ZANITE"), AetherArmorMaterial.ZANITE, HumanArmorShape.BOOTS));
 
 
         ARMOR_HELMET_GRAVITITE = new ItemBuilder(MOD_ID)
-            .build(new ItemArmor("armor.helmet.gravitite", itemKey("armor_helmet_gravitite"), itemID("ARMOR_HELMET_GRAVITITE"), AetherArmorMaterial.GRAVITITE, 3));
+            .build(new ItemArmor("armor.helmet.gravitite", itemKey("armor_helmet_gravitite"), itemID("ARMOR_HELMET_GRAVITITE"), AetherArmorMaterial.GRAVITITE, HumanArmorShape.HEAD));
 
         ARMOR_CHESTPLATE_GRAVITITE = new ItemBuilder(MOD_ID)
-            .build(new ItemArmor("armor.chestplate.gravitite", itemKey("armor_chestplate_gravitite"), itemID("ARMOR_CHESTPLATE_GRAVITITE"), AetherArmorMaterial.GRAVITITE, 2));
+            .build(new ItemArmor("armor.chestplate.gravitite", itemKey("armor_chestplate_gravitite"), itemID("ARMOR_CHESTPLATE_GRAVITITE"), AetherArmorMaterial.GRAVITITE, HumanArmorShape.CHEST));
 
         ARMOR_LEGGINGS_GRAVITITE = new ItemBuilder(MOD_ID)
-            .build(new ItemArmor("armor.leggings.gravitite", itemKey("armor_leggings_gravitite"), itemID("ARMOR_LEGGINGS_GRAVITITE"), AetherArmorMaterial.GRAVITITE, 1));
+            .build(new ItemArmor("armor.leggings.gravitite", itemKey("armor_leggings_gravitite"), itemID("ARMOR_LEGGINGS_GRAVITITE"), AetherArmorMaterial.GRAVITITE, HumanArmorShape.LEGS));
 
         ARMOR_BOOTS_GRAVITITE = new ItemBuilder(MOD_ID)
-            .build(new ItemArmor("armor.boots.gravitite", itemKey("armor_boots_gravitite"), itemID("ARMOR_BOOTS_GRAVITITE"), AetherArmorMaterial.GRAVITITE, 0));
+            .build(new ItemArmor("armor.boots.gravitite", itemKey("armor_boots_gravitite"), itemID("ARMOR_BOOTS_GRAVITITE"), AetherArmorMaterial.GRAVITITE, HumanArmorShape.BOOTS));
 
 
         ARMOR_HELMET_OBSIDIAN = new ItemBuilder(MOD_ID)
             .addTags(AetherItemTags.IMMUNE_TO_BLAST_DAMAGE)
-            .build(new ItemArmor("armor.helmet.obsidian", itemKey("armor_helmet_obsidian"), itemID("ARMOR_HELMET_OBSIDIAN"), AetherArmorMaterial.OBSIDIAN, 3));
+            .build(new ItemArmor("armor.helmet.obsidian", itemKey("armor_helmet_obsidian"), itemID("ARMOR_HELMET_OBSIDIAN"), AetherArmorMaterial.OBSIDIAN, HumanArmorShape.HEAD));
 
         ARMOR_CHESTPLATE_OBSIDIAN = new ItemBuilder(MOD_ID)
             .addTags(AetherItemTags.IMMUNE_TO_BLAST_DAMAGE)
-            .build(new ItemArmor("armor.chestplate.obsidian", itemKey("armor_chestplate_obsidian"), itemID("ARMOR_CHESTPLATE_OBSIDIAN"), AetherArmorMaterial.OBSIDIAN, 2));
+            .build(new ItemArmor("armor.chestplate.obsidian", itemKey("armor_chestplate_obsidian"), itemID("ARMOR_CHESTPLATE_OBSIDIAN"), AetherArmorMaterial.OBSIDIAN, HumanArmorShape.CHEST));
 
         ARMOR_LEGGINGS_OBSIDIAN = new ItemBuilder(MOD_ID)
             .addTags(AetherItemTags.IMMUNE_TO_BLAST_DAMAGE)
-            .build(new ItemArmor("armor.leggings.obsidian", itemKey("armor_leggings_obsidian"), itemID("ARMOR_LEGGINGS_OBSIDIAN"), AetherArmorMaterial.OBSIDIAN, 1));
+            .build(new ItemArmor("armor.leggings.obsidian", itemKey("armor_leggings_obsidian"), itemID("ARMOR_LEGGINGS_OBSIDIAN"), AetherArmorMaterial.OBSIDIAN, HumanArmorShape.LEGS));
 
         ARMOR_BOOTS_OBSIDIAN = new ItemBuilder(MOD_ID)
             .addTags(AetherItemTags.IMMUNE_TO_BLAST_DAMAGE)
-            .build(new ItemArmor("armor.boots.obsidian", itemKey("armor_boots_obsidian"), itemID("ARMOR_BOOTS_OBSIDIAN"), AetherArmorMaterial.OBSIDIAN, 0));
+            .build(new ItemArmor("armor.boots.obsidian", itemKey("armor_boots_obsidian"), itemID("ARMOR_BOOTS_OBSIDIAN"), AetherArmorMaterial.OBSIDIAN, HumanArmorShape.BOOTS));
 
 
         ARMOR_HELMET_PHOENIX = new ItemBuilder(MOD_ID)
             .addTags(AetherItemTags.IMMUNE_TO_FIRE_DAMAGE)
-            .build(new ItemArmor("armor.helmet.phoenix", itemKey("armor_helmet_phoenix"), itemID("ARMOR_HELMET_PHOENIX"), AetherArmorMaterial.PHOENIX, 3));
+            .build(new ItemArmor("armor.helmet.phoenix", itemKey("armor_helmet_phoenix"), itemID("ARMOR_HELMET_PHOENIX"), AetherArmorMaterial.PHOENIX, HumanArmorShape.HEAD));
 
         ARMOR_CHESTPLATE_PHOENIX = new ItemBuilder(MOD_ID)
             .addTags(AetherItemTags.IMMUNE_TO_FIRE_DAMAGE)
-            .build(new ItemArmor("armor.chestplate.phoenix", itemKey("armor_chestplate_phoenix"), itemID("ARMOR_CHESTPLATE_PHOENIX"), AetherArmorMaterial.PHOENIX, 2));
+            .build(new ItemArmor("armor.chestplate.phoenix", itemKey("armor_chestplate_phoenix"), itemID("ARMOR_CHESTPLATE_PHOENIX"), AetherArmorMaterial.PHOENIX, HumanArmorShape.CHEST));
 
         ARMOR_LEGGINGS_PHOENIX = new ItemBuilder(MOD_ID)
             .addTags(AetherItemTags.IMMUNE_TO_FIRE_DAMAGE)
-            .build(new ItemArmor("armor.leggings.phoenix", itemKey("armor_leggings_phoenix"), itemID("ARMOR_LEGGINGS_PHOENIX"), AetherArmorMaterial.PHOENIX, 1));
+            .build(new ItemArmor("armor.leggings.phoenix", itemKey("armor_leggings_phoenix"), itemID("ARMOR_LEGGINGS_PHOENIX"), AetherArmorMaterial.PHOENIX, HumanArmorShape.LEGS));
 
         ARMOR_BOOTS_PHOENIX = new ItemBuilder(MOD_ID)
             .addTags(AetherItemTags.IMMUNE_TO_FIRE_DAMAGE)
-            .build(new ItemArmor("armor.boots.phoenix", itemKey("armor_boots_phoenix"), itemID("ARMOR_BOOTS_PHOENIX"), AetherArmorMaterial.PHOENIX, 0));
+            .build(new ItemArmor("armor.boots.phoenix", itemKey("armor_boots_phoenix"), itemID("ARMOR_BOOTS_PHOENIX"), AetherArmorMaterial.PHOENIX, HumanArmorShape.BOOTS));
 
 
         ARMOR_HELMET_NEPTUNE = new ItemBuilder(MOD_ID)
-            .build(new ItemArmor("armor.helmet.neptune", itemKey("armor_helmet_neptune"), itemID("ARMOR_HELMET_NEPTUNE"), AetherArmorMaterial.NEPTUNE, 3));
+            .build(new ItemArmor("armor.helmet.neptune", itemKey("armor_helmet_neptune"), itemID("ARMOR_HELMET_NEPTUNE"), AetherArmorMaterial.NEPTUNE, HumanArmorShape.HEAD));
 
         ARMOR_CHESTPLATE_NEPTUNE = new ItemBuilder(MOD_ID)
-            .build(new ItemArmor("armor.chestplate.neptune", itemKey("armor_chestplate_neptune"), itemID("ARMOR_CHESTPLATE_NEPTUNE"), AetherArmorMaterial.NEPTUNE, 2));
+            .build(new ItemArmor("armor.chestplate.neptune", itemKey("armor_chestplate_neptune"), itemID("ARMOR_CHESTPLATE_NEPTUNE"), AetherArmorMaterial.NEPTUNE, HumanArmorShape.CHEST));
 
         ARMOR_LEGGINGS_NEPTUNE = new ItemBuilder(MOD_ID)
-            .build(new ItemArmor("armor.leggings.neptune", itemKey("armor_leggings_neptune"), itemID("ARMOR_LEGGINGS_NEPTUNE"), AetherArmorMaterial.NEPTUNE, 1));
+            .build(new ItemArmor("armor.leggings.neptune", itemKey("armor_leggings_neptune"), itemID("ARMOR_LEGGINGS_NEPTUNE"), AetherArmorMaterial.NEPTUNE, HumanArmorShape.LEGS));
 
         ARMOR_BOOTS_NEPTUNE = new ItemBuilder(MOD_ID)
-            .build(new ItemArmor("armor.boots.neptune", itemKey("armor_boots_neptune"), itemID("ARMOR_BOOTS_NEPTUNE"), AetherArmorMaterial.NEPTUNE, 0));
+            .build(new ItemArmor("armor.boots.neptune", itemKey("armor_boots_neptune"), itemID("ARMOR_BOOTS_NEPTUNE"), AetherArmorMaterial.NEPTUNE, HumanArmorShape.BOOTS));
 
 
         ARMOR_GLOVES_LEATHER = new ItemBuilder(MOD_ID)

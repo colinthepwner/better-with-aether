@@ -27,7 +27,7 @@ public abstract class MobWolfMixinFireImmunityBurn {
     public float bbHeight;
     @Shadow
     public float bbWidth;
-    @WrapMethod(method = "burn")
+    @WrapMethod(method = "burn(I)V")
     private void burn(int damage, Operation<Void> original) {
         if (!((Entity) (Object) this instanceof MobWolf)) {
             original.call(damage);
@@ -52,5 +52,18 @@ public abstract class MobWolfMixinFireImmunityBurn {
             return;
         }
         original.call(bolt);
+    }
+    @WrapMethod(method = "burn(ILnet/minecraft/core/block/Block;)V")
+    private void burnBlock(int damage, net.minecraft.core.block.Block<?> block, Operation<Void> original) {
+        if (!((Entity) (Object) this instanceof MobWolf)) {
+            original.call(damage, block);
+            return;
+        }
+        if (MixinHelper.isImmuneToFire((MobWolf) (Object) this)) {
+            if (world == null) return;
+            ParticleMaker.spawnSmokeParticles(world, x, y, z, bbHeight, bbWidth);
+            return;
+        }
+        original.call(damage, block);
     }
 }

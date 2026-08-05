@@ -1,31 +1,30 @@
 package teamport.aether.mixin.accessory.cape.invisibility_cape.render;
 
-import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
-import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import net.minecraft.client.option.GameSettings;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.render.item.model.ItemModelStandard;
-import net.minecraft.client.render.tessellator.Tessellator;
+import net.minecraft.client.render.tessellator.TessellatorGeneral;
 import net.minecraft.core.entity.Entity;
 import net.minecraft.core.entity.player.Player;
 import net.minecraft.core.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import teamport.aether.entity.player.PlayerUtil;
 
 @Environment(EnvType.CLIENT)
 @Mixin(value = ItemModelStandard.class)
 public abstract class MakeHeldItemInvisible {
-    @SuppressWarnings("java:S107")
-    @WrapOperation(method = "renderItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/item/model/ItemModelStandard;renderItemInWorld(Lnet/minecraft/client/render/tessellator/Tessellator;Lnet/minecraft/core/entity/Entity;Lnet/minecraft/core/item/ItemStack;FFZ)V"))
-    private void makeItemInvisible(ItemModelStandard instance, Tessellator tessellator, Entity entity, ItemStack itemStack, float brightness, float alpha, boolean worldTransform, Operation<Void> original) {
-        original.call(instance, tessellator, entity, itemStack, brightness,
-            entity instanceof Player
-                && (
-                    entity != Minecraft.getMinecraft().thePlayer
-                        || Minecraft.getMinecraft().gameSettings.thirdPersonView.value != 0)
-                && PlayerUtil.isInvisible(entity) ? 0.05F : alpha, worldTransform
-        );
+    @Inject(method = "renderSingle", at = @At("HEAD"), cancellable = true)
+    private void makeItemInvisible(TessellatorGeneral tessellator, Entity entity, ItemStack itemStack, boolean handheldTransform, byte brightness, int metadata, float partialTicks, boolean gui, CallbackInfo ci) {
+        if (entity instanceof Player
+            && (entity != Minecraft.getMinecraft().thePlayer || GameSettings.THIRD_PERSON_VIEW.value != 0)
+            && PlayerUtil.isInvisible(entity)
+        ) {
+            ci.cancel();
+        }
     }
 }

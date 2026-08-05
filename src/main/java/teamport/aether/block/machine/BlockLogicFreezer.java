@@ -1,10 +1,12 @@
 package teamport.aether.block.machine;
 
+import net.minecraft.core.world.pos.TilePosc;
 import net.minecraft.core.Global;
 import net.minecraft.core.block.Block;
 import net.minecraft.core.block.BlockLogicRotatable;
 import net.minecraft.core.block.entity.TileEntity;
 import net.minecraft.core.block.material.Material;
+import net.minecraft.core.block.material.Materials;
 import net.minecraft.core.entity.player.Player;
 import net.minecraft.core.enums.EnumDropCause;
 import net.minecraft.core.item.ItemStack;
@@ -22,7 +24,7 @@ public class BlockLogicFreezer extends BlockLogicRotatable {
     private static boolean keepFreezerInventory = false;
 
     public BlockLogicFreezer(Block<?> block, boolean active) {
-        super(block, Material.stone);
+        super(block, Materials.STONE);
         this.isActive = active;
         block.withEntity(TileEntityFreezer::new);
     }
@@ -46,7 +48,10 @@ public class BlockLogicFreezer extends BlockLogicRotatable {
     }
 
     @Override
-    public void animationTick(World world, int x, int y, int z, Random rand) {
+    public void animationTick(World world, TilePosc pos, Random rand) {
+		int x = pos.x();
+		int y = pos.y();
+		int z = pos.z();
         if (this.isActive) {
             double poxX = x + 0.5;
             double posY = y + 1.0 + (rand.nextDouble() * 6.0 / 16.0);
@@ -55,7 +60,7 @@ public class BlockLogicFreezer extends BlockLogicRotatable {
                 double maxSpeedX = rand.nextGaussian() * 0.05;
                 double maxSpeedZ = rand.nextGaussian() * 0.05;
                 ///  this is not broken, it works, its just that vanilla particles are broken at the time
-                world.spawnParticle("snowshovel", poxX, posY, posZ, maxSpeedX, 0.05, maxSpeedZ, 0);
+                world.spawnParticle("snowshovel", poxX, posY, posZ, maxSpeedX, 0.05, maxSpeedZ, 0, false);
             }
         }
     }

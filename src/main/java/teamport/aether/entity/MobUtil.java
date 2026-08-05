@@ -82,11 +82,11 @@ public class MobUtil {
     }
 
     public static void convertMob(Entity mob, String mobId) {
-        Class<? extends Entity> tempestClazz = EntityDispatcher.classForId(mobId);
+        Class<? extends Entity> tempestClazz = EntityDispatcher.getInstance().entryForId(mobId).entityClass;
         if (tempestClazz == null) {
             return;
         }
-        Entity entity = EntityDispatcher.createEntityInWorld(tempestClazz, mob.world);
+        Entity entity = EntityDispatcher.getInstance().createEntityInWorld(tempestClazz, mob.world);
         if (entity == null) {
             return;
         }

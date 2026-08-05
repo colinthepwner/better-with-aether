@@ -35,7 +35,7 @@ public abstract class BlockLogicHarvestBlockGoldPendant {
     @NonNull
     public Block<?> block;
     /// spoof the check
-    @WrapOperation(method = "harvestBlock", at = @At(value = "INVOKE", target = "Lnet/minecraft/core/item/Item;isSilkTouch()Z"))
+    @WrapOperation(method = "onHarvest", at = @At(value = "INVOKE", target = "Lnet/minecraft/core/item/Item;isSilkTouch()Z"))
     private boolean golPendantEquipped(Item instance, Operation<Boolean> original, @Local(argsOnly = true) Player player) {
         ItemStack heldItemStack = player.inventory.getCurrentItem();
         Item heldItem = heldItemStack != null ? Item.itemsList[heldItemStack.itemID] : null;
@@ -46,9 +46,9 @@ public abstract class BlockLogicHarvestBlockGoldPendant {
         return ((goldInSlot1) || (goldInSlot2) || original.call(instance)) && !(heldItem instanceof ItemToolShears);
     }
     ///  only one takes damage and only if the check succeed
-    @Inject(method = "harvestBlock", at = @At(value = "INVOKE", target = "Lnet/minecraft/core/block/BlockLogic;dropBlockWithCause(Lnet/minecraft/core/world/World;Lnet/minecraft/core/enums/EnumDropCause;IIIILnet/minecraft/core/block/entity/TileEntity;Lnet/minecraft/core/entity/player/Player;)V"),
+    @Inject(method = "onHarvest", at = @At(value = "INVOKE", target = "Lnet/minecraft/core/block/BlockLogic;dropWithCause(Lnet/minecraft/core/world/World;Lnet/minecraft/core/enums/EnumDropCause;Lnet/minecraft/core/world/pos/TilePosc;ILnet/minecraft/core/block/entity/TileEntity;Lnet/minecraft/core/entity/player/Player;)V"),
         slice = @Slice(from = @At(value = "INVOKE", target = "Lnet/minecraft/core/entity/player/Player;canHarvestBlock(Lnet/minecraft/core/block/Block;)Z"), to = @At(value = "INVOKE", target = "Lnet/minecraft/core/block/Block;hasTag(Lnet/minecraft/core/data/tag/Tag;)Z")))
-    private void damageGoldPendant(World world, Player player, int x, int y, int z, int meta, TileEntity tileEntity, CallbackInfo ci) {
+    private void damageGoldPendant(World world, Player player, net.minecraft.core.world.pos.TilePosc pos, int meta, TileEntity tileEntity, CallbackInfo ci) {
         ItemStack trinketOne = player.inventory.armorInventory[TRINKET_1_SLOT];
         ItemStack trinketTwo = player.inventory.armorInventory[TRINKET_2_SLOT];
         if (trinketOne != null && trinketOne.getItem().id == AetherItems.ARMOR_TALISMAN_GOLD.id) {
@@ -60,8 +60,8 @@ public abstract class BlockLogicHarvestBlockGoldPendant {
         }
     }
     // make it apply when player has no item equipped (e.i barefist)
-    @WrapOperation(method = "harvestBlock", at = @At(value = "INVOKE", target = "Lnet/minecraft/core/entity/player/Player;canHarvestBlock(Lnet/minecraft/core/block/Block;)Z", ordinal = 1))
-    private boolean catchNullItemOne(Player instance, Block<?> block, Operation<Boolean> original, World world, Player player, int x, int y, int z, int meta, TileEntity tileEntity, @Local Item heldItem, @Share("exists") LocalBooleanRef exists, @Share("goldInSlot6") LocalBooleanRef goldInSlot6Ref) {
+    @WrapOperation(method = "onHarvest", at = @At(value = "INVOKE", target = "Lnet/minecraft/core/entity/player/Player;canHarvestBlock(Lnet/minecraft/core/block/Block;)Z", ordinal = 1))
+    private boolean catchNullItemOne(Player instance, Block<?> block, Operation<Boolean> original, World world, Player player, net.minecraft.core.world.pos.TilePosc pos, int meta, TileEntity tileEntity, @Local Item heldItem, @Share("exists") LocalBooleanRef exists, @Share("goldInSlot6") LocalBooleanRef goldInSlot6Ref) {
         boolean canHarvestBlock = original.call(instance, block);
         exists.set(false);
         goldInSlot6Ref.set(false);
@@ -77,9 +77,9 @@ public abstract class BlockLogicHarvestBlockGoldPendant {
         }
         return canHarvestBlock;
     }
-    @WrapOperation(method = "harvestBlock", at = @At(value = "INVOKE", target = "Lnet/minecraft/core/block/BlockLogic;dropBlockWithCause(Lnet/minecraft/core/world/World;Lnet/minecraft/core/enums/EnumDropCause;IIIILnet/minecraft/core/block/entity/TileEntity;Lnet/minecraft/core/entity/player/Player;)V", ordinal = 2))
-    private void catchNullItemTwo(BlockLogic instance, World world, EnumDropCause cause, int x, int y, int z, int meta, TileEntity tileEntity, Player player, Operation<Void> original, @Share("exists") LocalBooleanRef exists, @Share("goldInSlot6") LocalBooleanRef goldInSlot6Ref) {
-        original.call(instance, world, exists.get() ? EnumDropCause.SILK_TOUCH : cause, x, y, z, meta, tileEntity, player);
+    @WrapOperation(method = "onHarvest", at = @At(value = "INVOKE", target = "Lnet/minecraft/core/block/BlockLogic;dropWithCause(Lnet/minecraft/core/world/World;Lnet/minecraft/core/enums/EnumDropCause;Lnet/minecraft/core/world/pos/TilePosc;ILnet/minecraft/core/block/entity/TileEntity;Lnet/minecraft/core/entity/player/Player;)V", ordinal = 2))
+    private void catchNullItemTwo(BlockLogic instance, World world, EnumDropCause cause, net.minecraft.core.world.pos.TilePosc pos, int meta, TileEntity tileEntity, Player player, Operation<Void> original, @Share("exists") LocalBooleanRef exists, @Share("goldInSlot6") LocalBooleanRef goldInSlot6Ref) {
+        original.call(instance, world, exists.get() ? EnumDropCause.SILK_TOUCH : cause, pos, meta, tileEntity, player);
         if (exists.get()) {
             if (goldInSlot6Ref.get()) {
                 PlayerUtil.damageItemArmor(player, player.inventory.armorInventory[TRINKET_1_SLOT], TRINKET_1_SLOT);

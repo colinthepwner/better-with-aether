@@ -1,5 +1,7 @@
 package teamport.aether.entity.projectile;
 
+import org.joml.primitives.AABBd;
+import teamport.aether.util.HitResults;
 import net.minecraft.core.entity.Entity;
 import net.minecraft.core.entity.EntityLightning;
 import net.minecraft.core.entity.Mob;
@@ -8,6 +10,7 @@ import net.minecraft.core.entity.monster.MobCreeper;
 import net.minecraft.core.entity.player.Player;
 import net.minecraft.core.sound.SoundCategory;
 import net.minecraft.core.util.phys.AABB;
+import org.joml.primitives.AABBdc;
 import net.minecraft.core.util.phys.HitResult;
 import net.minecraft.core.world.World;
 import teamport.aether.AetherMod;
@@ -68,7 +71,7 @@ public class ProjectileElementLightning extends ProjectileElementBase implements
         }
 
         if (this.target == null || !this.target.isAlive()) {
-            AABB searchBox = AABB.getPermanentBB(this.x - 16.0, this.y - 16.0, this.z - 16.0, this.x + 16.0, this.y + 16.0, this.z + 16.0);
+            AABBd searchBox = new AABBd(this.x - 16.0, this.y - 16.0, this.z - 16.0, this.x + 16.0, this.y + 16.0, this.z + 16.0);
             List<Mob> entities = this.world.getEntitiesWithinAABB(Mob.class, searchBox);
             Player closestPlayer = null;
             for (Mob entity : entities) {
@@ -109,8 +112,8 @@ public class ProjectileElementLightning extends ProjectileElementBase implements
     @Override
     public void onHit(HitResult hitResult) {
         if (this.world != null && !this.world.isClientSide) {
-            if (!(hitResult.entity instanceof MobBossValkyrie || hitResult.entity instanceof ProjectileElementBase)) {
-                if (hitResult.entity instanceof MobCreeper || hitResult.entity instanceof MobPig) {
+            if (!(HitResults.entity(hitResult) instanceof MobBossValkyrie || HitResults.entity(hitResult) instanceof ProjectileElementBase)) {
+                if (HitResults.entity(hitResult) instanceof MobCreeper || HitResults.entity(hitResult) instanceof MobPig) {
                     EntityLightning bolt = new EntityLightning(world, x, y, z);
                     world.entityJoinedWorld(bolt);
                     this.remove();
@@ -118,8 +121,8 @@ public class ProjectileElementLightning extends ProjectileElementBase implements
                     return;
                 }
 
-                if (hitResult.entity instanceof Mob) {
-                    hitResult.entity.hurt(this.owner, this.damage, AetherMod.LIGHTNING);
+                if (HitResults.entity(hitResult) instanceof Mob) {
+                    HitResults.entity(hitResult).hurt(this.owner, this.damage, AetherMod.LIGHTNING);
                     this.remove();
                     doExplosion();
                     return;

@@ -1,6 +1,5 @@
 package teamport.aether.mixin.accessory.trinket;
 
-import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import net.minecraft.core.entity.player.Player;
 import net.minecraft.core.item.ItemStack;
 import net.minecraft.core.player.inventory.container.ContainerInventory;
@@ -9,22 +8,21 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import teamport.aether.entity.player.PlayerUtil;
 import teamport.aether.item.AetherItems;
 
 import static teamport.aether.item.accessory.SlotAccessory.TRINKET_1_SLOT;
 import static teamport.aether.item.accessory.SlotAccessory.TRINKET_2_SLOT;
 
-@Mixin(value = ContainerInventory.class)
-public abstract class ContainerInventoryZanitePendantDamageMixin {
-    @Shadow
-    public ItemStack[] mainInventory;
-    @Shadow
-    public Player player;
-    @ModifyReturnValue(method = "getDamageVsEntity", at = @At("RETURN"))
-    private int getGloveDamage(int damage) {
-        ItemStack trinketOne = player.inventory.armorInventory[TRINKET_1_SLOT];
-        ItemStack trinketTwo = player.inventory.armorInventory[TRINKET_2_SLOT];
+@Mixin(value = Player.class)
+public abstract class PlayerZanitePendantDamageMixin {
+    @Shadow public ContainerInventory inventory;
+
+    @ModifyVariable(method = "attackTargetEntityWithCurrentItem", at = @At("STORE"), ordinal = 0)
+    private int getPendantDamage(int damage) {
+        ItemStack trinketOne = inventory.armorInventory[TRINKET_1_SLOT];
+        ItemStack trinketTwo = inventory.armorInventory[TRINKET_2_SLOT];
         if (trinketOne != null && trinketOne.itemID == AetherItems.ARMOR_TALISMAN_ZANITE.id) {
             damage = addDamage(damage, trinketOne, TRINKET_1_SLOT);
         }
@@ -37,7 +35,7 @@ public abstract class ContainerInventoryZanitePendantDamageMixin {
     private int addDamage(int damage, ItemStack trinket, int slotID) {
         float damagePercent = (float) trinket.getMetadata() / trinket.getMaxDamage();
         float speed = MathHelper.lerp(0.0F, 3.0F, damagePercent);
-        PlayerUtil.damageItemArmor(player, trinket, slotID);
+        PlayerUtil.damageItemArmor((Player) (Object) this, trinket, slotID);
         damage += (int) Math.floor(speed);
         return damage;
     }

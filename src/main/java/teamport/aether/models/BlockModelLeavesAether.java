@@ -20,11 +20,11 @@ public class BlockModelLeavesAether<T extends BlockLogic> extends BlockModelLeav
 
     @Override
     public IconCoordinate getBlockTextureFromSideAndMetadata(Side side, int data) {
-        String retroTex = fancyGraphics ? retroBaseTexture + "_fancy" : retroBaseTexture;
-        if (this.canBeRetro && this.isRetro()) {
+        String retroTex = true ? retroBaseTexture + "_fancy" : retroBaseTexture;
+        if (this.canBeRetro) {
             return TextureRegistry.getTexture(retroTex);
         } else {
-            return fancyGraphics ? this.fancyLeavesTexture : super.getBlockTextureFromSideAndMetadata(side, data);
+            return true ? this.fancyLeavesTexture : super.getBlockTextureFromSideAndMetadata(side, data);
         }
     }
 }

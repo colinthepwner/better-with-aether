@@ -1,6 +1,9 @@
 package teamport.aether.entity.animal.aerwhale;
 
+
+import teamport.aether.util.HitResults;
 import net.minecraft.core.block.material.Material;
+import net.minecraft.core.block.material.Materials;
 import net.minecraft.core.entity.Entity;
 import net.minecraft.core.entity.MobFlying;
 import net.minecraft.core.entity.animal.AmbientCreature;
@@ -242,14 +245,14 @@ public class MobAerwhale extends MobFlying implements AmbientCreature {
         int x = MathHelper.floor(this.x);
         int y = MathHelper.floor(this.bb.minY);
         int z = MathHelper.floor(this.z);
-        return this.world != null && this.world.checkIfAABBIsClear(this.bb) && this.world.getCollidingSolidBlockBoundingBoxes(this, this.bb).isEmpty() && !this.world.isAABBInMaterial(this.bb, Material.water) && this.world.getFullBlockLightValue(x, y, z) > 8;
+        return this.world != null && this.world.checkIfAABBIsClear(this.bb) && this.world.getCollidingSolidBlockBoundingBoxes(this, this.bb).isEmpty() && !this.world.isAABBInMaterial(this.bb, Materials.WATER) && this.world.getFullBlockLightValue(x, y, z) > 8;
     }
 
     public double openSpace(float rotationyRotOffset, float rotationPitchOffset) {
         if (this.world == null) return 50.0;
         float yRot = this.yRot + rotationyRotOffset;
         float pitch = this.xRot + rotationPitchOffset;
-        Vec3 vec3d = Vec3.getTempVec3(this.x, this.y, this.z);
+        org.joml.Vector3d vec3d = new org.joml.Vector3d(this.x, this.y, this.z);
         float f3 = MathHelper.cos(-yRot * 0.01745329F - 3.141593F);
         float f4 = MathHelper.sin(-yRot * 0.01745329F - 3.141593F);
         float f5 = MathHelper.cos(-pitch * 0.01745329F);
@@ -257,14 +260,14 @@ public class MobAerwhale extends MobFlying implements AmbientCreature {
         float f7 = f4 * f5;
         float f9 = f3 * f5;
         double d3 = 50.0;
-        Vec3 vec3d1 = vec3d.add(f7 * d3, f6 * d3, f9 * d3);
+        org.joml.Vector3d vec3d1 = vec3d.add(f7 * d3, f6 * d3, f9 * d3);
         HitResult movingobjectposition = this.world.checkBlockCollisionBetweenPoints(vec3d, vec3d1, true);
         if (movingobjectposition == null) {
             return 50.0;
-        } else if (movingobjectposition.hitType == HitResult.HitType.TILE) {
-            double i = movingobjectposition.x - this.x;
-            double j = movingobjectposition.y - this.y;
-            double k = movingobjectposition.z - this.z;
+        } else if (HitResults.isTile(movingobjectposition)) {
+            double i = HitResults.x(movingobjectposition) - this.x;
+            double j = HitResults.y(movingobjectposition) - this.y;
+            double k = HitResults.z(movingobjectposition) - this.z;
             return Math.sqrt(i * i + j * j + k * k);
         } else {
             return 50.0;

@@ -26,7 +26,7 @@ public class NetEntryFloatingBlock implements IVehicleEntry<EntityFloatingBlock>
         return 160;
     }
 
-    public int getPacketDelay() {
+    public int getMovementPacketDelay() {
         return 20;
     }
 

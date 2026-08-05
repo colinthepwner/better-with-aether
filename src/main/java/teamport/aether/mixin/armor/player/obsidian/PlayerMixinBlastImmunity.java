@@ -20,7 +20,14 @@ public abstract class PlayerMixinBlastImmunity {
         if (type == null || type.equals(DamageType.BLAST) || PlayerUtil.countArmorPiecesOfMaterial(this.inventory, AetherArmorMaterial.OBSIDIAN) < 5) {
             return original;
         }
-        this.inventory.damageArmor((int) Math.ceil((double) damage / (double) 4.0F));
+                for (int i = 0; i < this.inventory.armorInventory.length; i++) {
+            if (this.inventory.armorInventory[i] != null && this.inventory.armorInventory[i].getItem() instanceof net.minecraft.core.item.ItemArmor) {
+                this.inventory.armorInventory[i].damageItem((int) Math.ceil((double) damage / (double) 4.0F), (net.minecraft.core.entity.player.Player)(Object)this);
+                if (this.inventory.armorInventory[i].stackSize <= 0) {
+                    this.inventory.armorInventory[i] = null;
+                }
+            }
+        }
         return false;
     }
 }

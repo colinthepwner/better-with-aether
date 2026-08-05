@@ -1,5 +1,6 @@
 package teamport.aether.item;
 
+import teamport.aether.util.Directions;
 import net.minecraft.core.block.Block;
 import net.minecraft.core.block.entity.TileEntityActivator;
 import net.minecraft.core.entity.player.Player;
@@ -37,18 +38,21 @@ public class ItemDoorDungeon extends Item {
     }
 
     @Override
-    public boolean onUseItemOnBlock(ItemStack itemstack, Player entityplayer, World world, int blockX, int blockY, int blockZ, Side side, double xPlaced, double yPlaced) {
+    public boolean onUseOnBlock(ItemStack itemstack, World world, Player entityplayer, net.minecraft.core.world.pos.TilePosc pos, Side side, double xPlaced, double yPlaced) {
+        int blockX = pos.x();
+        int blockY = pos.y();
+        int blockZ = pos.z();
         if (!world.canPlaceInsideBlock(blockX, blockY, blockZ)) {
-            blockX += side.getOffsetX();
-            blockY += side.getOffsetY();
-            blockZ += side.getOffsetZ();
+            blockX += side.offsetX();
+            blockY += side.offsetY();
+            blockZ += side.offsetZ();
         }
 
         int width = doorType.width;
         int height = doorType.height;
 
-        Direction dir = entityplayer.getHorizontalPlacementDirection(side).rotate(2);
-        int meta = dir.getHorizontalIndex();
+        Direction dir = entityplayer.getHorizontalPlacementDirection(side).rotateY(2);
+        int meta = Directions.horizontalIndex(dir);
 
         int xOffset;
         int zOffset;
@@ -101,11 +105,14 @@ public class ItemDoorDungeon extends Item {
     }
 
     @Override
-    public void onUseByActivator(ItemStack itemStack, TileEntityActivator activatorBlock, World world, Random random, int blockX, int blockY, int blockZ, double offX, double offY, double offZ, Direction direction) {
+    public void onUseByActivator(ItemStack itemStack, World world, TileEntityActivator activatorBlock, Random random, net.minecraft.core.world.pos.TilePosc pos, Direction direction, double offX, double offY, double offZ) {
+        int blockX = pos.x();
+        int blockY = pos.y();
+        int blockZ = pos.z();
         if (!world.canPlaceInsideBlock(blockX, blockY, blockZ)) {
-            blockX += direction.getOffsetX();
-            blockY += direction.getOffsetY();
-            blockZ += direction.getOffsetZ();
+            blockX += direction.offsetX();
+            blockY += direction.offsetY();
+            blockZ += direction.offsetZ();
         }
 
         int width = doorType.width;
@@ -115,8 +122,8 @@ public class ItemDoorDungeon extends Item {
             direction = Direction.NORTH;
         }
 
-        Direction dir = direction.rotate(2);
-        int meta = dir.getHorizontalIndex();
+        Direction dir = direction.rotateY(2);
+        int meta = Directions.horizontalIndex(dir);
 
         int xOffset;
         int zOffset;
@@ -158,7 +165,7 @@ public class ItemDoorDungeon extends Item {
                 int placeZ = blockZ + w * zOffset;
                 world.setBlockAndMetadataWithNotify(placeX, blockY + y, placeZ, this.doorBlock.id(), meta);
                 world.notifyBlocksOfNeighborChange(placeX, blockY + y, placeZ, this.doorBlock.id());
-                this.doorBlock.onBlockPlacedOnSide(world, placeX, blockY + y, placeZ, direction.getSide(), 0.5, 0.5);
+                this.doorBlock.onBlockPlacedOnSide(world, placeX, blockY + y, placeZ, direction.side(), 0.5, 0.5);
             }
         }
         world.noNeighborUpdate = false;

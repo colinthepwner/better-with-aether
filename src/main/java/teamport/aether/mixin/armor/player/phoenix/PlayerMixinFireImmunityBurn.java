@@ -24,7 +24,7 @@ public abstract class PlayerMixinFireImmunityBurn {
     public float bbWidth;
     @Shadow
     public abstract boolean hurt(Entity attacker, int baseDamage, DamageType type);
-    @WrapMethod(method = "burn")
+    @WrapMethod(method = "burn(I)V")
     private void burn(int damage, Operation<Void> original) {
         if (!((Entity) (Object) this instanceof Player)) {
             original.call(damage);
@@ -51,5 +51,18 @@ public abstract class PlayerMixinFireImmunityBurn {
             return;
         }
         original.call(bolt);
+    }
+    @WrapMethod(method = "burn(ILnet/minecraft/core/block/Block;)V")
+    private void burnBlock(int damage, net.minecraft.core.block.Block<?> block, Operation<Void> original) {
+        if (!((Entity) (Object) this instanceof Player)) {
+            original.call(damage, block);
+            return;
+        }
+        Player player = (Player) (Object) this;
+        if (MixinHelper.fireResistanceCount(player.inventory) >= 3) {
+            MixinHelper.damageArmourWithEffect(1, player, x, y, z, bbHeight, bbWidth);
+            return;
+        }
+        original.call(damage, block);
     }
 }

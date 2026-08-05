@@ -1,5 +1,8 @@
 package teamport.aether.entity.projectile;
 
+import org.joml.primitives.AABBdc;
+
+import teamport.aether.util.HitResults;
 import com.mojang.nbt.tags.CompoundTag;
 import net.minecraft.core.block.Block;
 import net.minecraft.core.entity.Entity;
@@ -8,6 +11,7 @@ import net.minecraft.core.entity.projectile.Projectile;
 import net.minecraft.core.util.helper.DamageType;
 import net.minecraft.core.util.helper.MathHelper;
 import net.minecraft.core.util.phys.AABB;
+import org.joml.primitives.AABBdc;
 import net.minecraft.core.util.phys.HitResult;
 import net.minecraft.core.util.phys.Vec3;
 import net.minecraft.core.world.World;
@@ -120,8 +124,8 @@ public class ProjectileNeedle extends Projectile implements ProjectileAether, Ae
 
         Block<?> block = this.world.getBlock(this.xTile, this.yTile, this.zTile);
         if (block != null) {
-            AABB aabb = block.getCollisionBoundingBoxFromPool(this.world, this.xTile, this.yTile, this.zTile);
-            if (aabb != null && aabb.contains(Vec3.getTempVec3(this.x, this.y, this.z))) {
+            AABBdc aabb = block.getCollisionBoundingBoxFromPool(this.world, this.xTile, this.yTile, this.zTile);
+            if (aabb != null && aabb.containsPoint(this.x, this.y, this.z)) {
                 this.inGround = true;
             }
         }
@@ -152,21 +156,21 @@ public class ProjectileNeedle extends Projectile implements ProjectileAether, Ae
     @Override
     public HitResult getHitResult() {
         if (this.world == null) return super.getHitResult();
-        Vec3 oldPosition = Vec3.getTempVec3(this.x, this.y, this.z);
-        Vec3 newPosition = Vec3.getTempVec3(this.x + this.xd, this.y + this.yd, this.z + this.zd);
+        org.joml.Vector3d oldPosition = new org.joml.Vector3d(this.x, this.y, this.z);
+        org.joml.Vector3d newPosition = new org.joml.Vector3d(this.x + this.xd, this.y + this.yd, this.z + this.zd);
         return this.world.checkBlockCollisionBetweenPoints(oldPosition, newPosition, false, true, false);
     }
 
     @Override
     public void onHit(HitResult hitResult) {
         if (this.world == null) return;
-        if (hitResult.entity != null) {
-            if (hitResult.entity.hurt(this.owner, this.damage, DamageType.COMBAT)) {
-                IHasEffects<?> target = (IHasEffects<?>) hitResult.entity;
+        if (HitResults.entity(hitResult) != null) {
+            if (HitResults.entity(hitResult).hurt(this.owner, this.damage, DamageType.COMBAT)) {
+                IHasEffects<?> target = (IHasEffects<?>) HitResults.entity(hitResult);
                 AetherEffects.add((Entity) target, AetherEffects.poisonEffect, random.nextInt(1) + 1);
 
                 if (this.isOnFire()) {
-                    hitResult.entity.fireHurt();
+                    HitResults.entity(hitResult).fireHurt();
                 }
 
                 if (!this.world.isClientSide) {
@@ -176,14 +180,14 @@ public class ProjectileNeedle extends Projectile implements ProjectileAether, Ae
             }
 
         } else {
-            this.xTile = hitResult.x;
-            this.yTile = hitResult.y;
-            this.zTile = hitResult.z;
+            this.xTile = HitResults.x(hitResult);
+            this.yTile = HitResults.y(hitResult);
+            this.zTile = HitResults.z(hitResult);
             this.inTile = this.world.getBlockId(this.xTile, this.yTile, this.zTile);
             this.inData = this.world.getBlockMetadata(this.xTile, this.yTile, this.zTile);
-            this.xd = (float) (hitResult.location.x - this.x);
-            this.yd = (float) (hitResult.location.y - this.y);
-            this.zd = (float) (hitResult.location.z - this.z);
+            this.xd = (float) (hitResult.location.x() - this.x);
+            this.yd = (float) (hitResult.location.y() - this.y);
+            this.zd = (float) (hitResult.location.z() - this.z);
             float f1 = MathHelper.sqrt(this.xd * this.xd + this.yd * this.yd + this.zd * this.zd);
             this.x -= this.xd / f1 * 0.05;
             this.y -= this.yd / f1 * 0.05;

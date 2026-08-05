@@ -8,31 +8,34 @@ lwjglPlugin = "1.0.2"
 ##########################################################################
 # Java Configuration
 # The Java version the JDK will be for compiling and running code.
-java = "8"
+java = "17"
 # The Java version the JDK will be for running Gradle.
 gradleJava = "21"
 ##########################################################################
 # Mod Dependencies
 # Check this on https://downloads.betterthanadventure.net/bta-client/
-bta = "7.3_04"
+bta = "8.0.1"
 # Options are release, prerelease, nightly, and misc.
 btaChannel = "release"
 # Check this on https://maven.thesignalumproject.net/#/infrastructure/net/fabricmc/fabric-loader/
-loader = "0.18.4-bta.10"
+loader = "0.18.4-bta.11"
 # Check this on https://github.com/Turnip-Labs/ModMenu/releases/latest/
-modMenu = "4.0.1"
+modMenu = "5.0.2"
 # Check this on https://github.com/Turnip-Labs/bta-halplibe/releases/latest/
-halplibe = "5.4.1"
+halplibe = "6.1.4+8.0"
 # Check this on https://maven.thesignalumproject.net/#/infrastructure/com/github/Better-than-Adventure/legacy-lwjgl3/
 legacyLwjgl = "1.0.6"
 # Check this on https://maven.thesignalumproject.net/#/releases/sunsetsatellite/catalyst-core/
-catalyst-core = "2.3.0"
+catalyst-core = "3.0.0-beta.1"
 # Check this on https://maven.thesignalumproject.net/#/releases/sunsetsatellite/catalyst-effects/
-catalyst-effects = "2.5.3"
+catalyst-effects = "3.0.0-beta.1"
 # Check this on https://maven.thesignalumproject.net/#/releases/useless/btwaila/
 btwaila = "1.2.5-7.3_04"
 # Check this on https://modrinth.com/mod/bta-uselessnumerical/versions/
 uselessNumerical = "1.1.0"
+# PORT-8.0.1: uselessnumerical has no 8.0 build (newest is 1.1.0-7.3_04), so the BTA
+# suffix is pinned here instead of tracking `bta` above. Used by exactly one file.
+uselessNumericalBta = "7.3_04"
 # Check this on https://maven.thesignalumproject.net/#/releases/useless/dragonfly/
 dragonfly = "1.7.0-alpha.7"
 # Check this on https://github.com/Redart15/Commandly/releases/
@@ -44,7 +47,7 @@ slf4jApi = "2.0.17"
 # Check this on https://central.sonatype.com/artifact/com.google.guava/guava/
 guava = "33.5.0-jre"
 # Check this on https://central.sonatype.com/artifact/org.apache.logging.log4j/log4j-api/
-log4j = "2.20.0"
+log4j = "2.25.4"
 # Check this on https://central.sonatype.com/artifact/com.google.code.gson/gson/
 gson = "2.13.2"
 # Check this on https://central.sonatype.com/artifact/org.apache.commons/commons-lang3/

@@ -1,5 +1,6 @@
 package teamport.aether.entity.projectile;
 
+import teamport.aether.util.HitResults;
 import net.minecraft.core.entity.Entity;
 import net.minecraft.core.entity.EntityLightning;
 import net.minecraft.core.entity.Mob;
@@ -37,24 +38,24 @@ public class ProjectileKnifeLightning extends Projectile implements ProjectileAe
     @Override
     public void onHit(HitResult hitResult) {
         if (this.world == null) return;
-        if (hitResult.entity != null) {
-            hitResult.entity.hurt(this.owner, this.damage, AetherMod.LIGHTNING);
+        if (HitResults.entity(hitResult) != null) {
+            HitResults.entity(hitResult).hurt(this.owner, this.damage, AetherMod.LIGHTNING);
             if (!world.isClientSide) {
-                world.entityJoinedWorld(new EntityLightning(hitResult.entity.world, hitResult.entity.x, hitResult.entity.y, hitResult.entity.z));
+                world.entityJoinedWorld(new EntityLightning(HitResults.entity(hitResult).world, HitResults.entity(hitResult).x, HitResults.entity(hitResult).y, HitResults.entity(hitResult).z));
             }
 
             doEffect();
             this.remove();
         }
 
-        if (hitResult.hitType == HitResult.HitType.TILE) {
+        if (HitResults.isTile(hitResult)) {
             if (!world.isClientSide) {
                 world.entityJoinedWorld(
                     new EntityLightning(
                         world,
-                        (double) hitResult.x + hitResult.side.getOffsetX(),
-                        (double) hitResult.y + hitResult.side.getOffsetY(),
-                        (double) hitResult.z + hitResult.side.getOffsetZ()
+                        (double) HitResults.x(hitResult) + HitResults.side(hitResult).offsetX(),
+                        (double) HitResults.y(hitResult) + HitResults.side(hitResult).offsetY(),
+                        (double) HitResults.z(hitResult) + HitResults.side(hitResult).offsetZ()
                     )
                 );
             }

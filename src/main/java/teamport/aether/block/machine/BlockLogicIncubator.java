@@ -1,10 +1,12 @@
 package teamport.aether.block.machine;
 
+import net.minecraft.core.world.pos.TilePosc;
 import net.minecraft.core.Global;
 import net.minecraft.core.block.Block;
 import net.minecraft.core.block.BlockLogicRotatable;
 import net.minecraft.core.block.entity.TileEntity;
 import net.minecraft.core.block.material.Material;
+import net.minecraft.core.block.material.Materials;
 import net.minecraft.core.entity.player.Player;
 import net.minecraft.core.enums.EnumDropCause;
 import net.minecraft.core.item.ItemStack;
@@ -22,7 +24,7 @@ public class BlockLogicIncubator extends BlockLogicRotatable {
     private static boolean keepIncubatorInventory = false;
 
     public BlockLogicIncubator(Block<?> block, boolean active) {
-        super(block, Material.stone);
+        super(block, Materials.STONE);
         this.isActive = active;
         block.withEntity(TileEntityIncubator::new);
     }
@@ -46,7 +48,10 @@ public class BlockLogicIncubator extends BlockLogicRotatable {
     }
 
     @Override
-    public void animationTick(World world, int x, int y, int z, Random rand) {
+    public void animationTick(World world, TilePosc pos, Random rand) {
+		int x = pos.x();
+		int y = pos.y();
+		int z = pos.z();
         if (!this.isActive) {
             return;
         }
@@ -57,7 +62,7 @@ public class BlockLogicIncubator extends BlockLogicRotatable {
         double yPos = y + 1.0;
         double zPos = z + 0.5 + radius * Math.sin(angle);
         double dy = (rand.nextGaussian() * 0.5 + 1.0) * 0.01;
-        world.spawnParticle("flameambrosium", xPos, yPos, zPos, 0.0, dy, 0.0, 0);
+        world.spawnParticle("flameambrosium", xPos, yPos, zPos, 0.0, dy, 0.0, 0, false);
     }
 
     @Override

@@ -7,13 +7,13 @@ import net.minecraft.client.gui.Screen;
 import net.minecraft.client.gui.modelviewer.elements.ListenerButtonElement;
 import net.minecraft.client.input.controller.ControllerInput;
 import net.minecraft.client.render.TileEntityRenderDispatcher;
-import net.minecraft.client.render.tessellator.Tessellator;
+import net.minecraft.client.render.tessellator.TessellatorGeneral;
 import net.minecraft.core.block.Block;
 import net.minecraft.core.block.entity.TileEntitySign;
 import net.minecraft.core.enums.EnumSignPicture;
 import net.minecraft.core.lang.I18n;
 import net.minecraft.core.net.packet.PacketSignUpdate;
-import net.minecraft.core.util.helper.ChatAllowedCharacters;
+import net.minecraft.core.util.helper.NetCharacters;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 import teamport.aether.block.AetherBlocks;
@@ -56,7 +56,7 @@ public class ScreenSignSkyrootEditor extends Screen {
         if (this.mc.currentWorld != null && this.mc.currentWorld.isClientSide) {
             EnumSignPicture enumsignpicture = this.entitySign.getPicture();
             if (enumsignpicture != null)
-                this.mc.getSendQueue().addToSendQueue(new PacketSignUpdate(this.entitySign.x, this.entitySign.y, this.entitySign.z, this.entitySign.signText, enumsignpicture.getId(), this.entitySign.getColor().id));
+                this.mc.getSendQueue().addToSendQueue(new PacketSignUpdate(this.entitySign.tilePos.x, this.entitySign.tilePos.y, this.entitySign.tilePos.z, this.entitySign.signText, enumsignpicture.getId(), this.entitySign.getColor().id));
         }
 
     }
@@ -126,7 +126,7 @@ public class ScreenSignSkyrootEditor extends Screen {
             this.entitySign.signText[this.editLine] = this.entitySign.signText[this.editLine].substring(0, this.entitySign.signText[this.editLine].length() - 1);
         }
 
-        if ((ChatAllowedCharacters.ALLOWED_CHARACTERS.indexOf(eventCharacter) >= 0 || Character.isLetterOrDigit(eventCharacter)) && this.entitySign.signText[this.editLine].length() < 15) {
+        if ((NetCharacters.isAllowed(eventCharacter)) && this.entitySign.signText[this.editLine].length() < 15) {
             String[] var10002 = this.entitySign.signText;
             int var10004 = this.editLine;
             var10002[var10004] = String.valueOf(var10002[var10004]) + eventCharacter;
@@ -137,7 +137,7 @@ public class ScreenSignSkyrootEditor extends Screen {
     @Override
     public void render(int mx, int my, float partialTick) {
         this.renderBackground();
-        this.drawStringCentered(this.font, this.screenTitle, this.width / 2, 40, 16777215);
+        this.drawStringCenteredShadow(this.fontRenderer, this.screenTitle, this.width / 2, 40, 16777215);
         GL11.glPushMatrix();
         GL11.glTranslatef(this.width / 2.0F, 0.0F, 50.0F);
         float scale = 93.75F;
@@ -172,14 +172,14 @@ public class ScreenSignSkyrootEditor extends Screen {
         }
 
         GL11.glEnable(GL11.GL_BLEND);
-        TileEntityRenderDispatcher.instance.renderTileEntity(Tessellator.instance, this.entitySign, -0.5, -0.75, -0.5, 0.0F);
+        TileEntityRenderDispatcher.instance.renderTileEntity(net.minecraft.client.render.renderer.GLRenderer.getTessellator(), this.entitySign, -0.5, -0.75, -0.5, 0.0F);
         this.entitySign.lineBeingEdited = -1;
         GL11.glDisable(GL11.GL_BLEND);
         GL11.glPopMatrix();
         GL11.glDisable(GL11.GL_DEPTH_TEST);
         EnumSignPicture enumsignpicture = this.entitySign.getPicture();
         if (enumsignpicture != null)
-            this.drawStringCentered(this.font, I18n.getInstance().translateKey(enumsignpicture.getLanguageKey()), this.width / 2, 150 + this.yOffset, 16777215);
+            this.drawStringCenteredShadow(this.fontRenderer, I18n.getInstance().translateKey(enumsignpicture.getLanguageKey()), this.width / 2, 150 + this.yOffset, 16777215);
         GL11.glEnable(GL11.GL_DEPTH_TEST);
         super.render(mx, my, partialTick);
     }

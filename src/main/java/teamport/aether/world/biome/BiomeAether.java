@@ -29,10 +29,10 @@ import java.util.Random;
 public class BiomeAether extends Biome {
     public BiomeAether(String key) {
         super(key);
-        setColor(0xc0c0ff);
-        setTopBlock(AetherBlocks.GRASS_AETHER.id());
-        setFillerBlock(AetherBlocks.DIRT_AETHER.id());
-        setBlockedWeathers(Weathers.OVERWORLD_RAIN, Weathers.OVERWORLD_SNOW, Weathers.OVERWORLD_STORM);
+        this.withDebugColor(0xc0c0ff);
+        
+        this.withSurfaceProperties(new net.minecraft.core.world.biome.SurfaceProperties.Builder().withTopBlock(AetherBlocks.GRASS_AETHER).withFillerBlock(AetherBlocks.DIRT_AETHER).build());
+        this.withBlockedWeathers(Weathers.OVERWORLD_RAIN, Weathers.OVERWORLD_SNOW, Weathers.OVERWORLD_STORM);
 
         spawnableAmbientCreatureList.clear();
         spawnableCreatureList.clear();
@@ -66,7 +66,7 @@ public class BiomeAether extends Biome {
     }
 
     @Override
-    public WorldFeature getRandomWorldGenForTrees(Random random) {
+    public WorldFeature getTreeFeature(Random random) {
         return random.nextInt(10) == 0 ? new WorldFeatureAetherTree(AetherBlocks.LEAVES_SKYROOT.id(), AetherBlocks.LOG_SKYROOT.id(), 4)
             : new WorldFeatureAetherTreeGoldenOak();
     }

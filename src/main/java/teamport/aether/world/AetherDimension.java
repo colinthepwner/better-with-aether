@@ -8,6 +8,7 @@ import net.minecraft.core.entity.Entity;
 import net.minecraft.core.entity.EntityDispatcher;
 import net.minecraft.core.entity.player.Player;
 import net.minecraft.core.world.Dimension;
+import net.minecraft.core.world.type.WorldTypeGroups;
 import net.minecraft.core.world.World;
 import teamport.aether.AetherConfig;
 import teamport.aether.AetherMod;
@@ -71,9 +72,32 @@ public class AetherDimension {
         BiomeProviderAether.init();
 
         AETHER = new Dimension("aether", Dimension.OVERWORLD, 1.0f, AetherBlocks.PORTAL_AETHER, AetherWorldTypes.AETHER_DEFAULT);
-        Dimension.registerDimension(AETHER_DIMENSION_ID, AETHER);
 
         initDimensionBlackList();
+    }
+
+    /// Registers the Aether into the dimension list, deliberately *after* vanilla has registered its
+    /// own. Called from the tail of `Dimension.init()` rather than from mod init.
+    ///
+    /// Two separate 8.0 behaviours make the ordering load-bearing. `Dimension.dimensionList` is
+    /// insertion ordered, and `MinecraftServer.initWorld` walks it building the Overworld's
+    /// `WorldServer` first and every sub-dimension as its child -- meeting the Aether first throws
+    /// "Dimension load order issue!". Separately, `WorldTypeGroups.Group`'s constructor iterates
+    /// `i = 0 .. size-1` and looks each `i` up as a *key*, so the map has to be both complete and
+    /// contiguous by the time any group is built. Registering from mod init satisfied neither:
+    /// HalpLibe's `beforeGameStart()` runs before `Dimension.init()`, so the Aether landed first and
+    /// on its own.
+    ///
+    /// Guarded because `Dimension.init()` is called by both `MinecraftServer` and `Minecraft`, and
+    /// `registerDimension` rejects a duplicate key rather than ignoring it.
+    public static void registerAetherDimension() {
+        if (Dimension.getDimensionList().containsKey(AETHER_DIMENSION_ID)) {
+            return;
+        }
+        Dimension.registerDimension(AETHER_DIMENSION_ID, AETHER);
+
+        // Only safe once every dimension is registered: building a group snapshots the whole list.
+        AetherWorldTypes.registerAetherWorldTypeGroups();
     }
 
     public static void initDimensionBlackList() {
@@ -86,7 +110,7 @@ public class AetherDimension {
         aetherBlacklist.add(Blocks.TORCH_COAL.id());
 
         /// these blocks are replaced on placement.
-        aetherBlacklist.add(Blocks.COBBLE_NETHERRACK_IGNEOUS.id());
+        aetherBlacklist.add(Blocks.COBBLE_NETHERRACK_CRYSTALLINE.id());
         aetherBlacklist.add(Blocks.PUMICE_WET.id());
         aetherBlacklist.add(Blocks.BRAZIER_ACTIVE.id());
         aetherBlacklist.add(Blocks.PUMPKIN_CARVED_ACTIVE.id());
@@ -103,7 +127,6 @@ public class AetherDimension {
             aetherBlacklist.add(Blocks.COBBLE_NETHERRACK.id());
             aetherBlacklist.add(Blocks.STAIRS_COBBLE_NETHERRACK.id());
             aetherBlacklist.add(Blocks.SLAB_COBBLE_NETHERRACK.id());
-            aetherBlacklist.add(Blocks.COBBLE_NETHERRACK_MOSSY.id());
             aetherBlacklist.add(Blocks.NETHERRACK_CARVED.id());
             aetherBlacklist.add(Blocks.NETHERRACK_POLISHED.id());
             aetherBlacklist.add(Blocks.SLAB_NETHERRACK_POLISHED.id());
@@ -138,7 +161,7 @@ public class AetherDimension {
     public static MobAerbunny popBunnyFromPlayer(UUID uuidPlayer, World world) {
         CompoundTag tag = HAS_BUNNY_MAP.remove(uuidPlayer);
         if (tag == null) return null;
-        MobAerbunny mobAerbunny = (MobAerbunny) EntityDispatcher.createEntityFromNBT(tag, world);
+        MobAerbunny mobAerbunny = (MobAerbunny) EntityDispatcher.getInstance().createEntityFromNBT(tag, world);
         world.entityJoinedWorld(mobAerbunny);
         return mobAerbunny;
     }
@@ -187,7 +210,7 @@ public class AetherDimension {
                 while (!entities.isEmpty()) {
                     CompoundTag data = entities.remove(0);
 
-                    Entity copy = EntityDispatcher.createEntityFromNBT(data, world);
+                    Entity copy = EntityDispatcher.getInstance().createEntityFromNBT(data, world);
                     copy.load(data);
 
                     float scale = Dimension.getCoordScale(AetherDimension.getAether(), Dimension.OVERWORLD);

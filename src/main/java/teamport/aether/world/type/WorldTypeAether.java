@@ -31,7 +31,7 @@ public class WorldTypeAether extends WorldType {
                 .withSeasonInCycle(Seasons.OVERWORLD_WINTER, 14)
                 .build())
             .dayNightCycleTicks(Global.DAY_LENGTH_TICKS)
-            .oceanBlock(null)
+            .oceanBlocks()
             .fillerBlock(AetherBlocks.COBBLE_HOLYSTONE);
     }
 
@@ -57,13 +57,13 @@ public class WorldTypeAether extends WorldType {
     }
 
     @Override
-    public int getOceanBlockId() {
-        return 0;
-    }
+    public int[] getOceanBlockIds() {
+        return new int[]{0};
+	}
 
     @Override
     public BiomeProvider createBiomeProvider(World world) {
-        return new BiomeProviderAether(world.getRandomSeed(), this);
+        return new BiomeProviderAether(world);
     }
 
     @Override
@@ -137,8 +137,13 @@ public class WorldTypeAether extends WorldType {
         float weatherOffset = 0.0F;
         Weather currentWeather = world.getCurrentWeather();
         if (currentWeather != null) {
-            weatherOffset = currentWeather.subtractLightLevel * world.weatherManager.getWeatherIntensity() * world.weatherManager.getWeatherPower();
+            weatherOffset = currentWeather.getLightLevelSubtracted() * world.getWeatherManager().getWeatherIntensity() * world.getWeatherManager().getWeatherPower();
         }
         return (int) (f2 * (11.0F - weatherOffset) + weatherOffset);
+    }
+
+    @Override
+    public net.minecraft.core.world.biome.Biome[] allBiomes() {
+        return new net.minecraft.core.world.biome.Biome[]{teamport.aether.world.biome.AetherBiomes.AETHER_PLAINS};
     }
 }

@@ -1,5 +1,6 @@
 package teamport.aether.entity.projectile;
 
+import teamport.aether.util.HitResults;
 import com.mojang.nbt.tags.CompoundTag;
 import net.minecraft.core.block.Blocks;
 import net.minecraft.core.entity.Entity;
@@ -109,8 +110,8 @@ public abstract class ProjectileElementBase extends Projectile implements Projec
     @Override
     public void onHit(HitResult hitResult) {
         if (this.world == null || this.world.isClientSide) return;
-        if (hitResult.side != null) {
-            switch (hitResult.side) {
+        if (HitResults.side(hitResult) != null) {
+            switch (HitResults.side(hitResult)) {
                 case BOTTOM:
                 case TOP:
                     this.yd = -this.yd * 1.0F;

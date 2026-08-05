@@ -1,5 +1,7 @@
 package teamport.aether.block.terrain;
 
+import net.minecraft.core.world.pos.TilePosc;
+import it.unimi.dsi.fastutil.ints.Int2IntArrayMap;
 import net.minecraft.core.block.Block;
 import net.minecraft.core.block.BlockLogic;
 import net.minecraft.core.block.entity.TileEntity;
@@ -15,7 +17,7 @@ import teamport.aether.item.AetherItems;
 import java.util.Random;
 
 public class BlockLogicOreGravitite extends BlockLogic {
-    public static final WorldFeatureOre.OreMap variantMap = new WorldFeatureOre.OreMap();
+    public static final Int2IntArrayMap variantMap = new Int2IntArrayMap();
 
     public BlockLogicOreGravitite(Block<?> block, Block<?> parentBlock, Material material) {
         super(block, material);
@@ -33,7 +35,10 @@ public class BlockLogicOreGravitite extends BlockLogic {
     }
 
     @Override
-    public void updateTick(World world, int x, int y, int z, Random rand) {
+    public void updateTick(World world, TilePosc pos, Random rand, boolean isRandomTick) {
+		int x = pos.x();
+		int y = pos.y();
+		int z = pos.z();
         this.tryToFall(world, x, y, z);
     }
 

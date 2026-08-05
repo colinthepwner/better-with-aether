@@ -14,14 +14,14 @@ import teamport.aether.block.AetherBlocks;
 public abstract class BlockLogicPathDirtMixin {
     @Definition(id = "isSolid", method = "Lnet/minecraft/core/block/material/Material;isSolid()Z")
     @Expression("?.isSolid()")
-    @ModifyExpressionValue(method = "onNeighborBlockChange", at = @At("MIXINEXTRAS:EXPRESSION"))
-    private boolean addNewPathBlock(boolean original, @Local(name = "id") int id) {
+    @ModifyExpressionValue(method = "onNeighborChanged", at = @At("MIXINEXTRAS:EXPRESSION"))
+    private boolean addNewPathBlock(boolean original, @Local(index = 6) net.minecraft.core.block.Block<?> b) {
         return original &&
-            id != AetherBlocks.FENCEGATE_PLANKS_SKYROOT.id() &&
-            id != AetherBlocks.FENCEGATE_PLANKS_SKYROOT_PAINTED.id() &&
-            id != AetherBlocks.SIGN_WALL_PLANKS_SKYROOT_PAINTED.id() &&
-            id != Blocks.FENCE_GATE_PLANKS_OAK_PAINTED.id() &&
-            id != Blocks.SIGN_WALL_PLANKS_OAK_PAINTED.id() &&
-            id != AetherBlocks.SIGN_WALL_PLANKS_SKYROOT.id();
+            b != AetherBlocks.FENCEGATE_PLANKS_SKYROOT &&
+            b != AetherBlocks.FENCEGATE_PLANKS_SKYROOT_PAINTED &&
+            b != AetherBlocks.SIGN_WALL_PLANKS_SKYROOT_PAINTED &&
+            b != Blocks.FENCE_GATE_PLANKS_OAK_PAINTED &&
+            b != Blocks.SIGN_WALL_PLANKS_OAK_PAINTED &&
+            b != AetherBlocks.SIGN_WALL_PLANKS_SKYROOT;
     }
 }

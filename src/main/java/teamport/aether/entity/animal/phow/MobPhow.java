@@ -3,7 +3,7 @@ package teamport.aether.entity.animal.phow;
 import com.mojang.nbt.tags.CompoundTag;
 import net.minecraft.core.WeightedRandomLootObject;
 import net.minecraft.core.entity.player.Player;
-import net.minecraft.core.item.ItemBucketEmpty;
+import net.minecraft.core.item.ItemBucket;
 import net.minecraft.core.item.ItemStack;
 import net.minecraft.core.item.Items;
 import net.minecraft.core.item.tag.ItemTags;
@@ -123,11 +123,12 @@ public class MobPhow extends MobAetherAnimalRideable {
         ItemStack itemstack = player.inventory.getCurrentItem();
 
         if (itemstack != null) {
-            if (itemstack.itemID == Items.BUCKET.id) {
-                ItemBucketEmpty.useBucket(player, new ItemStack(Items.BUCKET_MILK));
+            if (itemstack.getItem() == Items.BUCKET_IRON) {
+                net.minecraft.core.item.ItemBucket.useBucket(itemstack, player, player.world, net.minecraft.core.item.ItemBucket.STATE_MILK);
                 return true;
-            } else if (itemstack.itemID == AetherItems.BUCKET_SKYROOT.id) {
-                ItemBucketEmpty.useBucket(player, new ItemStack(AetherItems.BUCKET_SKYROOT_MILK));
+            } else if (itemstack.getItem() == teamport.aether.item.AetherItems.BUCKET_SKYROOT) {
+                itemstack.consumeItem(player);
+                player.inventory.insertItem(new ItemStack(teamport.aether.item.AetherItems.BUCKET_SKYROOT_MILK, 1), false);
                 return true;
             }
         }

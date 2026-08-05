@@ -1,5 +1,6 @@
 package teamport.aether.mixin.block;
 
+import net.minecraft.core.world.pos.TilePosc;
 import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import net.minecraft.core.block.*;
@@ -27,8 +28,11 @@ public abstract class BlockLogicBrazierMixin extends BlockLogic {
     @Final
     private boolean burning;
 
-    @WrapMethod(method = "onBlockRightClicked")
-    private boolean callOnBlockRightClicked(World world, int x, int y, int z, Player player, Side side, double xPlaced, double yPlaced, Operation<Boolean> original) {
+    @WrapMethod(method = "onInteracted")
+    private boolean callOnBlockRightClicked(World world, TilePosc pos, Player player, Side side, double xPlaced, double yPlaced, Operation<Boolean> original) {
+    	int x = pos.x();
+    	int y = pos.y();
+    	int z = pos.z();
         ItemStack heldItem = player.getHeldItem();
         if (world.dimension == AetherDimension.getAether() && heldItem != null && heldItem.getItem() instanceof ItemFireStriker && !this.burning) {
             Block<?> b;
@@ -48,6 +52,6 @@ public abstract class BlockLogicBrazierMixin extends BlockLogic {
             }
         }
 
-        return original.call(world, x, y, z, player, side, xPlaced, yPlaced);
+        return original.call(world, pos, player, side, xPlaced, yPlaced);
     }
 }

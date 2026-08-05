@@ -1,7 +1,10 @@
 package teamport.aether.item.accessory.pendant;
 
+
+import teamport.aether.util.HitResults;
 import net.minecraft.core.block.Blocks;
 import net.minecraft.core.block.material.Material;
+import net.minecraft.core.block.material.Materials;
 import net.minecraft.core.entity.Entity;
 import net.minecraft.core.entity.player.Player;
 import net.minecraft.core.item.ItemStack;
@@ -32,23 +35,23 @@ public class ItemIcePendant extends ItemPendant {
         ) {
             return;
         }
-        Vec3 playerPos = Vec3.getPermanentVec3(player.x, player.y - player.bbHeight, player.z);
-        Vec3 playerNextPos = Vec3.getPermanentVec3(player.x + player.xd, player.y - player.bbHeight + player.yd - 1, player.z + player.zd);
+        org.joml.Vector3d playerPos = new org.joml.Vector3d(player.x, player.y - player.bbHeight, player.z);
+        org.joml.Vector3d playerNextPos = new org.joml.Vector3d(player.x + player.xd, player.y - player.bbHeight + player.yd - 1, player.z + player.zd);
         HitResult hits = world.checkBlockCollisionBetweenPoints(playerPos, playerNextPos, true);
-        if (hits == null || hits.hitType == HitResult.HitType.ENTITY) return;
-        int x = MathHelper.ceil(hits.x);
-        int y = MathHelper.ceil(hits.y);
-        int z = MathHelper.ceil(hits.z);
+        if (hits == null || HitResults.isEntity(hits)) return;
+        int x = MathHelper.ceil(HitResults.x(hits));
+        int y = MathHelper.ceil(HitResults.y(hits));
+        int z = MathHelper.ceil(HitResults.z(hits));
         int proc = 0;
         for (int radius = -1; radius <= 1; radius++) {
             for (int depth = -1; depth <= 1; depth++) {
                 int xPos = x + radius;
                 int zPos = z + depth;
                 Material material = world.getBlockMaterial(xPos, y, zPos);
-                if (material == Material.water) {
+                if (material == Materials.WATER) {
                     proc++;
                     world.setBlockWithNotify(xPos, y, zPos, Blocks.ICE.id());
-                } else if (material == Material.lava) {
+                } else if (material == Materials.LAVA) {
                     proc++;
                     world.setBlockWithNotify(xPos, y, zPos, Blocks.OBSIDIAN.id());
                 }

@@ -11,6 +11,7 @@ import net.minecraft.core.block.BlockLogicChest;
 import net.minecraft.core.block.Blocks;
 import net.minecraft.core.block.entity.TileEntity;
 import net.minecraft.core.block.material.Material;
+import net.minecraft.core.block.material.Materials;
 import net.minecraft.core.entity.Entity;
 import net.minecraft.core.entity.EntityDispatcher;
 import net.minecraft.core.entity.SkinVariantList;
@@ -202,7 +203,7 @@ public class MobMimic extends MobMonsterAether implements Enemy, AetherDeathMess
     public Entity findPlayerToAttack() {
         if (this.world == null) return null;
         Player player = PlayerUtil.getClosestNonInvisPlayerToEntity(this.world, this, 64);
-        if (player == null || !this.canEntityBeSeen(player) || !player.getGamemode().areMobsHostile()) {
+        if (player == null || !this.canEntityBeSeen(player) || !player.getGamemode().hasHostileMobs()) {
             return null;
         }
         return player;
@@ -261,8 +262,8 @@ public class MobMimic extends MobMonsterAether implements Enemy, AetherDeathMess
     @Override
     public String getDeathSound() {
         Block<?> block = Blocks.getBlock(mimicChestID);
-        Material material = block == null ? Material.wood : block.getMaterial();
-        if (material == Material.stone) {
+        Material material = block == null ? Materials.WOOD : block.getMaterial();
+        if (material == Materials.STONE) {
             return "step.stone";
         }
         return "random.door_open";
@@ -298,7 +299,7 @@ public class MobMimic extends MobMonsterAether implements Enemy, AetherDeathMess
 
     @Override
     public String deathMessage(Player player) {
-        String key = EntityDispatcher.nameKeyForClass(((Entity) this).getClass()) + ".death_message";
+        String key = EntityDispatcher.getInstance().entryForClass(((Entity) this).getClass()).nameKey + ".death_message";
         String deathMessage = TRANSLATOR
             .translateKey(key)
             .replace("[PLAYER]", RESET + String.format("<%s>", player.getDisplayName()) + RESET + RED);
@@ -331,7 +332,7 @@ public class MobMimic extends MobMonsterAether implements Enemy, AetherDeathMess
         if (world == null) return true;
         Block<?> block = world.getBlock(point.getX(), point.getY(), point.getZ());
         int blockID = block == null ? 0 : block.id();
-        Material blockMaterial = blockID == 0 ? Material.air : block.getMaterial();
+        Material blockMaterial = blockID == 0 ? Materials.AIR : block.getMaterial();
         return blockID == 0 || blockMaterial.isLiquid();
     }
 
@@ -357,7 +358,7 @@ public class MobMimic extends MobMonsterAether implements Enemy, AetherDeathMess
             int cdist = distance.get(next);
             if (cdist >= 5) break;
             for (Direction direction : check) {
-                WorldFeaturePoint to = new WorldFeaturePoint(next.getX() + direction.getOffsetX(), next.getY() + direction.getOffsetY(), next.getZ() + direction.getOffsetZ());
+                WorldFeaturePoint to = new WorldFeaturePoint(next.getX() + direction.offsetX(), next.getY() + direction.offsetY(), next.getZ() + direction.offsetZ());
                 if (distance.getOrDefault(to, -1) != -1) continue;
                 distance.put(to, cdist + 1);
                 Block<?> block = world.getBlock(to.getX(), to.getY(), to.getZ());
@@ -379,7 +380,7 @@ public class MobMimic extends MobMonsterAether implements Enemy, AetherDeathMess
 
     private void populateChest(WorldFeaturePoint point) {
         if (this.world == null) return;
-        Container inventory = BlockLogicChest.getInventory(world, point.getX(), point.getY(), point.getZ());
+        Container inventory = BlockLogicChest.getInventory(world, new net.minecraft.core.world.pos.TilePos(point.getX(), point.getY(), point.getZ()));
         if (inventory == null) {
             return;
         }

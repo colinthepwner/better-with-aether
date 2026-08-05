@@ -1,5 +1,6 @@
 package teamport.aether.gui;
 
+import net.minecraft.client.option.GameSettings;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
@@ -22,19 +23,19 @@ public class HudComponentJumpBar extends HudComponentMovable {
     }
 
     @Override
-    public boolean isVisible(Minecraft mc) {
-        return mc.gameSettings.immersiveMode.drawHotbar() && mc.thePlayer.vehicle instanceof AetherJumpAmount;
+    public boolean isVisible() {
+        return GameSettings.IMMERSIVE_MODE.drawHotbar() && mc.thePlayer.vehicle instanceof AetherJumpAmount;
     }
 
     @Override
-    public void render(Minecraft mc, HudIngame hud, int xSizeScreen, int ySizeScreen, float partialTick) {
+    public void render(HudIngame hud, int xSizeScreen, int ySizeScreen, float partialTick) {
         if (!(mc.thePlayer.vehicle instanceof AetherJumpAmount)) return;
 
         int maxJumps = ((AetherJumpAmount) mc.thePlayer.vehicle).getJumpMaxAmount();
         int currentJumps = ((AetherJumpAmount) mc.thePlayer.vehicle).getJumpAmount();
 
-        int baseX = this.getLayout().getComponentX(mc, this, xSizeScreen);
-        int baseY = this.getLayout().getComponentY(mc, this, ySizeScreen);
+        int baseX = this.getLayout().getComponentX(this, xSizeScreen);
+        int baseY = this.getLayout().getComponentY(this, ySizeScreen);
 
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         GL11.glDisable(GL11.GL_BLEND);
@@ -52,9 +53,9 @@ public class HudComponentJumpBar extends HudComponentMovable {
     }
 
     @Override
-    public void renderPreview(Minecraft mc, Gui gui, Layout layout, int screenWidth, int screenHeight) {
-        int x = layout.getComponentX(mc, this, screenWidth);
-        int y = layout.getComponentY(mc, this, screenHeight);
+    public void renderPreview(Gui gui, Layout layout, int screenWidth, int screenHeight) {
+        int x = layout.getComponentX(this, screenWidth);
+        int y = layout.getComponentY(this, screenHeight);
 
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         GL11.glDisable(GL11.GL_BLEND);

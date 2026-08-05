@@ -34,7 +34,7 @@ public class BlockLogicPaintableSignSkyroot extends BlockLogicSign implements IP
         if (signEntity != null && player != null) {
             if (player.getHeldItem() != null && player.getHeldItem().itemID == Items.DUST_GLOWSTONE.id && !signEntity.isGlowing()) {
                 signEntity.setGlowing(true);
-                if (player.getGamemode().consumeBlocks()) {
+                if (player.getGamemode().hasBlockConsumption()) {
                     player.getHeldItem().stackSize--;
                 }
                 player.addStat(Achievements.LIGHT_SIGN, 1);

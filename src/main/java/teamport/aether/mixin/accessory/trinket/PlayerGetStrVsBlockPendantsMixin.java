@@ -14,16 +14,14 @@ import teamport.aether.item.AetherItems;
 import static teamport.aether.item.accessory.SlotAccessory.TRINKET_1_SLOT;
 import static teamport.aether.item.accessory.SlotAccessory.TRINKET_2_SLOT;
 
-@Mixin(value = ContainerInventory.class)
-public abstract class ContainerInventoryGetStrVsBlockPendantsMixin {
+@Mixin(value = Player.class)
+public abstract class PlayerGetStrVsBlockPendantsMixin {
     @Shadow
-    public Player player;
-    @Shadow
-    public ItemStack[] mainInventory;
-    @ModifyReturnValue(method = "getStrVsBlock", at = @At("RETURN"))
+    public ContainerInventory inventory;
+    @ModifyReturnValue(method = "getCurrentPlayerStrVsBlock", at = @At("RETURN"))
     private float aether_getStrVsBlock(float strVsBlock, Block<?> block) {
-        ItemStack trinketOne = player.inventory.armorInventory[TRINKET_1_SLOT];
-        ItemStack trinketTwo = player.inventory.armorInventory[TRINKET_2_SLOT];
+        ItemStack trinketOne = inventory.armorInventory[TRINKET_1_SLOT];
+        ItemStack trinketTwo = inventory.armorInventory[TRINKET_2_SLOT];
         float refStrVsBlock = strVsBlock;
         if (trinketOne != null && trinketOne.itemID == AetherItems.ARMOR_TALISMAN_ZANITE.id) {
             float damagePercent = (float) trinketOne.getMetadata() / trinketOne.getMaxDamage();

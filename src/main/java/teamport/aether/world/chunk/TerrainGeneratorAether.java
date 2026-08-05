@@ -19,7 +19,7 @@ public class TerrainGeneratorAether extends TerrainGeneratorLerp {
     }
 
     @Override
-    public int getBlockAt(int x, int y, int z, double density) {
+    public int getBlockAt(net.minecraft.core.world.chunk.Chunk chunk, int x, int y, int z, double density) {
         WorldType type = this.world.getWorldType();
         return density > 1.0 ? type.getFillerBlockId() : 0;
     }

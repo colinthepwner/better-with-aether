@@ -4,6 +4,7 @@ import net.minecraft.core.block.Block;
 import net.minecraft.core.entity.Entity;
 import net.minecraft.core.util.helper.MathHelper;
 import net.minecraft.core.util.phys.AABB;
+import org.joml.primitives.AABBdc;
 import net.minecraft.core.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Final;
@@ -26,7 +27,7 @@ public abstract class EntityMixin {
     @Shadow
     @Final
     @NotNull
-    public AABB bb;
+    public org.joml.primitives.AABBd bb;
 
     @Inject(method = "checkOnWater", at = @At(value = "INVOKE", target = "Lnet/minecraft/core/entity/Entity;checkAndHandleWater(Z)Z"))
     private void checkOnCloud(boolean addVelocity, CallbackInfo ci) {

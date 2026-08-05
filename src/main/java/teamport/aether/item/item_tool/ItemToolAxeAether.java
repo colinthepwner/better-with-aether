@@ -21,17 +21,17 @@ public class ItemToolAxeAether extends ItemTool {
     }
 
     @Override
-    public boolean canHarvestBlock(Mob mob, ItemStack itemStack, Block<?> block) {
+    public boolean canHarvestBlock(ItemStack itemStack, Mob mob, Block<?> block) {
         return block.hasTag(AetherBlockTags.MINEABLE_BY_AETHER_AXE);
     }
 
     @SuppressWarnings("java:S5411")
     @Override
-    public boolean beforeDestroyBlock(World world, ItemStack itemStack, int blockId, int x, int y, int z, Side side, Player player) {
+    public boolean beforeBlockDestroyed(ItemStack itemStack, World world, Player player, Block<?> block, net.minecraft.core.world.pos.TilePosc pos, Side side) {
+        int x = pos.x(); int y = pos.y(); int z = pos.z(); int blockId = block.id();
         if (!world.isClientSide && world.getGameRuleValue(GameRules.TREECAPITATOR) && !player.isSneaking()) {
             ItemStack held = player.getHeldItem();
-            Block<?> block = Blocks.blocksList[blockId];
-            if (Block.hasLogicClass(block, BlockLogicLog.class) && (block.hasTag(AetherBlockTags.MINEABLE_BY_AETHER_AXE) || held != null && held.itemID == AetherItems.TOOL_AXE_VALKYRIE.id)) {
+                        if (Block.hasLogicClass(block, BlockLogicLog.class) && (block.hasTag(AetherBlockTags.MINEABLE_BY_AETHER_AXE) || held != null && held.itemID == AetherItems.TOOL_AXE_VALKYRIE.id)) {
                 return !(new TreecapitatorHelper(world, x, y, z, player)).chopTree();
             }
         }

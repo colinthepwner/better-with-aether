@@ -1,5 +1,6 @@
 package teamport.aether.entity.projectile;
 
+import teamport.aether.util.HitResults;
 import net.minecraft.core.entity.Entity;
 import net.minecraft.core.entity.Mob;
 import net.minecraft.core.entity.projectile.Projectile;
@@ -46,13 +47,13 @@ public class ProjectileHammerHead extends Projectile implements ProjectileAether
 
     @Override
     public void onHit(HitResult hitResult) {
-        if (hitResult.entity != null) {
-            hitResult.entity.hurt(this.owner, this.damage, DamageType.COMBAT);
+        if (HitResults.entity(hitResult) != null) {
+            HitResults.entity(hitResult).hurt(this.owner, this.damage, DamageType.COMBAT);
             doEffect();
             this.remove();
         }
 
-        if (hitResult.hitType == HitResult.HitType.TILE) {
+        if (HitResults.isTile(hitResult)) {
             doEffect();
             this.remove();
         }

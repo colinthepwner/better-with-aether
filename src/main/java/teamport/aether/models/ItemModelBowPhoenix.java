@@ -1,5 +1,6 @@
 package teamport.aether.models;
 
+import teamport.aether.util.AetherArmorSlot;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.entity.player.PlayerRemote;
@@ -13,7 +14,7 @@ import teamport.aether.item.AetherItems;
 @Environment(EnvType.CLIENT)
 public class ItemModelBowPhoenix extends ItemModelBow {
     public ItemModelBowPhoenix(Item item, String namespace) {
-        super(item, namespace);
+        super(item, true);
     }
 
     @Override
@@ -22,8 +23,8 @@ public class ItemModelBowPhoenix extends ItemModelBow {
             int id = player.getArrowId();
             return id >= 0 && id < Item.itemsList.length ? AetherItems.AMMO_ARROW_FLAMING : null;
         } else {
-            ItemStack quiverSlot = player.inventory.armorItemInSlot(2);
-            ItemStack capeSlot = player.inventory.armorItemInSlot(5);
+            ItemStack quiverSlot = player.inventory.armorItemInSlot(AetherArmorSlot.of(2));
+            ItemStack capeSlot = player.inventory.armorItemInSlot(AetherArmorSlot.of(5));
             if (quiverSlot != null && (quiverSlot.itemID == Items.ARMOR_QUIVER.id && quiverSlot.getMetadata() < quiverSlot.getMaxDamage()) ||
                 (quiverSlot != null && quiverSlot.itemID == Items.ARMOR_QUIVER_GOLD.id) || capeSlot != null && (capeSlot.itemID == Items.ARMOR_QUIVER.id && capeSlot.getMetadata() < capeSlot.getMaxDamage()) ||
                 (capeSlot != null && capeSlot.itemID == Items.ARMOR_QUIVER_GOLD.id) ||

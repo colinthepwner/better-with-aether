@@ -3,6 +3,7 @@ package teamport.aether.block.terrain;
 import net.minecraft.core.block.Block;
 import net.minecraft.core.block.BlockLogic;
 import net.minecraft.core.block.material.Material;
+import net.minecraft.core.block.material.Materials;
 import net.minecraft.core.entity.Entity;
 import net.minecraft.core.entity.Mob;
 import net.minecraft.core.entity.player.Player;
@@ -18,7 +19,7 @@ import static teamport.aether.AetherConfig.QUICK_SOIL_SPEED_CAP;
 
 public class BlockLogicQuicksoil extends BlockLogic {
     public BlockLogicQuicksoil(Block<?> block) {
-        super(block, Material.dirt);
+        super(block, Materials.DIRT);
         block.friction = 1.1f;
     }
 
@@ -42,7 +43,7 @@ public class BlockLogicQuicksoil extends BlockLogic {
     @Override
     public void onBlockDestroyedByPlayer(World world, int x, int y, int z, Side side, int meta, Player player, Item item) {
         ItemStack heldItem = player.getHeldItem();
-        if (heldItem != null && heldItem.getItem().equals(AetherItems.TOOL_SHOVEL_SKYROOT) && meta == 0 && player.getGamemode().consumeBlocks()) {
+        if (heldItem != null && heldItem.getItem().equals(AetherItems.TOOL_SHOVEL_SKYROOT) && meta == 0 && player.getGamemode().hasBlockConsumption()) {
             this.harvestBlock(world, player, x, y, z, 1, world.getTileEntity(x, y, z));
         }
     }

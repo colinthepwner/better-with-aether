@@ -1,5 +1,6 @@
 package teamport.aether.world.feature.util;
 
+import teamport.aether.util.Directions;
 import com.mojang.nbt.tags.CompoundTag;
 import net.minecraft.core.block.*;
 import net.minecraft.core.util.helper.Direction;
@@ -94,7 +95,7 @@ public class WorldFeatureBlock extends WorldFeaturePoint {
     @Override
     public WorldFeaturePoint rotateYAroundPivot(WorldFeaturePoint pivotPoint, Direction direction) {
         super.rotateYAroundPivot(pivotPoint, direction);
-        int rotateAmount = direction.getHorizontalIndex() - NORTH.getHorizontalIndex();
+        int rotateAmount = Directions.horizontalIndex(direction) - Directions.horizontalIndex(NORTH);
 
         Block<?> block = Blocks.getBlock(this.blockId);
         if (block == null) return this;
@@ -107,9 +108,9 @@ public class WorldFeatureBlock extends WorldFeaturePoint {
             logic instanceof BlockLogicFenceGate
         ) {
             int indexDirection = this.metadata & MASK_DIRECTION;
-            if (indexDirection > Direction.horizontalDirections.length) indexDirection = 0;
-            Direction currentDirection = Direction.horizontalDirections[indexDirection];
-            Direction newDirection = currentDirection.rotate(rotateAmount);
+            if (indexDirection > Direction.horizontal.length) indexDirection = 0;
+            Direction currentDirection = Direction.horizontal[indexDirection];
+            Direction newDirection = currentDirection.rotateY(rotateAmount);
             this.metadata = maskDirectionHorizontal(this.metadata, newDirection);
         }
 
@@ -119,7 +120,7 @@ public class WorldFeatureBlock extends WorldFeaturePoint {
         ) {
             int indexDirection = this.metadata & MASK_DIRECTION;
             Direction currentDirection = getStairDirectionFromMetadata(indexDirection);
-            Direction newDirection = currentDirection.rotate(rotateAmount);
+            Direction newDirection = currentDirection.rotateY(rotateAmount);
             this.metadata = maskDirectionHorizontal(this.metadata, getStairMetadataFromDirection(newDirection));
         }
 
@@ -128,7 +129,7 @@ public class WorldFeatureBlock extends WorldFeaturePoint {
         ) {
             int indexDirection = this.metadata & MASK_DIRECTION_FULL;
             Direction currentDirection = getTorchDirectionFromMetadata(indexDirection);
-            Direction newDirection = currentDirection.rotate(rotateAmount);
+            Direction newDirection = currentDirection.rotateY(rotateAmount);
             this.metadata = maskDirectionHorizontal(this.metadata, getTorchMetadataFromDirection(newDirection));
         }
         if (
@@ -136,7 +137,7 @@ public class WorldFeatureBlock extends WorldFeaturePoint {
         ) {
             int indexDirection = this.metadata & MASK_DIRECTION;
             Direction currentDirection = getTrapDoorDirectionForMeta(indexDirection);
-            Direction newDirection = currentDirection.rotate(rotateAmount);
+            Direction newDirection = currentDirection.rotateY(rotateAmount);
             this.metadata = maskDirectionHorizontal(this.metadata, getTrapDoorMetaForDirection(newDirection));
         }
 

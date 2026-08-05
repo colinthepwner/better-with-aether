@@ -1,9 +1,11 @@
 package teamport.aether.mixin.accessory;
 
 
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.core.InventoryAction;
+import net.minecraft.core.enums.HumanArmorShape;
 import net.minecraft.core.entity.player.Player;
 import net.minecraft.core.item.IArmorItem;
 import net.minecraft.core.item.Item;
@@ -12,6 +14,7 @@ import net.minecraft.core.item.ItemQuiverEndless;
 import net.minecraft.core.player.inventory.container.Container;
 import net.minecraft.core.player.inventory.container.ContainerCrafting;
 import net.minecraft.core.player.inventory.container.ContainerInventory;
+import org.objectweb.asm.Opcodes;
 import net.minecraft.core.player.inventory.menu.MenuInventory;
 import net.minecraft.core.player.inventory.slot.Slot;
 import net.minecraft.core.player.inventory.slot.SlotArmor;
@@ -40,8 +43,21 @@ import static teamport.aether.item.accessory.SlotAccessory.*;
 public abstract class MenuInventoryMixinAddSlotAdjSlot {
     @Shadow
     public ContainerInventory inventory;
-    @Inject(method = "<init>(Lnet/minecraft/core/player/inventory/container/ContainerInventory;Z)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/core/player/inventory/menu/MenuInventory;slotsChanged(Lnet/minecraft/core/player/inventory/container/Container;)V"))
-    private void addingAndAdjustingSlots(ContainerInventory inventory, boolean active, CallbackInfo ci) {
+    /// Keeps vanilla's armour-slot loop at the four shapes it actually has.
+    ///
+    /// `ContainerInventoryMixinAccessory` widens `ARMOR_INVENTORY_SIZE` to 8 so the backing array,
+    /// the container size and the save bounds all cover the accessory slots. 8.0's `MenuInventory`
+    /// constructor reads that same constant to decide how many `SlotArmor`s to build, and pairs each
+    /// one with `HumanArmorShape.values()[i]` -- an enum with exactly four entries -- so the widened
+    /// value walks straight off the end of it. Vanilla builds its four; the accessory slots are
+    /// added separately below.
+    @ModifyExpressionValue(method = "<init>(Lnet/minecraft/core/player/inventory/container/ContainerInventory;)V", at = @At(value = "FIELD", target = "Lnet/minecraft/core/player/inventory/container/ContainerInventory;ARMOR_INVENTORY_SIZE:I", opcode = Opcodes.GETSTATIC))
+    private int onlyVanillaArmorShapes(int original) {
+        return HumanArmorShape.values().length;
+    }
+
+    @Inject(method = "<init>(Lnet/minecraft/core/player/inventory/container/ContainerInventory;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/core/player/inventory/menu/MenuInventory;slotsChanged(Lnet/minecraft/core/player/inventory/container/Container;)V"))
+    private void addingAndAdjustingSlots(ContainerInventory inventory, CallbackInfo ci) {
         MenuInventory menu = (MenuInventory) (Object) this;
         for (int i = 0; i < menu.slots.size(); i++) {
             Slot slot = menu.slots.get(i);
@@ -55,7 +71,7 @@ public abstract class MenuInventoryMixinAddSlotAdjSlot {
             }
             //because getContainerSize now returns 44, both slot and index need to be adjusted for armor slot to work.
             if (slot instanceof SlotArmor) {
-                SlotArmor newArmorSlot = new SlotArmor(menu, slot.getContainer(), ((SlotAccessor) slot).getSlot() - 4, slot.x, slot.y, ((SlotArmorAccessor) slot).getArmorType());
+                SlotArmor newArmorSlot = new SlotArmor(menu, slot.getContainer(), ((SlotAccessor) slot).getSlot() - 4, slot.x, slot.y, ((SlotArmorAccessor) slot).getArmorShape());
                 newArmorSlot.index = i;
                 menu.slots.set(menu.slots.indexOf(slot), newArmorSlot);
             }
@@ -77,12 +93,12 @@ public abstract class MenuInventoryMixinAddSlotAdjSlot {
      * alters the target to be always 2 for accessories - Redart15
      */
     @ModifyReturnValue(method = "getTargetSlots", at = @At("RETURN"))
-    private List<Integer> accessoryTargets(List<Integer> original, InventoryAction action, Slot slot, int target, Player player) {
+    private it.unimi.dsi.fastutil.ints.IntList accessoryTargets(it.unimi.dsi.fastutil.ints.IntList original, InventoryAction action, Slot slot, int target, Player player) {
         if (slot.index < 9 || slot.index > 44 || target == 1 || slot.getItemStack() == null || !(slot.getItemStack().getItem() instanceof IAccessory || slot.getItemStack().getItem().hasTag(AetherItemTags.TRINKET))) {
             return original;
         }
         Item accessory = slot.getItemStack().getItem();
-        List<Integer> ints = new ArrayList<>();
+        it.unimi.dsi.fastutil.ints.IntList ints = new it.unimi.dsi.fastutil.ints.IntArrayList();
         if (accessory instanceof ItemAccessoryArmor) {
             ints.add(AetherMod.ARMOR_START_INDEX + ((ItemAccessoryArmor) accessory).getSlotID());
         }
@@ -93,11 +109,20 @@ public abstract class MenuInventoryMixinAddSlotAdjSlot {
         return ints;
     }
     // allow quiver to be shift clicked in either the body or the cape slot
-    @Inject(method = "getTargetSlots", at = @At(value = "INVOKE", target = "Ljava/util/List;add(Ljava/lang/Object;)Z", shift = At.Shift.AFTER))
-    private void quiverTarget(InventoryAction action, Slot slot, int target, Player player, CallbackInfoReturnable<List<Integer>> cir, @Local IArmorItem armorItem, @Local List<Integer> ints) {
-        if (!(armorItem instanceof ItemQuiver) && !(armorItem instanceof ItemQuiverEndless)) {
-            return;
+    @ModifyReturnValue(method = "getTargetSlots", at = @At("RETURN"))
+    private it.unimi.dsi.fastutil.ints.IntList quiverTarget(it.unimi.dsi.fastutil.ints.IntList original, InventoryAction action, Slot slot, int target, Player player) {
+        if (slot.getItemStack() != null && slot.getItemStack().getItem() instanceof IArmorItem) {
+            Item armorItem = slot.getItemStack().getItem();
+            if (armorItem instanceof ItemQuiver || armorItem instanceof ItemQuiverEndless) {
+                if (original == null) {
+                    original = new it.unimi.dsi.fastutil.ints.IntArrayList();
+                } else {
+                    original = new it.unimi.dsi.fastutil.ints.IntArrayList(original);
+                }
+                original.add(AetherMod.ARMOR_START_INDEX + CAPE_SLOT);
+                return original;
+            }
         }
-        ints.add(AetherMod.ARMOR_START_INDEX + CAPE_SLOT);
+        return original;
     }
 }

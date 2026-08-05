@@ -1,5 +1,6 @@
 package teamport.aether.mixin.item;
 
+import net.minecraft.core.world.pos.TilePosc;
 import com.llamalad7.mixinextras.expression.Definition;
 import com.llamalad7.mixinextras.expression.Expression;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
@@ -21,6 +22,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
 import teamport.aether.helper.MixinHelper;
 import teamport.aether.helper.ParticleMaker;
 import teamport.aether.world.AetherDimension;
@@ -41,53 +43,58 @@ public abstract class ItemBlockBlacklistMixin {
     @NonNull
     protected Block<?> block;
 
-    @Definition(id = "stackSize", field = "Lnet/minecraft/core/item/ItemStack;stackSize:I")
-    @Expression("?.stackSize <= 0")
-    @ModifyExpressionValue(method = "onUseItemOnBlock", at = @At("MIXINEXTRAS:EXPRESSION"))
-    private boolean banBlocksFromDimensionsOne(boolean original, ItemStack stack, @Nullable Player player, World world, int x, int y, int z, Side side, double xPlaced, double yPlaced) {
-        return original || world.dimension != AetherDimension.getAether() && AetherDimension.getDimensionBlacklist(world.dimension).contains(block.id());
-    }
-
-    @Definition(id = "canPlaceInsideBlock", method = "Lnet/minecraft/core/world/World;canPlaceInsideBlock(III)Z")
-    @Expression("?.canPlaceInsideBlock(?, ?, ?) == false")
-    @ModifyExpressionValue(method = "onUseItemOnBlock", at = @At("MIXINEXTRAS:EXPRESSION"))
-    private boolean banBlocksFromDimensionsTwo(boolean original, ItemStack stack, @Nullable Player player, World world, int x, int y, int z, Side side, double xPlaced, double yPlaced, @Share("replacementId") LocalIntRef replacementId) {
-        List<Integer> dimensionBlackList = AetherDimension.getDimensionBlacklist(world.dimension);
-
-        if (dimensionBlackList.contains(block.id())) {
-            // This is a hack.
-            // if we want to expand it later better make a proper interface for it,
-            // blocks that should be banned up to until the sun spirit dies and then be replaced on placement.
-            if (block == Blocks.COBBLE_NETHERRACK_IGNEOUS || block == Blocks.PUMICE_WET && !SunSpiritDeath.isDead()) replacementId.set(REPLACED_BLOCK);
-            else replacementId.set(MixinHelper.BLOCK_TO_BECOME.getOrDefault(block.id(), REPLACED_BLOCK));
-            player.swingItem();
-        }
-
-        else replacementId.set(BANNED_BLOCK);
-        return original;
-    }
-
-    @WrapOperation(method = "onUseItemOnBlock", at = @At(value = "INVOKE", target = "Lnet/minecraft/core/world/World;canBlockBePlacedAt(IIIIZLnet/minecraft/core/util/helper/Side;)Z"))
-    private boolean banBlocksFromDimensionsThree(World instance, int blockId, int x, int y, int z, boolean flag, Side side, Operation<Boolean> original, @Share("replacementId") LocalIntRef replacementId) {
-        int id = replacementId.get();
-        if (id == REPLACED_BLOCK) {
-            ParticleMaker.spawnBlockBreakParticles(instance, x, y, z, blockId);
-            return false;
-        }
-        return original.call(instance, id == BANNED_BLOCK ? blockId : id, x, y, z, flag, side);
-    }
-
-    @WrapOperation(method = "onUseItemOnBlock", at = @At(value = "INVOKE", target = "Lnet/minecraft/core/world/World;setBlockAndMetadataWithNotify(IIIII)Z"))
-    private boolean banBlocksFromDimensionsFour(World instance, int x, int y, int z, int id, int meta, Operation<Boolean> original, @Share("replacementId") LocalIntRef replacementId) {
-        int theReplacementId = replacementId.get();
-        boolean condition = original.call(instance, x, y, z, theReplacementId == BANNED_BLOCK ? id : theReplacementId, meta);
-        if (theReplacementId != BANNED_BLOCK && condition) {
-            ParticleMaker.spawnReplacementEffects(instance, x, y, z);
-            if (!EnvironmentHelper.isClientWorld()) {
-                instance.playSoundEffect(null, SoundCategory.WORLD_SOUNDS, x + 0.5, y + 0.5, z + 0.5, "fire.ignite", 1.0F, instance.rand.nextFloat() * 0.4F + 0.8F);
-                instance.playSoundEffect(null, SoundCategory.WORLD_SOUNDS, x + 0.5F, y + 0.5F, z + 0.5F, "random.fizz", 0.5f, 2.6f + (instance.rand.nextFloat() - instance.rand.nextFloat()) * 0.8f);
+    @Inject(method = "onUseOnBlock", at = @At("HEAD"), cancellable = true)
+    private void banBlocksFromDimensions(ItemStack stack, World world, Player player, TilePosc pos, Side side, double xPlaced, double yPlaced, org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable<Boolean> cir) {
+        if (world.dimension != AetherDimension.getAether() && AetherDimension.getDimensionBlacklist(world.dimension).contains(this.block.id())) {
+            
+            int replacedId = REPLACED_BLOCK;
+            if (this.block == Blocks.COBBLE_NETHERRACK_CRYSTALLINE || this.block == Blocks.PUMICE_WET && !SunSpiritDeath.isDead()) {
+                replacedId = REPLACED_BLOCK;
+            } else {
+                replacedId = MixinHelper.BLOCK_TO_BECOME.getOrDefault(this.block.id(), REPLACED_BLOCK);
             }
+            
+            TilePosc targetPos = pos;
+            net.minecraft.core.item.IPlaceable placeable = (net.minecraft.core.item.IPlaceable) (Object) this;
+            if (placeable.shouldShiftOutOf(stack, world, player, pos, side, xPlaced, yPlaced)) {
+                targetPos = pos.add(side.direction(), new net.minecraft.core.world.pos.TilePos());
+            }
+            
+            if (replacedId == REPLACED_BLOCK || replacedId == BANNED_BLOCK) {
+                ParticleMaker.spawnBlockBreakParticles(world, targetPos.x(), targetPos.y(), targetPos.z(), this.block.id());
+                cir.setReturnValue(false);
+                return;
+            }
+            
+            if (!placeable.canPlaceDirectlyAtPosition(stack, world, player, targetPos, side, xPlaced, yPlaced)) {
+                 cir.setReturnValue(false);
+                 return;
+            }
+            
+            Block<?> replacementBlock = Blocks.blocksList[replacedId];
+            int meta = ((net.minecraft.core.item.IPlaceable.PlaceableBlock<?>) (Object) this).getPlacedData(stack, world, player, targetPos, side, xPlaced, yPlaced);
+            
+            if (world.setBlockTypeDataRaw(targetPos, replacementBlock, meta)) {
+                stack.consumeItem(player);
+                if (player == null) {
+                    replacementBlock.onPlacedOnSide(world, targetPos, side, xPlaced, yPlaced);
+                } else {
+                    replacementBlock.onPlacedByMob(world, targetPos, side, player, xPlaced, yPlaced);
+                }
+                replacementBlock.onPlacedByWorld(world, targetPos);
+                world.notifyBlockChange(targetPos, replacementBlock);
+                world.playBlockSoundEffect(player, targetPos.x() + 0.5, targetPos.y() + 0.5, targetPos.z() + 0.5, replacementBlock, net.minecraft.core.enums.EnumBlockSoundEffectType.PLACE);
+                
+                ParticleMaker.spawnReplacementEffects(world, targetPos.x(), targetPos.y(), targetPos.z());
+                if (!EnvironmentHelper.isClientWorld()) {
+                    world.playSoundEffect(null, SoundCategory.WORLD_SOUNDS, targetPos.x() + 0.5, targetPos.y() + 0.5, targetPos.z() + 0.5, "fire.ignite", 1.0F, world.rand.nextFloat() * 0.4F + 0.8F);
+                    world.playSoundEffect(null, SoundCategory.WORLD_SOUNDS, targetPos.x() + 0.5F, targetPos.y() + 0.5F, targetPos.z() + 0.5F, "random.fizz", 0.5f, 2.6f + (world.rand.nextFloat() - world.rand.nextFloat()) * 0.8f);
+                }
+                cir.setReturnValue(true);
+                return;
+            }
+            
+            cir.setReturnValue(false);
         }
-        return condition;
     }
 }

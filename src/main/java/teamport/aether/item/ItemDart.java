@@ -17,9 +17,9 @@ public class ItemDart extends Item implements IDispensable {
     }
 
     @Override
-    public void onDispensed(ItemStack itemStack, World world, double x, double y, double z, int xOffset, int yOffset, int zOffset, Random random) {
+    public void onDispensed(ItemStack itemStack, World world, Random random, net.minecraft.core.util.helper.Direction direction, double x, double y, double z) {
         ProjectileDart dart = new ProjectileDart(world, x, y, z, this.dartType);
-        dart.setHeading(xOffset, yOffset + 0.1, zOffset, 1.1F, 3.0f);
+        dart.setHeading(direction.offsetX(), direction.offsetY() + 0.1, direction.offsetZ(), 1.1F, 3.0f);
         dart.setDoesDartBelongToPlayer(true);
         world.entityJoinedWorld(dart);
     }

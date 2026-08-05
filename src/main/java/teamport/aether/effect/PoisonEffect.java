@@ -56,8 +56,8 @@ public class PoisonEffect extends AetherEffect {
         }
         if (mob.tickCount % 4 == 0) {
             if (mob instanceof Player) {
-                Direction dir = Direction.getDirection(mob).getOpposite();
-                ParticleMaker.spawnPoisonParticles(mob.world, mob.x + dir.getOffsetX(), mob.y - 2, mob.z + dir.getOffsetZ(), mob.bbHeight, mob.bbWidth);
+                Direction dir = Direction.getHorizontalLockable(mob).opposite();
+                ParticleMaker.spawnPoisonParticles(mob.world, mob.x + dir.offsetX(), mob.y - 2, mob.z + dir.offsetZ(), mob.bbHeight, mob.bbWidth);
             } else {
                 ParticleMaker.spawnPoisonParticles(mob.world, mob.x, mob.y, mob.z, mob.bbHeight, mob.bbWidth);
             }

@@ -16,7 +16,8 @@ public abstract class MobWolfNoKnockbackFling {
             original.call(xd, yd, zd, pushTime);
             return;
         }
-        ArmorMaterial material = ((MobWolf) (Object) this).getArmorMaterial();
+        net.minecraft.core.item.ItemStack armor = ((MobWolf) (Object) this).getArmorItem();
+        net.minecraft.core.item.material.ArmorMaterial material = armor != null && armor.getItem() instanceof net.minecraft.core.item.ItemArmor ? ((net.minecraft.core.item.ItemArmor) armor.getItem()).getArmorMaterial() : null;
         if (material != null && material.equals(AetherArmorMaterial.OBSIDIAN)) return;
         original.call(xd, yd, zd, pushTime);
     }

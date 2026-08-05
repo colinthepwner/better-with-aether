@@ -65,7 +65,7 @@ public class AetherRecipes implements RecipeEntrypoint {
         AetherRecipes.oreGemGroups();
         AetherRecipes.enchanterGroups();
 
-        Registries.ITEM_GROUPS.register("aether:milk_buckets", Registries.stackListOf(AetherItems.BUCKET_SKYROOT_MILK, Items.BUCKET_MILK));
+        Registries.ITEM_GROUPS.register("aether:milk_buckets", Registries.stackListOf(AetherItems.BUCKET_SKYROOT_MILK, Items.BUCKET_IRON));
         Registries.ITEM_GROUPS.register("aether:all_eggs", Registries.stackListOf(AetherItems.EGG_MOA_BLACK, AetherItems.EGG_MOA_BLUE, AetherItems.EGG_MOA_WHITE, Items.EGG_CHICKEN));
 
         ENCHANTER = new RecipeGroupAetherMachine(new RecipeSymbol(new ItemStack(AetherBlocks.ENCHANTER_ACTIVE.getDefaultStack())));
@@ -205,7 +205,7 @@ public class AetherRecipes implements RecipeEntrypoint {
 
     public static void freezerGroups() {
         Registries.ITEM_GROUPS.register("aether:water_buckets", Registries.stackListOf(
-            new ItemStack(Items.BUCKET_WATER),
+            new ItemStack(Items.BUCKET_IRON),
             new ItemStack(AetherItems.BUCKET_SKYROOT_WATER)
         ));
 
@@ -801,7 +801,7 @@ public class AetherRecipes implements RecipeEntrypoint {
             .addEntry(new WeightedRandomLootObject(Items.AMMO_PEBBLE.getDefaultStack(), 1, 3), 60.24)
             .addEntry(new WeightedRandomLootObject(Items.CLAY.getDefaultStack(), 1, 5), 24.10)
             .addEntry(new WeightedRandomLootObject(Items.FLINT.getDefaultStack(), 1, 3), 12.05)
-            .addEntry(new WeightedRandomLootObject(Items.SULPHUR.getDefaultStack(), 1), 2.41)
+            .addEntry(new WeightedRandomLootObject(Items.SULFUR.getDefaultStack(), 1), 2.41)
             .addEntry(new WeightedRandomLootObject(Items.BONE.getDefaultStack(), 1), 0.60)
             .addEntry(new WeightedRandomLootObject(AetherItems.ZANITE.getDefaultStack(), 1), 0.30)
             .addEntry(new WeightedRandomLootObject(AetherItems.ORE_RAW_GRAVITITE.getDefaultStack(), 1), 0.30)
@@ -812,7 +812,7 @@ public class AetherRecipes implements RecipeEntrypoint {
             .addEntry(new WeightedRandomLootObject(AetherItems.AMBROSIUM.getDefaultStack(), 1, 2), 36.76)
             .addEntry(new WeightedRandomLootObject(AetherItems.AMBER.getDefaultStack(), 4, 8), 22.06)
             .addEntry(new WeightedRandomLootObject(Items.AMMO_PEBBLE.getDefaultStack(), 1, 5), 18.38)
-            .addEntry(new WeightedRandomLootObject(Items.SULPHUR.getDefaultStack(), 1), 3.68)
+            .addEntry(new WeightedRandomLootObject(Items.SULFUR.getDefaultStack(), 1), 3.68)
             .addEntry(new WeightedRandomLootObject(AetherItems.PETAL_AECHOR.getDefaultStack(), 1), 0.74)
             .addEntry(new WeightedRandomLootObject(Items.BONE.getDefaultStack(), 1, 3), 7.35)
             .addEntry(new WeightedRandomLootObject(AetherItems.STICK_SKYROOT.getDefaultStack(), 1), 0.30)

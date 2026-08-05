@@ -1,11 +1,13 @@
 package teamport.aether.block.dungeon;
 
+import net.minecraft.core.world.pos.TilePos;
 import net.minecraft.core.block.Block;
 import net.minecraft.core.block.BlockLogic;
 import net.minecraft.core.block.BlockLogicChest;
 import net.minecraft.core.block.BlockLogicRotatable;
 import net.minecraft.core.block.entity.TileEntityChest;
 import net.minecraft.core.block.material.Material;
+import net.minecraft.core.block.material.Materials;
 import net.minecraft.core.entity.player.Player;
 import net.minecraft.core.item.ItemStack;
 import net.minecraft.core.sound.SoundCategory;
@@ -18,7 +20,7 @@ public class BlockLogicChestLocked extends BlockLogicRotatable {
     private final boolean locked;
 
     public BlockLogicChestLocked(Block<BlockLogic> block, ItemStack key, boolean locked, Block<?> unlockedChest) {
-        super(block, Material.stone);
+        super(block, Materials.STONE);
         this.key = key;
         this.locked = locked;
         this.unlockedChest = unlockedChest;
@@ -28,7 +30,7 @@ public class BlockLogicChestLocked extends BlockLogicRotatable {
     @SuppressWarnings("java:S3516")
     @Override
     public boolean onBlockRightClicked(World world, int x, int y, int z, Player player, Side side, double xPlaced, double yPlaced) {
-        if (this.locked && !player.gamemode.isPlayerInvulnerable()) {
+        if (this.locked && !player.gamemode.hasInvulnerablePlayer()) {
             ItemStack item = player.getHeldItem();
 
             if (item != null && item.itemID == key.itemID) {
@@ -40,7 +42,7 @@ public class BlockLogicChestLocked extends BlockLogicRotatable {
             return true;
         }
 
-        player.displayChestScreen(BlockLogicChest.getInventory(world, x, y, z), x, y, z);
+        player.displayChestScreen(BlockLogicChest.getInventory(world, new net.minecraft.core.world.pos.TilePos(new TilePos(x, y, z))), x, y, z);
         return true;
     }
 

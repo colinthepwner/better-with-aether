@@ -16,7 +16,8 @@ public class BlockLogicDeadBushAether extends BlockLogicDeadBush {
     }
 
     @Override
-    public boolean mayPlaceOn(int blockId) {
+    public boolean mayPlaceOn(Block<?> placedOn) {
+		int blockId = placedOn == null ? 0 : placedOn.id();
         return blockId == Blocks.SAND.id()
             || blockId == Blocks.DIRT_SCORCHED.id()
             || blockId == AetherBlocks.QUICKSOIL.id()

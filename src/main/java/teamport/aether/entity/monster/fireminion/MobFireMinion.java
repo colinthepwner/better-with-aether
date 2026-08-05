@@ -39,10 +39,6 @@ public class MobFireMinion extends MobMonsterAether implements Enemy, AetherDeat
         return 1.0F;
     }
 
-    @Override
-    public int getLightmapCoord(float partialTick) {
-        return this.world == null ? super.getLightmapCoord(partialTick) : this.world.getLightmapCoord(15, 15);
-    }
 
     @Override
     public int getMaxHealth() {
@@ -67,7 +63,7 @@ public class MobFireMinion extends MobMonsterAether implements Enemy, AetherDeat
     protected Entity findPlayerToAttack() {
         if (this.world == null) return super.findPlayerToAttack();
         Player entityplayer = this.world.getClosestPlayerToEntity(this, 16.0);
-        return entityplayer != null && this.canEntityBeSeen(entityplayer) && entityplayer.getGamemode().areMobsHostile() ? entityplayer : null;
+        return entityplayer != null && this.canEntityBeSeen(entityplayer) && entityplayer.getGamemode().hasHostileMobs() ? entityplayer : null;
     }
 
     @Override

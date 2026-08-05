@@ -20,7 +20,7 @@ public class ItemToolKnifeLightning extends Item implements IDispensable, Aether
     }
 
     @Override
-    public ItemStack onUseItem(ItemStack itemstack, World world, Player entityplayer) {
+    public ItemStack onUse(ItemStack itemstack, World world, Player entityplayer) {
         itemstack.consumeItem(entityplayer);
         entityplayer.swingItem();
 
@@ -33,20 +33,21 @@ public class ItemToolKnifeLightning extends Item implements IDispensable, Aether
     }
 
     @Override
-    public void onUseByActivator(ItemStack itemStack, TileEntityActivator activatorBlock, World world, Random random, int blockX, int blockY, int blockZ, double offX, double offY, double offZ, Direction direction) {
+    public void onUseByActivator(ItemStack itemStack, World world, TileEntityActivator activatorBlock, Random random, net.minecraft.core.world.pos.TilePosc pos, Direction direction, double offX, double offY, double offZ) {
+        int blockX = pos.x(); int blockY = pos.y(); int blockZ = pos.z();
         if (!world.isClientSide) {
             ProjectileKnifeLightning projectileKnife = new ProjectileKnifeLightning(world, blockX + offX, blockY + offY, blockZ + offZ);
-            projectileKnife.setHeading(direction.getOffsetX() * 0.6, direction.getOffsetY() == 0 ? 0.1 : direction.getOffsetY() * 0.6, direction.getOffsetZ() * 0.6F, 1.1F, 6.0F);
+            projectileKnife.setHeading(direction.offsetX() * 0.6, direction.offsetY() == 0 ? 0.1 : direction.offsetY() * 0.6, direction.offsetZ() * 0.6F, 1.1F, 6.0F);
             world.entityJoinedWorld(projectileKnife);
         }
         --itemStack.stackSize;
     }
 
     @Override
-    public void onDispensed(ItemStack itemStack, World world, double x, double y, double z, int xOffset, int yOffset, int zOffset, Random random) {
+    public void onDispensed(ItemStack itemStack, World world, Random random, net.minecraft.core.util.helper.Direction direction, double x, double y, double z) {
         if (!world.isClientSide) {
             ProjectileKnifeLightning entityknife = new ProjectileKnifeLightning(world, x, y, z);
-            entityknife.setHeading(xOffset, yOffset + 0.1, zOffset, 1.1F, 6.0F);
+            entityknife.setHeading(direction.offsetX(), direction.offsetY() + 0.1, direction.offsetZ(), 1.1F, 6.0F);
             world.entityJoinedWorld(entityknife);
         }
     }

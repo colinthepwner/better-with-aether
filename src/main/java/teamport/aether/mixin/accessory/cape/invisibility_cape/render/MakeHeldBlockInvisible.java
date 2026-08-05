@@ -1,37 +1,30 @@
 package teamport.aether.mixin.accessory.cape.invisibility_cape.render;
 
-import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
-import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import net.minecraft.client.option.GameSettings;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.render.ItemRenderer;
-import net.minecraft.client.render.block.model.BlockModel;
 import net.minecraft.client.render.item.model.ItemModelBlock;
-import net.minecraft.client.render.tessellator.Tessellator;
+import net.minecraft.client.render.tessellator.TessellatorGeneral;
 import net.minecraft.core.entity.Entity;
 import net.minecraft.core.entity.player.Player;
 import net.minecraft.core.item.ItemStack;
-import org.jspecify.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import teamport.aether.entity.player.PlayerUtil;
 
 @Environment(EnvType.CLIENT)
 @Mixin(value = ItemModelBlock.class)
 public abstract class MakeHeldBlockInvisible {
-    @SuppressWarnings("java:S107")
-    @WrapOperation(method = "renderItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/block/model/BlockModel;renderBlockOnInventory(Lnet/minecraft/client/render/tessellator/Tessellator;IFLjava/lang/Integer;)V"))
-    private void makeItemInvisible(BlockModel<?> instance, Tessellator tessellator, int metadata, float brightness, Integer lightmapCoordinate, Operation<Void> original, Tessellator tessellatorTwo, ItemRenderer renderer, ItemStack itemstack, @Nullable Entity entity, float brightnessTwo, boolean handheldTransform) {
+    @Inject(method = "renderSingle", at = @At("HEAD"), cancellable = true)
+    private void makeItemInvisible(TessellatorGeneral tessellator, Entity entity, ItemStack itemStack, boolean handheldTransform, byte brightness, int metadata, float partialTicks, boolean gui, CallbackInfo ci) {
         if (entity instanceof Player
-            && (
-                entity != Minecraft.getMinecraft().thePlayer
-                || Minecraft.getMinecraft().gameSettings.thirdPersonView.value != 0)
-                && PlayerUtil.isInvisible(entity)
+            && (entity != Minecraft.getMinecraft().thePlayer || GameSettings.THIRD_PERSON_VIEW.value != 0)
+            && PlayerUtil.isInvisible(entity)
         ) {
-            instance.renderBlockOnInventory(tessellator, metadata, brightness, 0.05F, lightmapCoordinate);
-            return;
+            ci.cancel();
         }
-        original.call(instance, tessellator, metadata, brightness, lightmapCoordinate);
     }
 }

@@ -1,9 +1,11 @@
 package teamport.aether.world.feature.dungeon.gold;
 
+import teamport.aether.util.Directions;
 import net.minecraft.core.WeightedRandomBag;
 import net.minecraft.core.WeightedRandomLootObject;
 import net.minecraft.core.block.BlockLogicRotatable;
 import net.minecraft.core.block.material.Material;
+import net.minecraft.core.block.material.Materials;
 import net.minecraft.core.item.ItemStack;
 import net.minecraft.core.util.helper.Direction;
 import net.minecraft.core.world.World;
@@ -121,7 +123,7 @@ public class WorldFeatureAetherGoldDungeon extends WorldFeatureMap<DungeonLogicG
     }
 
     public WorldFeatureAetherGoldDungeon(int dir) {
-        this.direction = Direction.horizontalDirections[dir & 3];
+        this.direction = Direction.horizontal[dir & 3];
     }
 
     public WorldFeatureAetherGoldDungeon(Random random) {
@@ -166,7 +168,7 @@ public class WorldFeatureAetherGoldDungeon extends WorldFeatureMap<DungeonLogicG
                 int checkY = y + i * dir[1];
                 int checkZ = z + i * dir[2];
                 Material blockMaterial = world.getBlockMaterial(checkX, checkY, checkZ);
-                if (blockMaterial != Material.air) {
+                if (blockMaterial != Materials.AIR) {
                     return false;
                 }
             }
@@ -294,7 +296,7 @@ public class WorldFeatureAetherGoldDungeon extends WorldFeatureMap<DungeonLogicG
         world.setBlock(x, y, z, AetherBlocks.BLOCK_GRAVITITE.id());
 
         WorldFeatureComponent entranceDoor = new WorldFeatureComponent();
-//        Direction doorDir = direction.getHorizontalIndex() % 2 == 0? direction : direction.getOpposite();
+//        Direction doorDir = Directions.horizontalIndex(direction) % 2 == 0? direction : direction.opposite();
         int entranceDoorMeta = BlockLogicRotatable.setDirection(0, direction);
 
         iterate3d(

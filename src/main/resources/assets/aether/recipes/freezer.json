@@ -16,9 +16,7 @@
     "type": "aether:machine",
     "time": 500,
     "input": {
-      "stack": {
-        "id": "minecraft:item/bucket_lava"
-      }
+      "group": "minecraft:lava_buckets"
     },
     "output": {
       "id": "minecraft:block/obsidian",
@@ -190,12 +188,12 @@
     }
   },
   {
-    "name": "aether:freezer/igneous_netherrack_to_netherrack",
+    "name": "aether:freezer/crystalline_netherrack_to_netherrack",
     "type": "aether:machine",
     "time": 500,
     "input": {
       "stack": {
-        "id": "minecraft:block/cobble_netherrack_igneous"
+        "id": "minecraft:block/cobble_netherrack_mossy"
       }
     },
     "output": {

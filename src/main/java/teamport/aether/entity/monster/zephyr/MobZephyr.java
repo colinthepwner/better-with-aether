@@ -1,5 +1,6 @@
 package teamport.aether.entity.monster.zephyr;
 
+import org.joml.primitives.AABBd;
 import net.minecraft.core.WeightedRandomLootObject;
 import net.minecraft.core.entity.Entity;
 import net.minecraft.core.entity.MobFlying;
@@ -9,6 +10,7 @@ import net.minecraft.core.util.collection.NamespaceID;
 import net.minecraft.core.util.helper.DamageType;
 import net.minecraft.core.util.helper.MathHelper;
 import net.minecraft.core.util.phys.AABB;
+import org.joml.primitives.AABBdc;
 import net.minecraft.core.util.phys.Vec3;
 import net.minecraft.core.world.World;
 import org.jspecify.annotations.NonNull;
@@ -40,10 +42,7 @@ public class MobZephyr extends MobFlying implements Enemy, AetherDeathMessage {
         return 1.0F;
     }
 
-    @Override
-    public int getLightmapCoord(float partialTick) {
-        return this.world.getLightmapCoord(15, 15);
-    }
+    
 
     @Override
     public int getMaxHealth() {
@@ -147,7 +146,7 @@ public class MobZephyr extends MobFlying implements Enemy, AetherDeathMessage {
                 this.aggroCooldown = 20;
             }
 
-            if (this.targetedEntity != null && !((Player) this.targetedEntity).getGamemode().areMobsHostile()) {
+            if (this.targetedEntity != null && !((Player) this.targetedEntity).getGamemode().hasHostileMobs()) {
                 this.targetedEntity = null;
             }
         }
@@ -155,14 +154,14 @@ public class MobZephyr extends MobFlying implements Enemy, AetherDeathMessage {
         double d4 = 64.0;
         if (this.targetedEntity != null && this.targetedEntity.distanceToSqr(this) < d4 * d4) {
             double d8 = 4.0;
-            Vec3 vec3 = this.getViewVector(1.0F);
+            org.joml.Vector3dc vec3 = this.getViewVector(1.0F);
             double dX = this.targetedEntity.x - this.x;
             double dY = this.targetedEntity.y - this.y;
             double dZ = this.targetedEntity.z - this.z;
             double dist = MathHelper.sqrt(dX * dX + dY * dY + dZ * dZ);
-            double vX = dX + this.targetedEntity.xd * dist / 7.5 - vec3.x * d8;
+            double vX = dX + this.targetedEntity.xd * dist / 7.5 - vec3.x() * d8;
             double vY = dY + this.targetedEntity.yd * dist / 7.5 - ((this.bbHeight / 2.0F) + 0.5);
-            double vZ = dZ + this.targetedEntity.zd * dist / 7.5 - vec3.z * d8;
+            double vZ = dZ + this.targetedEntity.zd * dist / 7.5 - vec3.z() * d8;
             this.yBodyRot = this.yRot = -((float) Math.atan2(vX, vZ)) * 180.0F / 3.1415927F;
             if (this.canEntityBeSeen(this.targetedEntity)) {
                 if (this.attackCharge == 10 && this.world != null) {
@@ -173,7 +172,7 @@ public class MobZephyr extends MobFlying implements Enemy, AetherDeathMessage {
                 if (this.attackCharge == 20 && this.world != null) {
                     this.world.playSoundAtEntity(null, this, "aether:mob.zephyr.shoot", this.getSoundVolume(), (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F);
                     ProjectileWindball windball = new ProjectileWindball(this.world, this, vX, vY, vZ);
-                    windball.setPos(this.x + vec3.x * d8, this.y + (this.bbHeight / 2.0F) - 0.5, this.z + vec3.z * d8);
+                    windball.setPos(this.x + vec3.x() * d8, this.y + (this.bbHeight / 2.0F) - 0.5, this.z + vec3.z() * d8);
                     this.world.entityJoinedWorld(windball);
                     this.attackCharge = -40;
                 }
@@ -201,7 +200,7 @@ public class MobZephyr extends MobFlying implements Enemy, AetherDeathMessage {
     private Entity findPlayerToAttack() {
         if (this.world == null) return null;
         Player player = PlayerUtil.getClosestNonInvisPlayerToEntity(this.world, this, (float) 100.0);
-        if (player == null || !this.canEntityBeSeen(player) || !player.getGamemode().areMobsHostile()) {
+        if (player == null || !this.canEntityBeSeen(player) || !player.getGamemode().hasHostileMobs()) {
             return null;
         }
         return player;
@@ -211,10 +210,10 @@ public class MobZephyr extends MobFlying implements Enemy, AetherDeathMessage {
         double d4 = (this.waypointX - this.x) / d3;
         double d5 = (this.waypointY - this.y) / d3;
         double d6 = (this.waypointZ - this.z) / d3;
-        AABB axisalignedbb = this.bb.copy();
+        AABBd axisalignedbb = new AABBd(this.bb);
 
         for (int i = 1; i < d3; ++i) {
-            axisalignedbb.move(d4, d5, d6);
+            axisalignedbb.translate(d4, d5, d6);
             if (this.world == null || !this.world.getCubes(this, axisalignedbb).isEmpty()) {
                 return false;
             }
@@ -260,7 +259,7 @@ public class MobZephyr extends MobFlying implements Enemy, AetherDeathMessage {
     public boolean canSpawnHere() {
         if (this.world == null) return false;
 
-        boolean tooManyZephyrs = world.loadedEntityList.stream()
+        boolean tooManyZephyrs = world.entities.stream()
             .filter(MobZephyr.class::isInstance)
             .filter(e -> e.distanceTo(this) <= 64)
             .count() > 5;

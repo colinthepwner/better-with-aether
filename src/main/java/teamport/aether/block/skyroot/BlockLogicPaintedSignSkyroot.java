@@ -26,8 +26,8 @@ public class BlockLogicPaintedSignSkyroot extends BlockLogicPaintableSignSkyroot
         return meta & -241;
     }
 
-    public void removeDye(World world, int x, int y, int z) {
-        world.setBlockMetadata(x, y, z, this.stripColorFromMetadata(world.getBlockMetadata(x, y, z)));
+    public void removeDye(World world, net.minecraft.core.world.pos.TilePosc pos) {
+        world.setBlockMetadataWithNotify(pos.x(), pos.y(), pos.z(), this.stripColorFromMetadata(world.getBlockMetadata(pos.x(), pos.y(), pos.z())));
     }
 
     @Override

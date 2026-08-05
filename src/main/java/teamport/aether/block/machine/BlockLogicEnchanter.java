@@ -1,10 +1,12 @@
 package teamport.aether.block.machine;
 
+import net.minecraft.core.world.pos.TilePosc;
 import net.minecraft.core.Global;
 import net.minecraft.core.block.Block;
 import net.minecraft.core.block.BlockLogicRotatable;
 import net.minecraft.core.block.entity.TileEntity;
 import net.minecraft.core.block.material.Material;
+import net.minecraft.core.block.material.Materials;
 import net.minecraft.core.entity.player.Player;
 import net.minecraft.core.enums.EnumDropCause;
 import net.minecraft.core.item.ItemStack;
@@ -22,7 +24,7 @@ public class BlockLogicEnchanter extends BlockLogicRotatable {
     private static boolean keepEnchanterInventory = false;
 
     public BlockLogicEnchanter(Block<?> block, boolean active) {
-        super(block, Material.stone);
+        super(block, Materials.STONE);
         this.isActive = active;
         block.withEntity(TileEntityEnchanter::new);
     }
@@ -46,7 +48,10 @@ public class BlockLogicEnchanter extends BlockLogicRotatable {
     }
 
     @Override
-    public void animationTick(World world, int x, int y, int z, Random rand) {
+    public void animationTick(World world, TilePosc pos, Random rand) {
+		int x = pos.x();
+		int y = pos.y();
+		int z = pos.z();
         if (this.isActive) {
             int l = world.getBlockMetadata(x, y, z);
             double poxX = x + 0.5;
@@ -55,13 +60,13 @@ public class BlockLogicEnchanter extends BlockLogicRotatable {
             double f3 = 0.52;
             double f4 = rand.nextDouble() * 0.6 - 0.3;
             if (l == 4) {
-                world.spawnParticle("flameenchanter", poxX - f3, posY, posZ + f4, 0.0, 0.0, 0.0, 0);
+                world.spawnParticle("flameenchanter", poxX - f3, posY, posZ + f4, 0.0, 0.0, 0.0, 0, false);
             } else if (l == 5) {
-                world.spawnParticle("flameenchanter", poxX + f3, posY, posZ + f4, 0.0, 0.0, 0.0, 0);
+                world.spawnParticle("flameenchanter", poxX + f3, posY, posZ + f4, 0.0, 0.0, 0.0, 0, false);
             } else if (l == 2) {
-                world.spawnParticle("flameenchanter", poxX + f4, posY, posZ - f3, 0.0, 0.0, 0.0, 0);
+                world.spawnParticle("flameenchanter", poxX + f4, posY, posZ - f3, 0.0, 0.0, 0.0, 0, false);
             } else if (l == 3) {
-                world.spawnParticle("flameenchanter", poxX + f4, posY, posZ + f3, 0.0, 0.0, 0.0, 0);
+                world.spawnParticle("flameenchanter", poxX + f4, posY, posZ + f3, 0.0, 0.0, 0.0, 0, false);
             }
 
         }

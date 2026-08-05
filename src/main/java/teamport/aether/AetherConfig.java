@@ -23,7 +23,12 @@ public class AetherConfig {
 
     public static final String GENERAL_CATEGORY = "General";
 
-    public static int DIMENSION = 9;
+    /// Must stay contiguous with the vanilla ids (Overworld 0, Nether 1, Drift 2), hence 3 rather
+    /// than 7.3's 9. `WorldTypeGroups.Group`'s constructor walks `i = 0 .. dimensionList.size()-1`
+    /// and calls `dimensionList.get(i)` positionally, so a gap in the id space makes that lookup
+    /// return null and the world fails to load. Raising this by hand past the next free slot will
+    /// break world creation the same way.
+    public static int DIMENSION = 3;
     public static int EXTRA_HEALTH = 20;
     public static double QUICK_SOIL_SPEED_CAP = 1.325F;
 

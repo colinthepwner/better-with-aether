@@ -20,11 +20,11 @@ public class BlockLogicPaintableChestMimic extends BlockLogicChestMimic implemen
     }
 
     @Override
-    public void setColor(World world, int x, int y, int z, DyeColor dyeColor) {
-        int meta = world.getBlockMetadata(x, y, z); // frank
-        world.setBlockAndMetadataRaw(x, y, z, paintedBlock.id(), meta);
-        world.setBlockAndMetadata(x, y, z, paintedBlock.id(), meta);
-        paintedBlock.getLogic().setColor(world, x, y, z, dyeColor); // no frank
+    public void setColor(World world, net.minecraft.core.world.pos.TilePosc pos, DyeColor dyeColor) {
+        int meta = world.getBlockMetadata(pos.x(), pos.y(), pos.z()); // frank
+        world.setBlockAndMetadataRaw(pos.x(), pos.y(), pos.z(), paintedBlock.id(), meta);
+        world.setBlockAndMetadataWithNotify(pos.x(), pos.y(), pos.z(), paintedBlock.id(), meta);
+        paintedBlock.getLogic().setColor(world, pos, dyeColor); // no frank
 
     }
 }

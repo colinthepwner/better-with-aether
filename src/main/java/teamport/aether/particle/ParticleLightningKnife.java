@@ -2,9 +2,9 @@ package teamport.aether.particle;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.entity.particle.Particle;
+import net.minecraft.client.render.particle.Particle;
 import net.minecraft.client.render.LightmapHelper;
-import net.minecraft.client.render.tessellator.Tessellator;
+import net.minecraft.client.render.tessellator.TessellatorParticle;
 import net.minecraft.client.render.texture.stitcher.IconCoordinate;
 import net.minecraft.client.render.texture.stitcher.TextureRegistry;
 import net.minecraft.core.util.helper.MathHelper;
@@ -35,10 +35,10 @@ public class ParticleLightningKnife extends Particle {
     }
 
     @Override
-    public void render(Tessellator t, float partialTick, double xOff, double yOff, double zOff, float xa, float ya, float za, float xa2, float za2) {
+    public void render(TessellatorParticle t, float partialTick) {
         float s = (this.age + partialTick) / this.lifetime;
         this.size = this.originalScale * (1.0F - s * s * 0.5F);
-        super.render(t, partialTick, xOff, yOff, zOff, xa, ya, za, xa2, za2);
+        super.render(t, partialTick);
     }
 
     @Override
@@ -48,9 +48,10 @@ public class ParticleLightningKnife extends Particle {
     }
 
     @Override
-    public int getLightmapCoord(float partialTick) {
-        return LightmapHelper.setBlocklightValue(super.getLightmapCoord(partialTick), 15);
-    }
+    public byte getLightIndex(float partialTick) {
+		// 8.0 packs the lightmap into a single byte; force the block-light nibble to full.
+		return (byte) ((super.getLightIndex(partialTick) & 0xF0) | 0x0F);
+	}
 
     @Override
     public void tick() {

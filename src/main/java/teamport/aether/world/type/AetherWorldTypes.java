@@ -2,6 +2,13 @@ package teamport.aether.world.type;
 
 import net.minecraft.core.world.type.WorldType;
 import net.minecraft.core.world.type.WorldTypes;
+import net.minecraft.core.world.Dimension;
+import net.minecraft.core.world.type.WorldTypeGroups;
+import teamport.aether.world.AetherDimension;
+
+import java.util.HashMap;
+import java.util.Map;
+
 
 @SuppressWarnings({"java:S1104", "java:S1444", "java:S3008"})
 public abstract class AetherWorldTypes {
@@ -46,6 +53,45 @@ public abstract class AetherWorldTypes {
                 .seasonConfig(null)
                 .bounds(0, 127, 0)
                 .portalBounds(0, 256)
-                .setRetro()));
+                ));
+    }
+
+    /// Pairs each overworld world type with the Aether type that should generate alongside it, so a
+    /// world created as e.g. SKYBLOCK gets the skyblock Aether rather than the default one.
+    ///
+    /// This used to be a `static {}` block in a mixin on `WorldTypeGroups`, which is why it had to
+    /// move: it needs `AetherDimension.getAether()`, but as a class initialiser it fired the moment
+    /// anything first touched `WorldTypeGroups` -- and in 8.0 that happens inside
+    /// `AetherWorldTypes.init()`, one line *before* `AETHER` is assigned. The group then got a null
+    /// dimension and `Group` rejects it. Called explicitly at the end of dimension setup instead,
+    /// the ordering is guaranteed.
+    public static void registerAetherWorldTypeGroups() {
+        Map<WorldType, WorldType> overworldToAetherWorldTypeMap = new HashMap<>();
+        for (WorldType t : new WorldType[]{
+            WorldTypes.OVERWORLD_EXTENDED,
+            WorldTypes.OVERWORLD_AMPLIFIED,
+            WorldTypes.OVERWORLD_INLAND,
+            WorldTypes.OVERWORLD_PARADISE,
+            WorldTypes.OVERWORLD_WOODS,
+            WorldTypes.OVERWORLD_HELL,
+            WorldTypes.OVERWORLD_WINTER,
+            WorldTypes.OVERWORLD_ISLANDS,
+            WorldTypes.OVERWORLD_FLOATING,
+            WorldTypes.FLAT,
+            WorldTypes.EMPTY,
+            WorldTypes.DEBUG,
+        })
+            overworldToAetherWorldTypeMap.put(t, AETHER_EXTENDED);
+
+        overworldToAetherWorldTypeMap.put(WorldTypes.OVERWORLD_DEFAULT, AETHER_DEFAULT);
+        overworldToAetherWorldTypeMap.put(WorldTypes.OVERWORLD_SKYBLOCK, AETHER_SKYBLOCK);
+        overworldToAetherWorldTypeMap.put(WorldTypes.OVERWORLD_RETRO, AETHER_RETRO);
+        overworldToAetherWorldTypeMap.put(WorldTypes.OVERWORLD_CLASSIC, AETHER_RETRO);
+        overworldToAetherWorldTypeMap.put(WorldTypes.OVERWORLD_INDEV, AETHER_RETRO);
+
+        for (WorldTypeGroups.Group group : WorldTypeGroups.GROUPS) {
+            WorldType overworldType = group.get(Dimension.OVERWORLD);
+            group.with(AetherDimension.getAether(), overworldToAetherWorldTypeMap.computeIfAbsent(overworldType, w -> AETHER_DEFAULT));
+        }
     }
 }

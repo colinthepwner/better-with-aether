@@ -24,14 +24,9 @@ public abstract class WorldTypeOverworldRespawnMixin {
         attempts.set(attempts.get() + 1);
         return original.call(instance, x, z);
     }
-    @WrapOperation(method = "getRespawnLocation", at = @At(value = "INVOKE", target = "Lnet/minecraft/core/world/save/LevelData;setSpawnX(I)V"))
-    private void respawnLocationThree(LevelData instance, int x, Operation<Void> original, @Share("attempts") LocalIntRef attempts) {
-        if  (attempts.get() >= 500) return;
-        original.call(instance, x);
-    }
-    @WrapOperation(method = "getRespawnLocation", at = @At(value = "INVOKE", target = "Lnet/minecraft/core/world/save/LevelData;setSpawnZ(I)V"))
-    private void respawnLocationFour(LevelData instance, int z, Operation<Void> original, @Share("attempts") LocalIntRef attempts) {
-        if  (attempts.get() >= 500) return;
-        original.call(instance, z);
+    @WrapOperation(method = "getRespawnLocation", at = @At(value = "INVOKE", target = "Lnet/minecraft/core/world/pos/TilePos;set(III)Lnet/minecraft/core/world/pos/TilePos;"))
+    private net.minecraft.core.world.pos.TilePos respawnLocationThree(net.minecraft.core.world.pos.TilePos instance, int x, int y, int z, Operation<net.minecraft.core.world.pos.TilePos> original, @Share("attempts") LocalIntRef attempts) {
+        if  (attempts.get() >= 500) return instance;
+        return original.call(instance, x, y, z);
     }
 }

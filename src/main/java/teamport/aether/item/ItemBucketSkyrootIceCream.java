@@ -12,7 +12,7 @@ public class ItemBucketSkyrootIceCream extends ItemFood {
     }
 
     @Override
-    public ItemStack onUseItem(ItemStack itemstack, World world, Player entityplayer) {
+    public ItemStack onUse(ItemStack itemstack, World world, Player entityplayer) {
         if (entityplayer.getHealth() < entityplayer.getMaxHealth()) {
             super.onUseItem(itemstack, world, entityplayer);
             return new ItemStack(AetherItems.BUCKET_SKYROOT);

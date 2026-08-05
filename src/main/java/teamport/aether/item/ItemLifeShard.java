@@ -19,7 +19,7 @@ public class ItemLifeShard extends Item {
     }
 
     @Override
-    public ItemStack onUseItem(ItemStack itemstack, World world, Player player) {
+    public ItemStack onUse(ItemStack itemstack, World world, Player player) {
         int extraHealth = HealthHelper.getExtraHealth(player);
 
         // to save on calculation further down

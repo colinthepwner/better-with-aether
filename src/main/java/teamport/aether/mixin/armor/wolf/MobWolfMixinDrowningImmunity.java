@@ -13,7 +13,8 @@ public abstract class MobWolfMixinDrowningImmunity {
     @ModifyReturnValue(method = "canBreatheUnderwater", at = @At("RETURN"))
     private boolean canBreatheUnderwater(boolean original) {
         if (!((Mob) (Object) this instanceof MobWolf)) return original;
-        ArmorMaterial material = ((MobWolf) (Object) this).getArmorMaterial();
+        net.minecraft.core.item.ItemStack armor = ((MobWolf) (Object) this).getArmorItem();
+        net.minecraft.core.item.material.ArmorMaterial material = armor != null && armor.getItem() instanceof net.minecraft.core.item.ItemArmor ? ((net.minecraft.core.item.ItemArmor) armor.getItem()).getArmorMaterial() : null;
         if (material != null && material.equals(AetherArmorMaterial.NEPTUNE)) return true;
         return original;
     }

@@ -2,7 +2,7 @@ package teamport.aether.models.skyroot;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.render.block.model.BlockModelChest;
+import net.minecraft.client.render.block.model.generic.BlockModelGenericChestPainted;
 import net.minecraft.client.render.texture.stitcher.IconCoordinate;
 import net.minecraft.client.render.texture.stitcher.TextureRegistry;
 import net.minecraft.core.block.Block;
@@ -14,18 +14,17 @@ import net.minecraft.core.util.helper.Side;
 import net.minecraft.core.world.WorldSource;
 
 @Environment(EnvType.CLIENT)
-public class BlockModelPaintedSkyrootChest<T extends BlockLogic> extends BlockModelChest<T> {
+public class BlockModelPaintedSkyrootChest<T extends BlockLogic> extends BlockModelGenericChestPainted<T> {
     private static final IconCoordinate[][] TEX_COORDS = new IconCoordinate[16][];
 
     public BlockModelPaintedSkyrootChest(Block<T> block) {
-        super(block, "aether:block/chest/skyroot/");
+        super(block);
     }
 
-    @Override
-    public IconCoordinate getBlockTexture(WorldSource blockAccess, int x, int y, int z, Side side) {
-        int meta = blockAccess.getBlockMetadata(x, y, z);
+    public IconCoordinate getBlockTexture(WorldSource blockAccess, net.minecraft.core.world.pos.TilePosc pos, Side side) {
+        int meta = blockAccess.getBlockMetadata(pos.x(), pos.y(), pos.z());
         int color = meta >> 4;
-        Side facing = BlockLogicChest.getDirectionFromMeta(meta).getSide();
+        Side facing = BlockLogicChest.getDirectionFromMeta(meta).side();
         BlockLogicChest.Type type = BlockLogicChest.getTypeFromMeta(meta);
         if (side != Side.TOP && side != Side.BOTTOM) {
             if (type == BlockLogicChest.Type.SINGLE && side == facing) {
@@ -36,7 +35,7 @@ public class BlockModelPaintedSkyrootChest<T extends BlockLogic> extends BlockMo
                         return TEX_COORDS[color][1];
                     }
 
-                    if (side == facing.getOpposite()) {
+                    if (side == facing.opposite()) {
                         return TEX_COORDS[color][4];
                     }
                 }
@@ -46,12 +45,12 @@ public class BlockModelPaintedSkyrootChest<T extends BlockLogic> extends BlockMo
                         return TEX_COORDS[color][2];
                     }
 
-                    if (side == facing.getOpposite()) {
+                    if (side == facing.opposite()) {
                         return TEX_COORDS[color][3];
                     }
                 }
 
-                return side.getAxis() != Axis.Y ? TEX_COORDS[color][5] : TEX_COORDS[color][6];
+                return side.axis() != Axis.Y ? TEX_COORDS[color][5] : TEX_COORDS[color][6];
             }
         } else if (type == BlockLogicChest.Type.LEFT) {
             return TEX_COORDS[color][7];
@@ -60,7 +59,6 @@ public class BlockModelPaintedSkyrootChest<T extends BlockLogic> extends BlockMo
         }
     }
 
-    @Override
     public IconCoordinate getBlockTextureFromSideAndMetadata(Side side, int data) {
         int color = data >> 4;
         if (side == Side.SOUTH) {

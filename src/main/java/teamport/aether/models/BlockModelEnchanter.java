@@ -19,22 +19,22 @@ public class BlockModelEnchanter<T extends BlockLogic> extends BlockModelHorizon
     }
 
     @Override
-    public IconCoordinate getBlockTexture(WorldSource blockAccess, int x, int y, int z, Side side) {
-        int data = blockAccess.getBlockMetadata(x, y, z);
-        int index = Sides.orientationLookUpHorizontal[6 * Math.min(data, 5) + side.getId()];
+    public IconCoordinate getBlockTexture(WorldSource blockAccess, net.minecraft.core.world.pos.TilePosc pos, Side side) {
+        int data = blockAccess.getBlockMetadata(pos.x(), pos.y(), pos.z());
+        int index = Sides.orientationLookUpHorizontal[6 * Math.min(data, 5) + side.id];
         if (index >= Sides.orientationLookUpHorizontal.length) {
             if (isRetro()) {
-                return this.retroBlockTextures.get(Side.BOTTOM);
+                return this.blockTextures.get(Side.BOTTOM);
             }
             return this.blockTextures.get(Side.BOTTOM);
-        } else if (index == Side.NORTH.getId()) {
+        } else if (index == Side.NORTH.id) {
             IconCoordinate originalFront;
             if (isRetro()) {
-                originalFront = this.retroBlockTextures.get(Side.NORTH);
+                originalFront = this.blockTextures.get(Side.NORTH);
             } else {
                 originalFront = this.blockTextures.get(Side.NORTH);
             }
-            Container container = (Container) blockAccess.getTileEntity(x, y, z);
+            Container container = (Container) blockAccess.getTileEntity(pos.x(), pos.y(), pos.z());
             if (container != null) {
                 boolean hasOutput = container.getItem(2) != null;
                 if (hasOutput && originalFront != null) {
@@ -45,9 +45,9 @@ public class BlockModelEnchanter<T extends BlockLogic> extends BlockModelHorizon
             return originalFront;
         } else {
             if (isRetro()) {
-                return this.retroBlockTextures.get(Side.getSideById(index));
+                return this.blockTextures.get(Side.fromId(index));
             }
-            return this.blockTextures.get(Side.getSideById(index));
+            return this.blockTextures.get(Side.fromId(index));
         }
     }
 }

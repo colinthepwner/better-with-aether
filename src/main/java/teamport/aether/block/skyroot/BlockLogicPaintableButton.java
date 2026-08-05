@@ -1,11 +1,11 @@
 package teamport.aether.block.skyroot;
 
 import net.minecraft.core.block.Block;
-import net.minecraft.core.block.BlockLogicButtonPlanks;
+import net.minecraft.core.block.BlockLogicButtonPlanksOak;
 import net.minecraft.core.util.helper.DyeColor;
 import net.minecraft.core.world.World;
 
-public class BlockLogicPaintableButton extends BlockLogicButtonPlanks {
+public class BlockLogicPaintableButton extends BlockLogicButtonPlanksOak {
     protected final Block<? extends BlockLogicPaintedButton> paintedBlock;
 
     public BlockLogicPaintableButton(Block<?> block, Block<? extends BlockLogicPaintedButton> paintedBlock) {

@@ -4,8 +4,8 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.particle.ParticleDispatcher;
-import net.minecraft.client.entity.particle.ParticleFirefly;
+import net.minecraft.client.render.particle.ParticleDispatcher;
+import net.minecraft.client.render.particle.ParticleFirefly;
 import net.minecraft.client.gui.achievements.data.AchievementPages;
 import net.minecraft.client.gui.hud.component.ComponentAnchor;
 import net.minecraft.client.gui.hud.component.HudComponent;
@@ -56,7 +56,7 @@ public class AetherClient implements ClientModInitializer, ClientStartEntrypoint
 
     public static AetherRemoteResourceDownloaderThread resourceDownloaderThread;
     @SuppressWarnings("unused")
-    public static AtlasStitcher extras = register("extras", new AtlasStitcher("textures/extras", true, false, null));
+    public static AtlasStitcher extras = register(new AtlasStitcher(true, false));
 
     @Override
     public void beforeClientStart() {
@@ -76,13 +76,11 @@ public class AetherClient implements ClientModInitializer, ClientStartEntrypoint
         dispatcher.addDispatch("fire", (world, x, y, z, xa, ya, za, id) -> new ParticleFireSpiral(world, x, y, z));
         dispatcher.addDispatch("fallingAetherLeaf", (world, x, y, z, motionX, motionY, motionZ, data) -> {
             int id = world.getBlockId(MathHelper.floor(x), MathHelper.floor(y), MathHelper.floor(z));
-            return id != 0 ? (new ParticleAetherLeaf(world, x, y, z, motionX, motionY, motionX)).init(MathHelper.floor(x), MathHelper.floor(y), MathHelper.floor(z)) : null;
+            return id != 0 ? (new ParticleAetherLeaf(world, x, y, z, motionX, motionY, motionX)) : null;
         });
 
-        SoundRepository.registerNamespace(MOD_ID);
-        AetherCommand.registerClientCommands();
-        AetherClient.registerTextures();
-    }
+                AetherCommand.registerClientCommands();
+            }
 
     @Override
     public void afterClientStart() {
@@ -185,16 +183,5 @@ public class AetherClient implements ClientModInitializer, ClientStartEntrypoint
             )
         );
 
-        ((HudComponentMovable) HudComponents.OXYGEN_BAR).setLayout(new LayoutSnap(HudComponents.ARMOR_BAR, ComponentAnchor.TOP_LEFT, ComponentAnchor.BOTTOM_LEFT));
-    }
-
-    public static void registerTextures() {
-        for (final AtlasStitcher stitcher : TextureRegistry.stitcherMap.values()) {
-            try {
-                TextureHelper.initializeAllFiles(MOD_ID, stitcher, Integer.MAX_VALUE);
-            } catch (Exception e) {
-                AetherMod.LOGGER.error("Failed to initialize texture files!", e);
             }
-        }
-    }
 }

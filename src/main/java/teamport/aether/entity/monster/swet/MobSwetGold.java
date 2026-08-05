@@ -55,10 +55,6 @@ public class MobSwetGold extends MobSwet implements Enemy {
         return 1.0F;
     }
 
-    @Override
-    public int getLightmapCoord(float partialTick) {
-        return this.world == null ? super.getLightmapCoord(partialTick) : this.world.getLightmapCoord(15, 15);
-    }
 
     @Override
     public void doTickEffect() {

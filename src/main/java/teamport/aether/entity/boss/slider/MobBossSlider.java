@@ -1,5 +1,6 @@
 package teamport.aether.entity.boss.slider;
 
+import org.joml.primitives.AABBd;
 import com.mojang.nbt.tags.CompoundTag;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.block.Block;
@@ -17,6 +18,7 @@ import net.minecraft.core.util.helper.DamageType;
 import net.minecraft.core.util.helper.Direction;
 import net.minecraft.core.util.helper.MathHelper;
 import net.minecraft.core.util.phys.AABB;
+import org.joml.primitives.AABBdc;
 import net.minecraft.core.world.World;
 import org.jspecify.annotations.NonNull;
 import teamport.aether.achievements.AetherAchievements;
@@ -220,7 +222,7 @@ public class MobBossSlider extends MobBoss {
             float posX;
             float posY;
             float posZ;
-            Direction dir = Direction.directions[this.random.nextInt(Direction.directions.length)];
+            Direction dir = Direction.all[this.random.nextInt(Direction.all.length)];
             switch (dir) {
                 case WEST:
                     posX = (float) (this.x - 1);
@@ -267,10 +269,6 @@ public class MobBossSlider extends MobBoss {
         }
     }
 
-    @Override
-    public AABB getBb() {
-        return this.bb.copy();
-    }
 
     public float getDeformX() {
         return this.deformX;
@@ -329,7 +327,7 @@ public class MobBossSlider extends MobBoss {
             return false;
         }
         this.tryAwake();
-        if (!((Player) attacker).gamemode.areMobsHostile()) {
+        if (!((Player) attacker).gamemode.hasHostileMobs()) {
             this.creativeAttackersList.add((Player) attacker);
         }
         this.target = attacker;
@@ -476,7 +474,7 @@ public class MobBossSlider extends MobBoss {
             final int slamRadius = 5;
             final float launchSpeed = 0.75F;
 
-            final AABB boundingBox = AABB.getTemporaryBB(this.x - slamRadius, this.y, this.z - slamRadius, this.x + slamRadius, this.y + slamRadius, this.z + slamRadius);
+            final AABBd boundingBox = new AABBd(this.x - slamRadius, this.y, this.z - slamRadius, this.x + slamRadius, this.y + slamRadius, this.z + slamRadius);
             List<Entity> list = this.world.getEntitiesWithinAABB(Entity.class, boundingBox);
 
             for (Entity entity : list) {
@@ -571,7 +569,7 @@ public class MobBossSlider extends MobBoss {
         if (this.world == null) return null;
         Player entityplayer = this.world.getClosestPlayerToEntity(this, 32.0F);
         if (entityplayer == null) return null;
-        if ((this.canEntityBeSeen(entityplayer) && entityplayer.gamemode.areMobsHostile())) {
+        if ((this.canEntityBeSeen(entityplayer) && entityplayer.gamemode.hasHostileMobs())) {
             ((AetherBossList) entityplayer).aether$TryAddBossList(this);
             return entityplayer;
         }
@@ -588,16 +586,16 @@ public class MobBossSlider extends MobBoss {
         float moveAmount = this.speed / TICKS_PER_SECOND;
         if (this.blocksToMove > moveAmount) {
             move(
-                moveAmount * this.moveDirection.getOffsetX(),
-                moveAmount * this.moveDirection.getOffsetY(),
-                moveAmount * this.moveDirection.getOffsetZ()
+                moveAmount * this.moveDirection.offsetX(),
+                moveAmount * this.moveDirection.offsetY(),
+                moveAmount * this.moveDirection.offsetZ()
             );
             this.blocksToMove -= moveAmount;
         } else {
             move(
-                this.blocksToMove * this.moveDirection.getOffsetX(),
-                this.blocksToMove * this.moveDirection.getOffsetY(),
-                this.blocksToMove * this.moveDirection.getOffsetZ()
+                this.blocksToMove * this.moveDirection.offsetX(),
+                this.blocksToMove * this.moveDirection.offsetY(),
+                this.blocksToMove * this.moveDirection.offsetZ()
             );
             this.blocksToMove = 0;
         }
@@ -732,7 +730,7 @@ public class MobBossSlider extends MobBoss {
             return super.collidesWith(entity);
         }
         if (entity instanceof Player) {
-            if (!((Player) entity).gamemode.isPlayerInvulnerable()) {
+            if (!((Player) entity).gamemode.hasInvulnerablePlayer()) {
                 MobUtil.multiHit(this, entity,
                     inst((int) Math.floor(BASE_DAMAGE * getAngerModifier()), DamageType.FALL),
                     inst((int) Math.floor((BASE_DAMAGE * 0.50F) * getAngerModifier()), DamageType.COMBAT)

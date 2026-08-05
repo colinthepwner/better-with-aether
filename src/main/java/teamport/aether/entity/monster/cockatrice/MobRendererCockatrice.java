@@ -8,7 +8,7 @@ import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.useless.dragonfly.models.entity.BoneTransform;
 import org.useless.dragonfly.models.entity.StaticEntityModel;
-import org.useless.dragonfly.renderer.MobRenderer;
+import net.minecraft.client.render.entity.MobRenderer;
 
 @Environment(EnvType.CLIENT)
 public class MobRendererCockatrice extends MobRenderer<MobCockatrice> {
@@ -21,9 +21,7 @@ public class MobRendererCockatrice extends MobRenderer<MobCockatrice> {
     protected @Nullable StaticEntityModel getAndSetupModelForLayer(@NonNull MobCockatrice entity, float brightness, float partialTick, int layer) {
         if (layer == 1) {
             this.bindTexture("/assets/aether/textures/entity/cockatrice/glow/" + entity.getTextureReference() + ".png");
-            if (LightmapHelper.isLightmapEnabled()) {
-                LightmapHelper.setLightmapCoord(LightmapHelper.getLightmapCoord(15, 15));
-            }
+            net.minecraft.client.render.renderer.GLRenderer.setLightmapCoord2i(255, 255);
         }
 
         StaticEntityModel model = this.getModel("main");

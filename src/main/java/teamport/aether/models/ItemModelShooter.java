@@ -4,12 +4,12 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.PlayerRemote;
-import net.minecraft.client.render.Font;
+import net.minecraft.client.render.font.FontRenderer;
 import net.minecraft.client.render.ItemRenderer;
 import net.minecraft.client.render.TextureManager;
 import net.minecraft.client.render.item.model.ItemModelDispatcher;
 import net.minecraft.client.render.item.model.ItemModelStandard;
-import net.minecraft.client.render.tessellator.Tessellator;
+import net.minecraft.client.render.tessellator.TessellatorGeneral;
 import net.minecraft.client.render.texture.stitcher.IconCoordinate;
 import net.minecraft.core.entity.Entity;
 import net.minecraft.core.entity.player.Player;
@@ -24,9 +24,9 @@ public class ItemModelShooter extends ItemModelStandard {
         super(item, namespace);
     }
 
-    @Override
-    public void renderItem(Tessellator tessellator, ItemRenderer renderer, ItemStack itemstack, Entity entity, float brightness, boolean handheldTransform) {
-        super.renderItem(tessellator, renderer, itemstack, entity, brightness, handheldTransform);
+    public void render(net.minecraft.client.render.tessellator.TessellatorGeneral tessellator, net.minecraft.core.entity.Entity entity, net.minecraft.core.item.ItemStack itemstack, String renderType, boolean handheldTransform, int textureIndex, byte lightmapCoord, float brightness, boolean useColor) {
+        super.render(tessellator, entity, itemstack, renderType, handheldTransform, textureIndex, lightmapCoord, brightness, useColor);
+        
         Item nextDart = null;
         if (entity instanceof Player) {
             Player entityplayer = (Player) entity;
@@ -36,13 +36,12 @@ public class ItemModelShooter extends ItemModelStandard {
         if (nextDart != null) {
             GL11.glRotatef(-90.0F, 0.0F, 0.0F, 1.0F);
             GL11.glTranslatef(-1.2F, 0.3F, 0.0625F);
-            ItemModelDispatcher.getInstance().getDispatch(nextDart).renderItem(tessellator, renderer, itemstack, entity, brightness, false);
+            ItemModelDispatcher.getInstance().getDispatch(nextDart).renderGui(tessellator, entity, itemstack, 0, 0, (byte)0, brightness);
         }
 
     }
 
-    @Override
-    public void renderItemIntoGui(Tessellator tessellator, Font font, TextureManager textureManager, ItemStack itemStack, int x, int y, float brightness, float alpha) {
+    public void renderItemOverlayIntoGUI(TessellatorGeneral tessellator, FontRenderer font, TextureManager textureManager, ItemStack itemStack, int x, int y, String text, float alpha) {
         Minecraft mc = Minecraft.getMinecraft();
         Item nextDart = this.getNextDart(mc.thePlayer);
         if (itemStack == mc.thePlayer.getHeldItem() && nextDart != null) {
@@ -53,23 +52,23 @@ public class ItemModelShooter extends ItemModelStandard {
             IconCoordinate textureIndex = dartModel.getIcon(mc.thePlayer, nextDart.getDefaultStack());
             GL11.glDisable(GL11.GL_LIGHTING);
             textureIndex.parentAtlas.bind();
-            if (this.useColor) {
+            if (true) {
                 int color = this.getColor(itemStack);
                 float r = (color >> 16 & 255) / 255.0F;
                 float g = (color >> 8 & 255) / 255.0F;
                 float b = (color & 255) / 255.0F;
-                GL11.glColor4f(r * brightness, g * brightness, b * brightness, alpha);
+                GL11.glColor4f(r * 1.0F, g * 1.0F, b * 1.0F, alpha);
             } else {
-                GL11.glColor4f(brightness, brightness, brightness, alpha);
+                GL11.glColor4f(1.0F, 1.0F, 1.0F, alpha);
             }
 
-            this.renderTexturedQuad(tessellator, x, y, textureIndex, false, false);
+            this.renderCoordinate(tessellator, textureIndex, (byte)0, 0, false, false);
             GL11.glEnable(GL11.GL_LIGHTING);
             GL11.glEnable(GL11.GL_CULL_FACE);
             GL11.glDisable(GL11.GL_BLEND);
         }
 
-        super.renderItemIntoGui(tessellator, font, textureManager, itemStack, x, y, brightness, alpha);
+        super.renderItemOverlayIntoGUI(tessellator, font, textureManager, itemStack, x, y, text, alpha);
     }
 
     public Item getNextDart(Player player) {
@@ -82,7 +81,6 @@ public class ItemModelShooter extends ItemModelStandard {
         }
     }
 
-    @Override
     public void heldTransformThirdPerson(ItemRenderer renderer, Entity entity, ItemStack itemStack) {
         GL11.glTranslatef(0.0F, 0.125F, 0.3125F);
         GL11.glRotatef(-20.0F, 0.0F, 1.0F, 0.0F);

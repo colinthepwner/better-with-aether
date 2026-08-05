@@ -33,7 +33,7 @@ public class UNDataMissingScreen extends Screen {
         Keyboard.enableRepeatEvents(true);
 
         body = i18n.translateKeyAndFormat("aether.gui.un_missing_warn.body", level.getDisplayName(), level.getFileName()).split("\n");
-        int bodyHeight = body.length * this.font.fontHeight;
+        int bodyHeight = body.length * this.fontRenderer.getFont().fontHeight();
 
         y = (int) (height * 0.25);
 
@@ -56,7 +56,7 @@ public class UNDataMissingScreen extends Screen {
         this.renderBackground();
 
         for (int i = 0; i < body.length; i++) {
-            this.drawStringCentered(this.font, body[i], this.width / 2, y + font.fontHeight * i, DyeColor.WHITE.color.value);
+            this.drawStringCenteredShadow(this.fontRenderer, body[i], this.width / 2, y + this.fontRenderer.getFont().fontHeight() * i, DyeColor.WHITE.color.value);
         }
 
         super.render(mx, my, partialTick);
@@ -72,7 +72,7 @@ public class UNDataMissingScreen extends Screen {
             if (button.id == 2) {
                 if (currBtn >= 3) {
                     this.mc.playerController = new PlayerControllerSP(this.mc);
-                    mc.startWorld(level.getFileName(), level.getDisplayName(), 0L);
+                    mc.startWorld(level.getFileName());
                     mc.displayScreen(null);
                     return;
                 }
@@ -88,7 +88,7 @@ public class UNDataMissingScreen extends Screen {
                     continueBtn.yPosition = (((int) ((height - 20) * .05f)) / 20) * 20;
                 } else if (currBtn == 3) {
                     continueBtn.xPosition = this.width / 2 - 100;
-                    continueBtn.yPosition = y + body.length * this.font.fontHeight + 48;
+                    continueBtn.yPosition = y + body.length * this.fontRenderer.getFont().fontHeight() + 48;
                 }
             }
         }

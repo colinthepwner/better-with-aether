@@ -9,6 +9,7 @@ import net.minecraft.core.item.ItemStack;
 import net.minecraft.core.item.tool.ItemToolShears;
 import net.minecraft.core.util.helper.Direction;
 import net.minecraft.core.util.phys.AABB;
+import org.joml.primitives.AABBdc;
 import net.minecraft.core.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -21,7 +22,7 @@ import java.util.Random;
 public abstract class ItemShearsMixin {
 
     @WrapOperation(method = "onUseByActivator", at = @At(value = "INVOKE", target = "Ljava/util/List;isEmpty()Z"))
-    private boolean callOnUseByActivator(List<MobSheep> instance, Operation<Boolean> original, ItemStack itemStack, TileEntityActivator activatorBlock, World world, Random random, int blockX, int blockY, int blockZ, double offX, double offY, double offZ, Direction direction, @Local(name = "box") AABB box) {
+    private boolean callOnUseByActivator(List<MobSheep> instance, Operation<Boolean> original, ItemStack itemStack, World world, TileEntityActivator activatorBlock, Random random, net.minecraft.core.world.pos.TilePosc pos, Direction direction, double offX, double offY, double offZ, @Local org.joml.primitives.AABBdc box) {
         if (Boolean.FALSE.equals(original.call(instance))) return false;
         List<MobSheepuff> entities = world.getEntitiesWithinAABB(MobSheepuff.class, box);
         if (!entities.isEmpty()) entities.get(0).onItemInteract(itemStack);

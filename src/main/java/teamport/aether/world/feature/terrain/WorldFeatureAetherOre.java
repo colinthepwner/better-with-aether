@@ -11,7 +11,7 @@ import java.util.Random;
 
 public class WorldFeatureAetherOre extends WorldFeatureOre {
     private final int numberOfBlocks;
-    private final OreMap variantMap;
+    private final it.unimi.dsi.fastutil.ints.Int2IntArrayMap variantMap;
     private int minableBlockId;
 
     @MethodParametersAnnotation(names = {"blockId", "numberOfBlocks"})
@@ -23,15 +23,18 @@ public class WorldFeatureAetherOre extends WorldFeatureOre {
     }
 
     @MethodParametersAnnotation(names = {"blockId", "numberOfBlocks", "variantMap"})
-    public WorldFeatureAetherOre(@NonNull OreMap variantMap, int numberOfBlocks) {
+    public WorldFeatureAetherOre(it.unimi.dsi.fastutil.ints.Int2IntArrayMap variantMap, int numberOfBlocks) {
         super(variantMap, numberOfBlocks);
         this.numberOfBlocks = numberOfBlocks;
         this.variantMap = variantMap;
     }
 
     @Override
-    public boolean place(World world, Random random, int xStart, int yStart, int zStart) {
+    public boolean place(World world, Random random, net.minecraft.core.world.pos.TilePosc pos) {
         float f = random.nextFloat() * 3.1415927F;
+        int xStart = pos.x();
+        int yStart = pos.y();
+        int zStart = pos.z();
         double xMax = (xStart + 8) + MathHelper.sin(f) * this.numberOfBlocks / 8.0F;
         double xMin = (xStart + 8) - MathHelper.sin(f) * this.numberOfBlocks / 8.0F;
         double zMax = (zStart + 8) + MathHelper.cos(f) * this.numberOfBlocks / 8.0F;

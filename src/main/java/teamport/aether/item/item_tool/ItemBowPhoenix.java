@@ -1,5 +1,6 @@
 package teamport.aether.item.item_tool;
 
+import teamport.aether.util.AetherArmorSlot;
 import net.minecraft.core.entity.player.Player;
 import net.minecraft.core.item.IArmorItem;
 import net.minecraft.core.item.ItemBow;
@@ -18,11 +19,11 @@ public class ItemBowPhoenix extends ItemBow {
     }
 
     @Override
-    public ItemStack onUseItem(ItemStack itemstack, World world, Player entityplayer) {
+    public ItemStack onUse(ItemStack itemstack, World world, Player entityplayer) {
         int index = findActiveQuiver(entityplayer, 2);
-        ItemStack quiverSlot = entityplayer.inventory.armorItemInSlot(index);
+        ItemStack quiverSlot = entityplayer.inventory.armorItemInSlot(AetherArmorSlot.of(index));
         if (quiverSlot != null && quiverSlot.itemID == Items.ARMOR_QUIVER.id && quiverSlot.getMetadata() < quiverSlot.getMaxDamage()) {
-            entityplayer.inventory.armorItemInSlot(index).damageItem(1, entityplayer);
+            entityplayer.inventory.armorItemInSlot(AetherArmorSlot.of(index)).damageItem(1, entityplayer);
             shootArrow(itemstack, world, entityplayer);
         } else if ((quiverSlot != null && quiverSlot.itemID == Items.ARMOR_QUIVER_GOLD.id) ||
             entityplayer.inventory.consumeInventoryItem(Items.AMMO_ARROW_GOLD.id)
@@ -49,7 +50,7 @@ public class ItemBowPhoenix extends ItemBow {
     }
 
     public int findActiveQuiver(Player entityplayer, int index) {
-        ItemStack bodyItem = entityplayer.inventory.armorItemInSlot(index);
+        ItemStack bodyItem = entityplayer.inventory.armorItemInSlot(AetherArmorSlot.of(index));
         if (
             bodyItem == null
                 || (bodyItem.itemID != Items.ARMOR_QUIVER_GOLD.id
@@ -57,6 +58,6 @@ public class ItemBowPhoenix extends ItemBow {
         ) {
             return CAPE_SLOT;
         }
-        return IArmorItem.PIECE_CHEST;
+        return 1;
     }
 }

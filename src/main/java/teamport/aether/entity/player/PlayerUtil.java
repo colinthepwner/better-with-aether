@@ -33,7 +33,7 @@ public class PlayerUtil {
                 continue;
             }
             IArmorItem armor = (IArmorItem) itemStack.getItem();
-            if (armor.getArmorPiece() != i) {
+            if (armor.getArmorShape().getSlotIndex() != i) {
                 continue;
             }
             ArmorMaterial armorMaterial = armor.getArmorMaterial();

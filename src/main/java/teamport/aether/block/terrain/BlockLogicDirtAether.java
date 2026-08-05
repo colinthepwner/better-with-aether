@@ -2,8 +2,10 @@ package teamport.aether.block.terrain;
 
 import net.minecraft.core.block.Block;
 import net.minecraft.core.block.BlockLogic;
+import net.minecraft.core.world.pos.TilePosc;
 import net.minecraft.core.block.Blocks;
 import net.minecraft.core.block.material.Material;
+import net.minecraft.core.block.material.Materials;
 import net.minecraft.core.entity.Mob;
 import net.minecraft.core.entity.player.Player;
 import net.minecraft.core.item.IBonemealable;
@@ -19,7 +21,7 @@ import teamport.aether.item.AetherItems;
 public class BlockLogicDirtAether extends BlockLogic implements IBonemealable {
 
     public BlockLogicDirtAether(Block<?> block) {
-        super(block, Material.dirt);
+        super(block, Materials.DIRT);
         block.setTicking(true);
     }
 
@@ -36,19 +38,20 @@ public class BlockLogicDirtAether extends BlockLogic implements IBonemealable {
     @Override
     public void onBlockDestroyedByPlayer(World world, int x, int y, int z, Side side, int meta, Player player, Item item) {
         ItemStack heldItem = player.getHeldItem();
-        if (heldItem != null && heldItem.getItem().equals(AetherItems.TOOL_SHOVEL_SKYROOT) && meta == 0 && player.getGamemode().consumeBlocks()) {
+        if (heldItem != null && heldItem.getItem().equals(AetherItems.TOOL_SHOVEL_SKYROOT) && meta == 0 && player.getGamemode().hasBlockConsumption()) {
             this.harvestBlock(world, player, x, y, z, 1, world.getTileEntity(x, y, z));
         }
     }
 
     @Override
-    public boolean onBonemealUsed(ItemStack itemStack, @Nullable Player player, World world, int i, int j, int k, Side side, double d, double e) {
+    public boolean onBonemealUsed(ItemStack itemStack, @Nullable Player player, World world, TilePosc pos, Side side, double d, double e) {
+        int i = pos.x(); int j = pos.y(); int k = pos.z();
         int j1;
         if (!world.isClientSide && Blocks.lightBlock[world.getBlockId(i, j + 1, k)] <= 2) {
             j1 = AetherBlocks.GRASS_AETHER.id();
 
             world.setBlockWithNotify(i, j, k, j1);
-            if (player == null || player.getGamemode().consumeBlocks()) {
+            if (player == null || player.getGamemode().hasBlockConsumption()) {
                 --itemStack.stackSize;
                 if (player != null) player.swingItem();
             }

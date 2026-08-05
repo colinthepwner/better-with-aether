@@ -17,7 +17,7 @@ public class ItemToolSwordZanite extends ItemToolSwordAether {
     }
 
     @Override
-    public int getDamageVsEntity(Entity entity, ItemStack is) {
+    public int getDamageVsEntity(ItemStack is, Entity entity) {
         // we will 'lerp' between the starting damage and starting damage time ZANITE_MULTIPLIER
         float durabilityProgress = (float) is.getMetadata() / this.getMaxDamage();
         float startingDamage = (float) super.getDamageVsEntity(entity, is);

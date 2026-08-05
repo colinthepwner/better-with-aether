@@ -71,7 +71,7 @@ public class MobTempest extends MobMonsterAether implements Enemy, AetherDeathMe
 
         if (this.cooldown >= 64 && this.target != null) {
             ProjectileElementLightning elementLightning = new ProjectileElementLightning(this.world, this);
-            elementLightning.setHeading(world.rand.nextDouble(), this.getLookAngle().y + 5, world.rand.nextDouble(), 0.5f, 0.0f);
+            elementLightning.setHeading(world.rand.nextDouble(), this.getViewVector(1.0F).y() + 5, world.rand.nextDouble(), 0.5f, 0.0f);
             this.world.playSoundAtEntity(null, this, "mob.ghast.fireball", this.getSoundVolume(), (this.random.nextFloat() + this.random.nextFloat()) * 1.2F + 1.0F);
             this.world.entityJoinedWorld(elementLightning);
             this.cooldown = 0;
@@ -82,7 +82,7 @@ public class MobTempest extends MobMonsterAether implements Enemy, AetherDeathMe
     protected Entity findPlayerToAttack() {
         if (this.world == null) return null;
         Player entityplayer =  PlayerUtil.getClosestNonInvisPlayerToEntity(this.world, this, 16.0);
-        return entityplayer != null && this.canEntityBeSeen(entityplayer) && entityplayer.getGamemode().areMobsHostile() ? entityplayer : null;
+        return entityplayer != null && this.canEntityBeSeen(entityplayer) && entityplayer.getGamemode().hasHostileMobs() ? entityplayer : null;
     }
 
     @Override

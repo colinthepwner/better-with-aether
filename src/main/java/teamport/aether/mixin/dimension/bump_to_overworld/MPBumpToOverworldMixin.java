@@ -35,7 +35,7 @@ public abstract class MPBumpToOverworldMixin extends Player {
     public abstract String getDisplayName();
     @Inject(method = "onUpdateEntity", at = @At("HEAD"))
     private void bumpPlayerToOverworld(CallbackInfo ci) {
-        if (this.world != null && dimension == AetherDimension.getAether().id && this.y < this.world.worldType.getMinY() - 10) {
+        if (this.world != null && dimension == AetherDimension.getAether().id && this.y < this.world.getWorldType().getMinY(this.world) - 10) {
             AetherMod.LOGGER.debug("Sending {} to overworld", getDisplayName());
             MinecraftServer server = MinecraftServer.getInstance();
 
@@ -68,7 +68,7 @@ public abstract class MPBumpToOverworldMixin extends Player {
             server.playerList.sendPlayerToOtherDimension(player, Dimension.OVERWORLD.id, DyeColor.BLUE, false);
 
             if (passengerNBT != null) {
-                Entity p = EntityDispatcher.createEntityFromNBT(passengerNBT, targetWorld);
+                Entity p = EntityDispatcher.getInstance().createEntityFromNBT(passengerNBT, targetWorld);
                 p.load(passengerNBT);
                 p.moveTo(x, y, z, 0f, 0f);
                 targetWorld.entityJoinedWorld(p);
@@ -78,7 +78,7 @@ public abstract class MPBumpToOverworldMixin extends Player {
                 player.playerNetServerHandler.sendPacket(new PacketSetRiding(p, player));
             }
             if (vehicleNBT != null) {
-                Entity v = EntityDispatcher.createEntityFromNBT(vehicleNBT, targetWorld);
+                Entity v = EntityDispatcher.getInstance().createEntityFromNBT(vehicleNBT, targetWorld);
                 v.moveTo(x, y, z, 0f, 0f);
                 targetWorld.entityJoinedWorld(v);
                 this.startRiding(v);

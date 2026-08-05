@@ -24,7 +24,7 @@ public class ItemToolPickaxeValkyrie extends ItemToolPickaxeAether implements Ae
     }
 
     @Override
-    public boolean canHarvestBlock(Mob mob, ItemStack itemStack, Block<?> block) {
+    public boolean canHarvestBlock(ItemStack itemStack, Mob mob, Block<?> block) {
         Integer miningLevel = aetherMiningLevels.get(block);
         if (miningLevel != null) {
             return this.material.getMiningLevel() >= miningLevel;
@@ -39,7 +39,8 @@ public class ItemToolPickaxeValkyrie extends ItemToolPickaxeAether implements Ae
     }
 
     @Override
-    public boolean beforeDestroyBlock(World world, ItemStack itemStack, int blockId, int x, int y, int z, Side side, Player player) {
+    public boolean beforeBlockDestroyed(ItemStack itemStack, World world, Player player, Block<?> block, net.minecraft.core.world.pos.TilePosc pos, Side side) {
+        int x = pos.x(); int y = pos.y(); int z = pos.z(); int blockId = block.id();
         if (!world.isClientSide && AetherCommandlyRules.canVeinMine(world) && !player.isSneaking()) {
             return !VeinMining
                 .veinMining(world, itemStack, x, y, z, player)

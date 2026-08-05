@@ -24,12 +24,13 @@ public class ItemToolShovelAether extends ItemTool{
     }
 
     @Override
-    public boolean canHarvestBlock(Mob mob, ItemStack itemStack, Block<?> block) {
+    public boolean canHarvestBlock(ItemStack itemStack, Mob mob, Block<?> block) {
         return block.hasTag(AetherBlockTags.MINEABLE_BY_AETHER_SHOVEL);
     }
 
     @Override
-    public boolean onUseItemOnBlock(ItemStack itemstack, Player player, World world, int blockX, int blockY, int blockZ, Side side, double xPlaced, double yPlaced) {
+    public boolean onUseOnBlock(ItemStack itemstack, World world, Player player, net.minecraft.core.world.pos.TilePosc pos, Side side, double xPlaced, double yPlaced) {
+        int blockX = pos.x(); int blockY = pos.y(); int blockZ = pos.z();
         return this.shovelBlock(itemstack, player, world, blockX, blockY, blockZ, side);
     }
 
@@ -57,7 +58,8 @@ public class ItemToolShovelAether extends ItemTool{
     }
 
     @Override
-    public void onUseByActivator(ItemStack itemStack, TileEntityActivator activatorBlock, World world, Random random, int blockX, int blockY, int blockZ, double offX, double offY, double offZ, Direction direction) {
-        this.shovelBlock(itemStack, null, world, blockX + direction.getOffsetX(), blockY + direction.getOffsetY(), blockZ + direction.getOffsetZ(), direction.getSide());
+    public void onUseByActivator(ItemStack itemStack, World world, TileEntityActivator activatorBlock, Random random, net.minecraft.core.world.pos.TilePosc pos, Direction direction, double offX, double offY, double offZ) {
+        int blockX = pos.x(); int blockY = pos.y(); int blockZ = pos.z();
+        this.shovelBlock(itemStack, null, world, blockX + direction.offsetX(), blockY + direction.offsetY(), blockZ + direction.offsetZ(), direction.side());
     }
 }

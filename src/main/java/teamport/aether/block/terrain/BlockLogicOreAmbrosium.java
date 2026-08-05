@@ -1,5 +1,6 @@
 package teamport.aether.block.terrain;
 
+import it.unimi.dsi.fastutil.ints.Int2IntArrayMap;
 import net.minecraft.core.block.Block;
 import net.minecraft.core.block.BlockLogic;
 import net.minecraft.core.block.entity.TileEntity;
@@ -17,7 +18,7 @@ import org.jspecify.annotations.Nullable;
 import teamport.aether.item.AetherItems;
 
 public class BlockLogicOreAmbrosium extends BlockLogic {
-    public static final WorldFeatureOre.OreMap variantMap = new WorldFeatureOre.OreMap();
+    public static final Int2IntArrayMap variantMap = new Int2IntArrayMap();
 
     public BlockLogicOreAmbrosium(Block<?> block, Block<?> parentBlock, Material material) {
         super(block, material);
@@ -37,7 +38,7 @@ public class BlockLogicOreAmbrosium extends BlockLogic {
     @Override
     public void onBlockDestroyedByPlayer(World world, int x, int y, int z, Side side, int meta, Player player, Item item) {
         ItemStack heldItem = player.getHeldItem();
-        if (heldItem != null && heldItem.getItem().equals(AetherItems.TOOL_PICKAXE_SKYROOT) && meta == 0 && player.getGamemode().consumeBlocks()) {
+        if (heldItem != null && heldItem.getItem().equals(AetherItems.TOOL_PICKAXE_SKYROOT) && meta == 0 && player.getGamemode().hasBlockConsumption()) {
             this.harvestBlock(world, player, x, y, z, 0, world.getTileEntity(x, y, z));
         }
     }

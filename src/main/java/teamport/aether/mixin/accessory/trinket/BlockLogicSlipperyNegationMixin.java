@@ -4,8 +4,8 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.core.block.Block;
 import net.minecraft.core.block.BlockLogic;
-import net.minecraft.core.block.BlockLogicIce;
-import net.minecraft.core.block.BlockLogicSlippery;
+
+// import removed
 import net.minecraft.core.entity.Mob;
 import net.minecraft.core.entity.player.Player;
 import net.minecraft.core.item.ItemStack;
@@ -35,7 +35,7 @@ public abstract class BlockLogicSlipperyNegationMixin {
 
         if (blockBelow != null) {
             BlockLogic logic = blockBelow.getLogic();
-            if (logic instanceof BlockLogicSlippery || logic instanceof BlockLogicIce) {
+            if (blockBelow.friction > 0.6F) {
                 ItemStack[] armor = player.inventory.armorInventory;
                 if (armor[TRINKET_1_SLOT] != null && armor[TRINKET_1_SLOT].getItem().namespaceID.equals(AetherItems.ARMOR_TALISMAN_LEATHER.namespaceID)
                     && armor[TRINKET_2_SLOT] != null && armor[TRINKET_2_SLOT].getItem().namespaceID.equals(AetherItems.ARMOR_TALISMAN_LEATHER.namespaceID)) {

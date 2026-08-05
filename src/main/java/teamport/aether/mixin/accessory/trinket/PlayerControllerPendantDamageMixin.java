@@ -25,17 +25,17 @@ public abstract class PlayerControllerPendantDamageMixin {
     @Shadow
     @Final
     protected Minecraft mc;
-    @Inject(method = "destroyBlock", at= @At(value = "INVOKE", target = "Lnet/minecraft/core/block/Block;onBlockDestroyedByPlayer(Lnet/minecraft/core/world/World;IIILnet/minecraft/core/util/helper/Side;ILnet/minecraft/core/entity/player/Player;Lnet/minecraft/core/item/Item;)V"))
-    public void damagePendant(int x, int y, int z, Side side, Player player, CallbackInfoReturnable<Boolean> cir){
+    @Inject(method = "destroyBlock", at= @At(value = "INVOKE", target = "Lnet/minecraft/core/block/Block;onDestroyedByPlayer(Lnet/minecraft/core/world/World;Lnet/minecraft/core/world/pos/TilePosc;Lnet/minecraft/core/util/helper/Side;ILnet/minecraft/core/entity/player/Player;Lnet/minecraft/core/item/Item;)V"))
+    public void damagePendant(net.minecraft.core.world.pos.TilePosc pos, Side side, CallbackInfoReturnable<Boolean> cir){
         if (this.mc.thePlayer == null) return;
         ItemStack[] armor = this.mc.thePlayer.inventory.armorInventory;
         ItemStack trinketSlot1 = armor[TRINKET_1_SLOT];
         ItemStack trinketSlot2 = armor[TRINKET_2_SLOT];
         if (trinketSlot1 != null && trinketSlot1.getItem() instanceof ItemPendant && ((ItemPendant) trinketSlot1.getItem()).canHarvestDamage()) {
-            PlayerUtil.damageItemArmor(player, trinketSlot1, TRINKET_1_SLOT);
+            PlayerUtil.damageItemArmor(this.mc.thePlayer, trinketSlot1, TRINKET_1_SLOT);
         }
         if (trinketSlot2 != null && trinketSlot2.getItem() instanceof ItemPendant && ((ItemPendant) trinketSlot2.getItem()).canHarvestDamage()) {
-            PlayerUtil.damageItemArmor(player, trinketSlot2, TRINKET_2_SLOT);
+            PlayerUtil.damageItemArmor(this.mc.thePlayer, trinketSlot2, TRINKET_2_SLOT);
         }
     }
 }

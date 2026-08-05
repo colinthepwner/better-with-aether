@@ -1,9 +1,11 @@
 package teamport.aether.block.terrain;
 
+import net.minecraft.core.world.pos.TilePosc;
 import net.minecraft.core.block.Block;
 import net.minecraft.core.block.BlockLogicLeavesBase;
 import net.minecraft.core.block.entity.TileEntity;
 import net.minecraft.core.block.material.Material;
+import net.minecraft.core.block.material.Materials;
 import net.minecraft.core.enums.EnumDropCause;
 import net.minecraft.core.item.ItemStack;
 import net.minecraft.core.item.Items;
@@ -14,13 +16,16 @@ import java.util.Random;
 
 public class BlockLogicLeavesOakGolden extends BlockLogicLeavesBase {
     public BlockLogicLeavesOakGolden(Block<?> block) {
-        super(block, Material.leaves, AetherBlocks.SAPLING_OAK_GOLDEN);
+        super(block, Materials.LEAVES, AetherBlocks.SAPLING_OAK_GOLDEN);
     }
 
     @Override
-    public void animationTick(World world, int x, int y, int z, Random rand) {
+    public void animationTick(World world, TilePosc pos, Random rand) {
+		int x = pos.x();
+		int y = pos.y();
+		int z = pos.z();
         if (rand.nextInt(5) == 0) {
-            world.spawnParticle("goldendust", x, y - 0.10000000149011612, z, 0.0, 0.0, 0.0, 0);
+            world.spawnParticle("goldendust", x, y - 0.10000000149011612, z, 0.0, 0.0, 0.0, 0, false);
         }
     }
 

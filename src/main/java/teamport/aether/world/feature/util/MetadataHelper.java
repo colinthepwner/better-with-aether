@@ -1,6 +1,7 @@
 package teamport.aether.world.feature.util;
 
 
+import teamport.aether.util.Directions;
 import net.minecraft.core.block.BlockLogicTorch;
 import net.minecraft.core.util.helper.Direction;
 import net.minecraft.core.util.helper.DyeColor;
@@ -16,7 +17,7 @@ public class MetadataHelper {
     public static final byte MASK_DIRECTION = 3;
 
     public static int getMetadataFromDyeAndDirection(DyeColor dyeColor, Direction direction) {
-        return dyeColor.blockMeta << 4 | direction.getHorizontalIndex();
+        return dyeColor.blockMeta << 4 | Directions.horizontalIndex(direction);
     }
 
     public static int getMetadataFromDyeAndLower(DyeColor dyeColor, int lowerBits) {
@@ -25,7 +26,7 @@ public class MetadataHelper {
 
 
     public static int maskDirectionHorizontal(int metadata, Direction direction) {
-        return (metadata & ~MASK_DIRECTION) | direction.getHorizontalIndex();
+        return (metadata & ~MASK_DIRECTION) | Directions.horizontalIndex(direction);
     }
 
 
@@ -48,7 +49,7 @@ public class MetadataHelper {
         int metadata = dyeColor.blockMeta << 4;
         metadata |= upper << 3;
         metadata |= open << 2;
-        return metadata | getTrapDoorMetaForDirection(direction.getOpposite());
+        return metadata | getTrapDoorMetaForDirection(direction.opposite());
     }
 
     /**

@@ -5,7 +5,7 @@ import net.minecraft.core.block.material.MaterialColor;
 import net.minecraft.core.crafting.LookupFuelFurnace;
 import teamport.aether.item.AetherItems;
 
-import static net.minecraft.core.block.BlockLogicMoss.stoneToMossMap;
+import static net.minecraft.core.block.BlockLogicMoss.NO_MOSS_TO_MOSS_MAP;
 import static net.minecraft.core.block.BlockLogicNote.Instrument.CELESTA;
 import static net.minecraft.core.block.BlockLogicNote.Instrument.WOOD_BLOCK;
 import static net.minecraft.core.block.material.MaterialColor.registerManualBlockColor;
@@ -45,7 +45,7 @@ public class AetherBlockDetails {
         LookupFuelFurnace.instance.addFuelEntry(AetherBlocks.BUTTON_PLANKS_SKYROOT.id(), 75);
         LookupFuelFurnace.instance.addFuelEntry(AetherBlocks.BUTTON_PLANKS_SKYROOT_PAINTED.id(), 75);
 
-        LookupFuelFurnace.instance.addFuelEntry(Blocks.BUTTON_PLANKS.id(), 75);
+        LookupFuelFurnace.instance.addFuelEntry(Blocks.BUTTON_PLANKS_OAK.id(), 75);
         LookupFuelFurnace.instance.addFuelEntry(Blocks.BUTTON_PLANKS_PAINTED.id(), 75);
 
         LookupFuelFurnace.instance.addFuelEntry(AetherItems.BUCKET_SKYROOT.id, 300);
@@ -137,8 +137,8 @@ public class AetherBlockDetails {
     }
 
     public static void registerMossMap() {
-        stoneToMossMap.put(AetherBlocks.HOLYSTONE, AetherBlocks.HOLYSTONE_MOSSY);
-        stoneToMossMap.put(AetherBlocks.COBBLE_HOLYSTONE, AetherBlocks.COBBLE_HOLYSTONE_MOSSY);
+        NO_MOSS_TO_MOSS_MAP.put(AetherBlocks.HOLYSTONE, AetherBlocks.HOLYSTONE_MOSSY);
+        NO_MOSS_TO_MOSS_MAP.put(AetherBlocks.COBBLE_HOLYSTONE, AetherBlocks.COBBLE_HOLYSTONE_MOSSY);
     }
 
     public static void registerMapColors() {

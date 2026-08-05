@@ -141,9 +141,9 @@ public class EntityFloatingBlock extends Entity {
                             }
 
                             this.carriedBlock.entity.validate();
-                            this.carriedBlock.entity.x = x;
-                            this.carriedBlock.entity.y = y;
-                            this.carriedBlock.entity.z = z;
+                            this.carriedBlock.entity.tilePos.x = x;
+                            this.carriedBlock.entity.tilePos.y = y;
+                            this.carriedBlock.entity.tilePos.z = z;
                             this.carriedBlock.entity.worldObj = this.world;
                             this.carriedBlock.entity.carriedBlock = null;
 

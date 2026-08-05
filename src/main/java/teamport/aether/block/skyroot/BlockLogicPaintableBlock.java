@@ -20,7 +20,8 @@ public class BlockLogicPaintableBlock extends BlockLogic implements IPaintable {
     }
 
     @Override
-    public void setColor(World world, int x, int y, int z, DyeColor color) {
+    public void setColor(World world, net.minecraft.core.world.pos.TilePosc pos, DyeColor color) {
+        int x = pos.x(); int y = pos.y(); int z = pos.z();
         Block<? extends IPainted> painted = paintedVariant.get();
         world.setBlock(x, y, z, painted.id());
         painted.getLogic().setColor(world, x, y, z, color);

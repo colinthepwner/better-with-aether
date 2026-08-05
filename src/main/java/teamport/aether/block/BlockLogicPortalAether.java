@@ -1,5 +1,6 @@
 package teamport.aether.block;
 
+import net.minecraft.core.world.pos.TilePosc;
 import net.minecraft.core.block.Block;
 import net.minecraft.core.block.BlockLogicPortal;
 import net.minecraft.core.sound.SoundCategory;
@@ -16,7 +17,10 @@ public class BlockLogicPortalAether extends BlockLogicPortal {
     }
 
     @Override
-    public void animationTick(World world, int x, int y, int z, Random rand) {
+    public void animationTick(World world, TilePosc pos, Random rand) {
+		int x = pos.x();
+		int y = pos.y();
+		int z = pos.z();
         int meta = world.getBlockMetadata(x, y, z);
         if ((meta & 2) > 0 && rand.nextInt(20) == 0) {
             world.playSoundEffect(null, SoundCategory.WORLD_SOUNDS, x + 0.5, y + 0.5, z + 0.5, "aether:portal", 1.0F, rand.nextFloat() * 0.4F + 0.8F);
@@ -38,7 +42,7 @@ public class BlockLogicPortalAether extends BlockLogicPortal {
                 zd = rand.nextDouble() * 2.0 * i1;
             }
 
-            world.spawnParticle("portal", px, py, pz, xd, yd, zd, this.fromMetadata(meta).blockMeta);
+            world.spawnParticle("portal", px, py, pz, xd, yd, zd, this.fromMetadata(meta).blockMeta, false);
         }
 
     }

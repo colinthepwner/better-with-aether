@@ -1,5 +1,6 @@
 package teamport.aether.mixin.accessory;
 
+import teamport.aether.util.AetherArmorSlot;
 import com.llamalad7.mixinextras.expression.Definition;
 import com.llamalad7.mixinextras.expression.Expression;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
@@ -15,13 +16,13 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Screen;
 import net.minecraft.client.gui.container.ScreenInventory;
 import net.minecraft.client.gui.container.ScreenInventoryCreative;
-import net.minecraft.client.render.EntityRenderDispatcher;
+import net.minecraft.client.render.EntityRendererDispatcher;
 import net.minecraft.client.render.TextureManager;
 import net.minecraft.client.render.entity.MobRenderer;
 import net.minecraft.client.render.entity.MobRendererPlayer;
-import net.minecraft.client.render.model.ModelBase;
-import net.minecraft.client.render.model.ModelBiped;
-import net.minecraft.client.render.tessellator.Tessellator;
+import teamport.aether.compat.model.ModelBase;
+import teamport.aether.compat.model.ModelBiped;
+import net.minecraft.client.render.tessellator.TessellatorGeneral;
 import net.minecraft.core.entity.player.Player;
 import net.minecraft.core.item.Item;
 import net.minecraft.core.item.ItemStack;
@@ -57,15 +58,14 @@ import static teamport.aether.item.accessory.SlotAccessory.*;
 
 @Environment(EnvType.CLIENT)
 @Mixin(value = MobRendererPlayer.class)
-public abstract class MobRendererPlayerMixinAccessoryRender extends MobRenderer<Player> {
-    @Shadow
-    private ModelBiped modelBipedMain;
-    @Shadow
-    @Final
-    private ModelBiped modelArmor;
-    @Shadow
-    @Final
-    private ModelBiped modelArmorChestplate;
+public abstract class MobRendererPlayerMixinAccessoryRender extends net.minecraft.client.render.entity.MobRendererBipedArmored<Player> {
+    public MobRendererPlayerMixinAccessoryRender() {
+        super(0f);
+    }
+        @Unique
+    private final ModelBiped modelArmor = new ModelBiped(1.0F);
+    @Unique
+    private final ModelBiped modelArmorChestplate = new ModelBiped(1.0F);
     @Unique
     private final ModelBiped modelAccessories = new ModelBiped(1.1F);
     @Unique
@@ -79,12 +79,11 @@ public abstract class MobRendererPlayerMixinAccessoryRender extends MobRenderer<
     @Unique
     private boolean shield6 = false;
 
-    protected MobRendererPlayerMixinAccessoryRender(ModelBase model, float shadowSize) {
-        super(model, shadowSize);
-    }
 
-    @Inject(method = "drawFirstPersonHand", at = @At("TAIL"))
-    private void callDrawFirstPersonHandAfter(@NonNull Player player, boolean isLeft, CallbackInfo ci) {
+
+    // 8.0 threads the tessellator in as the first parameter of drawFirstPersonHand.
+    @Inject(method = "drawFirstPersonHand(Lnet/minecraft/client/render/tessellator/TessellatorGeneral;Lnet/minecraft/core/entity/player/Player;Z)V", at = @At("TAIL"))
+    private void callDrawFirstPersonHandAfter(TessellatorGeneral tessellator, @NonNull Player player, boolean isLeft, CallbackInfo ci) {
         ItemStack held = player.inventory.getCurrentItem();
 
         if ((held == null || !held.getItem().equals(Items.MAP)) && isLeft) {
@@ -131,105 +130,61 @@ public abstract class MobRendererPlayerMixinAccessoryRender extends MobRenderer<
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, previousTexture);
     }
 
-    @Definition(id = "spectator", field = "Lnet/minecraft/core/player/gamemode/Gamemode;spectator:Lnet/minecraft/core/player/gamemode/Gamemode;")
-    @Expression("spectator")
-    @ModifyExpressionValue(method = "prepareArmor(Lnet/minecraft/core/entity/player/Player;IF)Z", at = @At(value = "MIXINEXTRAS:EXPRESSION", ordinal = 4))
-    private Gamemode spoofPrepareArmorCheckWhenInvisible(Gamemode original, Player entity, int layer, float partialTick) {
+    
+    
+    @Inject(method = "getAndSetupModelForLayer(Lnet/minecraft/core/entity/player/Player;FFI)Lorg/useless/dragonfly/models/entity/StaticEntityModel;", at = @At("HEAD"), cancellable = true)
+    private void hideArmorWhenInvisible(Player entity, float a, float b, int layer, org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable<org.useless.dragonfly.models.entity.StaticEntityModel> cir) {
         if (PlayerUtil.isInvisible(entity)) {
-            return entity.getGamemode();
+            cir.setReturnValue(null); return;
         }
-        return original;
+        
     }
 
-    @SuppressWarnings("java:S107")
-    @WrapOperation(method = "prepareArmor(Lnet/minecraft/core/entity/player/Player;IF)Z", at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/GL11;glColor4f(FFFF)V", ordinal = 1))
-    private void renderPrepareArmorPlayerInvisible(float red, float blue, float green, float alpha, Operation<Void> original, Player entity, int layer, float partialTick) {
-        if (entity.getGamemode() == Gamemode.spectator) {
-            original.call(red, blue, green, alpha);
-            return;
-        }
-        original.call(red, blue, green, 0.05F);
-        GL11.glEnable(GL11.GL_BLEND);
-    }
 
-    @Definition(id = "spectator", field = "Lnet/minecraft/core/player/gamemode/Gamemode;spectator:Lnet/minecraft/core/player/gamemode/Gamemode;")
-    @Expression("spectator")
-    @ModifyExpressionValue(method = "setupScale(Lnet/minecraft/core/entity/player/Player;F)V", at = @At(value = "MIXINEXTRAS:EXPRESSION", ordinal = 2))
-    private Gamemode spoofScaleCheckWhenInvisible(Gamemode original, Player entity, float partialTick) {
-        if (PlayerUtil.isInvisible(entity)) {
-            return entity.getGamemode();
-        }
-        return original;
-    }
 
-    @WrapOperation(method = "setupScale(Lnet/minecraft/core/entity/player/Player;F)V", at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/GL11;glColor4f(FFFF)V", ordinal = 1))
-    private void renderScalePlayerInvisible(float red, float blue, float green, float alpha, Operation<Void> original, Player entity, float partialTick) {
-        if (entity.getGamemode() == Gamemode.spectator) {
-            original.call(red, blue, green, alpha);
-            return;
-        }
-        original.call(red, blue, green, 0.0F);
-        GL11.glEnable(GL11.GL_BLEND);
-    }
 
-    @SuppressWarnings("java:S107")
-    @Inject(method = "render(Lnet/minecraft/client/render/tessellator/Tessellator;Lnet/minecraft/core/entity/player/Player;DDDFF)V", at = @At("HEAD"))
-    private void pushGL11AlphaTestRef(Tessellator tessellator, Player entity, double x, double y, double z, float yaw, float partialTick, CallbackInfo ci, @Share("alphaTest") LocalFloatRef alphaTest) {
-        alphaTest.set(GL11.glGetFloat(GL11.GL_ALPHA_TEST_REF));
-        GL11.glAlphaFunc(GL11.GL_GREATER, 0.0F);
-    }
 
-    @SuppressWarnings("java:S107")
-    @Inject(method = "render(Lnet/minecraft/client/render/tessellator/Tessellator;Lnet/minecraft/core/entity/player/Player;DDDFF)V", at = @At("RETURN"))
-    private void popGL11AlphaTestRef(Tessellator tessellator, Player entity, double x, double y, double z, float yaw, float partialTick, CallbackInfo ci, @Share("alphaTest") LocalFloatRef alphaTest) {
-        GL11.glAlphaFunc(GL11.GL_GREATER, alphaTest.get());
-    }
 
-    @ModifyArg(method = "prepareArmor*", at = @At(value = "INVOKE", target = "Lnet/minecraft/core/player/inventory/container/ContainerInventory;armorItemInSlot(I)Lnet/minecraft/core/item/ItemStack;"))
-    private int getArmorItemNotNegative(int i, @Local(argsOnly = true) int renderPass) {
-        return (renderPass > 3) ? renderPass : 3 - renderPass;
-    }
 
-    @SuppressWarnings("java:S107")
-    @Inject(method = "render(Lnet/minecraft/client/render/tessellator/Tessellator;Lnet/minecraft/core/entity/player/Player;DDDFF)V", at = @At("TAIL"))
-    public void renderBunny(Tessellator tessellator, Player entity, double x, double y, double z, float yaw, float partialTick, CallbackInfo ci) {
-        if (entity != Minecraft.getMinecraft().thePlayer) return;
-
-        Screen currScreen = Minecraft.getMinecraft().currentScreen;
-        final boolean isInInventory = currScreen instanceof ScreenInventory || currScreen instanceof ScreenInventoryCreative;
-
-        if (entity.passenger instanceof MobAerbunny && isInInventory) {
-            MobAerbunny bunny = (MobAerbunny) entity.passenger;
-            boolean hasHelmet = entity.inventory.armorInventory[3] != null;
-
-            GL11.glPushMatrix();
-            GL11.glColor4f(1F, 1F, 1F, 1F);
-            GL11.glScalef(0.80F, 0.80F, 0.80F);
-            if (hasHelmet) {
-                GL11.glTranslatef(0, 0.1875F, 0);
-            } else {
-                GL11.glTranslatef(0, 0.0625F, 0);
-            }
-            EntityRenderDispatcher.instance.renderEntityWithPosYaw(tessellator, bunny, x, y + 0.25F, z, yaw, partialTick);
-            GL11.glPopMatrix();
-        }
-    }
-
+    // The whole-render injectors (alpha-test push/pop and the aerbunny) moved to
+    // MobRendererMixinPlayerRender: 8.0 dropped MobRendererPlayer's render() override, leaving only
+    // the inherited MobRenderer declaration, which mixin cannot target from here.
 
     @SuppressWarnings({"java:S6541", "java:S1075", "java:S3776"})
-    @ModifyReturnValue(method = "prepareArmor(Lnet/minecraft/core/entity/player/Player;IF)Z", at = @At("TAIL"))
-    private boolean setArmorModel(boolean original, Player entity, int layer, float partialTick) {
-        modelAccessories.holdingLarge = shield.holdingLarge = modelFeather.holdingLarge = modelBubble.holdingLarge = modelHeart.holdingLarge = modelBipedMain.holdingLarge;
-        modelAccessories.holdingRightHand = shield.holdingRightHand = modelFeather.holdingRightHand = modelBubble.holdingRightHand = modelHeart.holdingRightHand = modelBipedMain.holdingRightHand;
-        modelAccessories.holdingLeftHand = shield.holdingLeftHand = modelFeather.holdingLeftHand = modelBubble.holdingLeftHand = modelHeart.holdingLeftHand = modelBipedMain.holdingLeftHand;
-        modelAccessories.sneaking = shield.sneaking = modelFeather.sneaking = modelBubble.sneaking = modelHeart.sneaking = modelBipedMain.sneaking;
-        modelAccessories.isRiding = shield.isRiding = modelFeather.isRiding = modelBubble.isRiding = modelHeart.isRiding = modelBipedMain.isRiding;
-        float swingProgress = this.getSwingProgress(entity, partialTick);
+        @Inject(method = "renderAdditional", at = @At("TAIL"))
+    private void renderAccessories(TessellatorGeneral tessellator, Player entity, float partialTick, CallbackInfo ci) {
+        for (int layer = 4; layer < ((Player)entity).inventory.armorInventory.length; layer++) {
+            renderAccessoryLayer(tessellator, entity, layer, partialTick);
+        }
+    }
+
+    @Unique
+    private void renderModelBiped(net.minecraft.client.render.tessellator.TessellatorGeneral tessellator, ModelBiped model, Player entity, float partialTick) {
+        float limbSwing = this.getLimbSwing(entity, partialTick);
+        float limbYaw = this.getLimbYaw(entity, partialTick);
+        float limbPitch = this.getLimbPitch(entity, partialTick);
+        float headYaw = this.getHeadYaw(entity, partialTick);
+        float headPitch = this.getHeadPitch(entity, partialTick);
+        
+        ModelBase.bind(tessellator);
+        model.render(limbSwing, limbYaw, limbPitch, headYaw, headPitch, 0.0625F);
+        ModelBase.bind(null);
+    }
+
+    @Unique
+    private void renderAccessoryLayer(TessellatorGeneral tessellator, Player entity, int layer, float partialTick) {
+        modelAccessories.holdingLarge = shield.holdingLarge = modelFeather.holdingLarge = modelBubble.holdingLarge = modelHeart.holdingLarge = false;
+        modelAccessories.holdingRightHand = shield.holdingRightHand = modelFeather.holdingRightHand = modelBubble.holdingRightHand = modelHeart.holdingRightHand = ((Player)entity).inventory.getCurrentItem() != null;
+        modelAccessories.holdingLeftHand = shield.holdingLeftHand = modelFeather.holdingLeftHand = modelBubble.holdingLeftHand = modelHeart.holdingLeftHand = false;
+        modelAccessories.sneaking = shield.sneaking = modelFeather.sneaking = modelBubble.sneaking = modelHeart.sneaking = ((Player)entity).isSneaking();
+        modelAccessories.isRiding = shield.isRiding = modelFeather.isRiding = modelBubble.isRiding = modelHeart.isRiding = ((Player)entity).isPassenger();
+        
+        float swingProgress = ((Player)entity).getSwingProgress(partialTick);
         modelAccessories.onGround = shield.onGround = modelFeather.onGround = modelBubble.onGround = modelHeart.onGround = modelArmor.onGround = modelArmorChestplate.onGround = swingProgress;
 
-        ItemStack armorStack = entity.inventory.armorInventory[layer];
+        ItemStack armorStack = ((Player)entity).inventory.armorInventory[layer];
         if (armorStack == null) {
-            return false;
+            return;
         }
 
         if ((armorStack.getItem() instanceof IAccessory || armorStack.getItem().hasTag(AetherItemTags.TRINKET)) && layer >= GLOVES_SLOT) {
@@ -237,16 +192,16 @@ public abstract class MobRendererPlayerMixinAccessoryRender extends MobRenderer<
 
             if (item instanceof ItemGloves) {
                 String path = String.format("/assets/%s/textures/armor/gloves/%s_gloves.png", item.namespaceID.namespace(), ((IAccessory) item).name());
-                modelArmorChestplate.holdingRightHand = entity.inventory.getCurrentItem() != null;
-                modelArmorChestplate.sneaking = entity.isSneaking();
-                modelArmorChestplate.isRiding = entity.isPassenger();
+                modelArmorChestplate.holdingRightHand = ((Player)entity).inventory.getCurrentItem() != null;
+                modelArmorChestplate.sneaking = ((Player)entity).isSneaking();
+                modelArmorChestplate.isRiding = ((Player)entity).isPassenger();
                 modelArmorChestplate.armLeft.visible = layer == GLOVES_SLOT;
                 modelArmorChestplate.armRight.visible = layer == GLOVES_SLOT;
                 renderDispatcher.textureManager.loadTexture(path).bind();
-                setArmorModel(modelArmorChestplate);
-                return true;
+                renderModelBiped(tessellator, modelArmorChestplate, entity, partialTick);
+                return;
             }
-            if ((item instanceof ItemRepulsionShield && (layer == TRINKET_2_SLOT || entity.inventory.armorInventory[TRINKET_2_SLOT] == null)) || this.shield6) {
+            if ((item instanceof ItemRepulsionShield && (layer == TRINKET_2_SLOT || ((Player)entity).inventory.armorInventory[TRINKET_2_SLOT] == null)) || this.shield6) {
                 this.shield6 = false;
                 String path;
                 if (((AetherRepulsion) entity).aether$isRepulse()) {
@@ -265,20 +220,23 @@ public abstract class MobRendererPlayerMixinAccessoryRender extends MobRenderer<
                     GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
                     GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
                 }
-                setArmorModel(shield);
-                return true;
+                renderModelBiped(tessellator, shield, entity, partialTick);
+                GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+                return;
             }
 
             ///  redirect the render to next item
             if (item instanceof ItemRepulsionShield && layer == 6) {
                 this.shield6 = true;
-                ItemStack nextSlot = entity.inventory.armorInventory[layer + 1];
-                item = nextSlot.getItem();
-                layer += 1;
+                ItemStack nextSlot = ((Player)entity).inventory.armorInventory[layer + 1];
+                if (nextSlot != null) {
+                    item = nextSlot.getItem();
+                    layer += 1;
+                }
             }
 
-            ItemStack itemTrinketSlot1 = entity.inventory.armorInventory[TRINKET_1_SLOT];
-            ItemStack itemTrinketSlot2 = entity.inventory.armorInventory[TRINKET_2_SLOT];
+            ItemStack itemTrinketSlot1 = ((Player)entity).inventory.armorInventory[TRINKET_1_SLOT];
+            ItemStack itemTrinketSlot2 = ((Player)entity).inventory.armorInventory[TRINKET_2_SLOT];
 
             if (item instanceof ItemGoldenFeather) {
                 String path;
@@ -295,14 +253,14 @@ public abstract class MobRendererPlayerMixinAccessoryRender extends MobRenderer<
                 modelFeather.armLeft.visible = false;
                 modelFeather.armRight.visible = false;
                 renderDispatcher.textureManager.loadTexture(path).bind();
-                setArmorModel(modelFeather);
-                return true;
+                renderModelBiped(tessellator, modelFeather, entity, partialTick);
+                return;
             }
 
             String textureKey = MixinHelper.TRINKET_TEXTURES.get(item);
             if (textureKey != null) {
                 if (layer != TRINKET_1_SLOT && layer != TRINKET_2_SLOT) {
-                    return false;
+                    return;
                 }
 
                 boolean leftSlot = (layer == TRINKET_1_SLOT);
@@ -317,8 +275,8 @@ public abstract class MobRendererPlayerMixinAccessoryRender extends MobRenderer<
                 modelAccessories.legRight.visible = !leftSlot;
 
                 renderDispatcher.textureManager.loadTexture(path).bind();
-                setArmorModel(modelAccessories);
-                return true;
+                renderModelBiped(tessellator, modelAccessories, entity, partialTick);
+                return;
             }
 
             if (item instanceof ItemPendant) {
@@ -329,8 +287,8 @@ public abstract class MobRendererPlayerMixinAccessoryRender extends MobRenderer<
                 String path = String.format("/assets/%s/textures/armor/pendants/%s_pendant_%d.png", item.namespaceID.namespace(), ((IAccessory) item).name(), variant);
                 modelAccessories.body.visible = true;
                 renderDispatcher.textureManager.loadTexture(path).bind();
-                setArmorModel(modelAccessories);
-                return true;
+                renderModelBiped(tessellator, modelAccessories, entity, partialTick);
+                return;
             }
 
             if (item instanceof ItemRegenStone) {
@@ -341,8 +299,8 @@ public abstract class MobRendererPlayerMixinAccessoryRender extends MobRenderer<
                 String path = String.format("/assets/%s/textures/armor/trinkets/%s_%s.png", item.namespaceID.namespace(), ((IAccessory) item).name(), variant);
                 modelHeart.head.visible = true;
                 renderDispatcher.textureManager.loadTexture(path).bind();
-                setArmorModel(modelHeart);
-                return true;
+                renderModelBiped(tessellator, modelHeart, entity, partialTick);
+                return;
             }
 
             if (item instanceof ItemIronBubble) {
@@ -369,13 +327,13 @@ public abstract class MobRendererPlayerMixinAccessoryRender extends MobRenderer<
                         GL11.glColor4f(1.0F, 1.0F, 1.0F, 0.5F);
                         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
                     }
-                    setArmorModel(modelBubble);
+                    renderModelBiped(tessellator, modelBubble, entity, partialTick);
+                    GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 
-                    return true;
+                    return;
                 }
             }
         }
-        return false;
     }
 
     @Unique

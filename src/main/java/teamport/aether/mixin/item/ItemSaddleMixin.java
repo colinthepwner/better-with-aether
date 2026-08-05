@@ -13,8 +13,8 @@ import teamport.aether.entity.animal.phyg.MobPhyg;
 
 @Mixin(value = ItemSaddle.class)
 public abstract class ItemSaddleMixin {
-    @ModifyReturnValue(method = "useItemOnEntity", at = @At("TAIL"))
-    private boolean callOnItemUse(boolean original, ItemStack itemstack, Mob mob, Player player) {
+    @ModifyReturnValue(method = "useOnEntity", at = @At("TAIL"))
+    private boolean callOnItemUse(boolean original, ItemStack itemstack, Player player, Mob mob) {
         if (mob instanceof MobPhyg && itemstack.consumeItem(player)) {
             MobPhyg entity = (MobPhyg) mob;
             if (!entity.getSaddled()) {

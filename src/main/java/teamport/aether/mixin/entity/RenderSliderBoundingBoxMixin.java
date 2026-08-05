@@ -7,17 +7,30 @@ import net.fabricmc.api.Environment;
 import net.minecraft.client.render.RenderGlobal;
 import net.minecraft.client.render.camera.ICamera;
 import net.minecraft.core.entity.Entity;
-import net.minecraft.core.util.phys.AABB;
+import org.joml.primitives.AABBd;
+import org.joml.primitives.AABBdc;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import teamport.aether.entity.boss.slider.MobBossSlider;
 
+/// The slider's debug outline is drawn un-grown, because its hitbox is already flush with the block
+/// it occupies and the usual outward nudge makes it look wrong.
+///
+/// 8.0 moved the growth out of `AABB.grow` (that class is gone along with the rest of the old physics
+/// types) and into the static `MathHelper.aabbGrow`, which writes into a caller-supplied `AABBd`
+/// rather than allocating. Declining the growth therefore means copying the source box into that
+/// destination instead of just returning the receiver.
 @Environment(EnvType.CLIENT)
 @Mixin(value = RenderGlobal.class)
 public abstract class RenderSliderBoundingBoxMixin {
-    @WrapOperation(method = "drawInterpolatedEntityBoundingBox", at = @At(value = "INVOKE", target = "Lnet/minecraft/core/util/phys/AABB;grow(DDD)Lnet/minecraft/core/util/phys/AABB;"))
-    private AABB undoGrow(AABB instance, double d, double d1, double d2, Operation<AABB> original, Entity entity, ICamera camera, float partialTicks) {
-        if (entity instanceof MobBossSlider) return instance;
-        return original.call(instance, d, d1, d2);
+    @WrapOperation(method = "drawInterpolatedEntityBoundingBox", at = @At(value = "INVOKE", target = "Lnet/minecraft/core/util/helper/MathHelper;aabbGrow(Lorg/joml/primitives/AABBdc;DDDLorg/joml/primitives/AABBd;)Lorg/joml/primitives/AABBd;"))
+    private AABBd undoGrow(AABBdc source, double growX, double growY, double growZ, AABBd dest, Operation<AABBd> original,
+                           Entity entity, AABBdc box, ICamera camera, float partialTicks) {
+        if (entity instanceof MobBossSlider) {
+            dest.setMin(source.minX(), source.minY(), source.minZ());
+            dest.setMax(source.maxX(), source.maxY(), source.maxZ());
+            return dest;
+        }
+        return original.call(source, growX, growY, growZ, dest);
     }
 }

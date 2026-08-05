@@ -1,5 +1,6 @@
 package teamport.aether.entity.projectile;
 
+import teamport.aether.util.HitResults;
 import net.minecraft.core.entity.Entity;
 import net.minecraft.core.entity.Mob;
 import net.minecraft.core.entity.projectile.Projectile;
@@ -90,11 +91,11 @@ public class ProjectileWindball extends Projectile implements ProjectileAether, 
 
     @Override
     public void onHit(HitResult result) {
-        if (result.entity instanceof MobZephyr) {
+        if (HitResults.entity(result) instanceof MobZephyr) {
             return;
         }
-        if (this.world != null && !this.world.isClientSide && result.entity != null && !(result.entity instanceof Projectile)) {
-            MobUtil.knockback(result.entity, this, 4.0f, 0.0f);
+        if (this.world != null && !this.world.isClientSide && HitResults.entity(result) != null && !(HitResults.entity(result) instanceof Projectile)) {
+            MobUtil.knockback(HitResults.entity(result), this, 4.0f, 0.0f);
             this.world.playSoundAtEntity(null, this, "aether:mob.zephyr.shoot", 0.3F, 2.0F);
         }
         this.remove();

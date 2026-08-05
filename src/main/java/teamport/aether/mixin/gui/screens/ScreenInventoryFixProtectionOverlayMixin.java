@@ -24,7 +24,7 @@ import teamport.aether.mixin.accessors.ScreenContainerAbstractAccessor;
 @Mixin(value = ScreenInventory.class)
 public abstract class ScreenInventoryFixProtectionOverlayMixin extends ScreenContainerAbstract {
     protected ScreenInventoryFixProtectionOverlayMixin(Player player) {
-        super(player.inventorySlots);
+        super(player.inventoryMenu);
     }
     @ModifyExpressionValue(method = "drawProtectionOverlay", at = @At(value = "CONSTANT", args = "intValue=44", ordinal = 1))
     private int adjustMaxHeight(int original) {
@@ -38,14 +38,14 @@ public abstract class ScreenInventoryFixProtectionOverlayMixin extends ScreenCon
     }
     @WrapOperation(method = "drawProtectionOverlay", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/container/ScreenInventory;drawGradientRect(IIIIII)V"))
     private void fixBoxOverlappingInCreative(ScreenInventory instance, int minX, int minY, int maxX, int maxY, int argb1, int argb2, Operation<Void> original) {
-        if (this.mc.thePlayer.gamemode.instantPortalTravel() && !this.mc.thePlayer.gamemode.isHiddenFromWorldCreation()) {
+        if (this.mc.thePlayer.gamemode.hasInstantPortalTravel()) {
             original.call(instance, minX - 5, minY, maxX - 5, maxY, argb1, argb2);
             return;
         }
         original.call(instance, minX, minY, maxX, maxY, argb1, argb2);
     }
-    @WrapOperation(method = "drawProtectionOverlay", at = @At(value = "INVOKE", target = "Lnet/minecraft/core/player/inventory/container/ContainerInventory;getTotalProtectionAmount(Lnet/minecraft/core/util/helper/DamageType;)F", ordinal = 0))
-    private float boundsMinProtectionValue(ContainerInventory instance, DamageType armor, Operation<Float> original) {
+    @WrapOperation(method = "drawProtectionOverlay", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/entity/player/PlayerLocal;getTotalProtectionAmount(Lnet/minecraft/core/util/helper/DamageType;)F", ordinal = 0))
+    private float boundsMinProtectionValue(net.minecraft.client.entity.player.PlayerLocal instance, DamageType armor, Operation<Float> original) {
         float originalFloat = original.call(instance, armor);
         return Math.max(originalFloat, -1.0F);
     }
@@ -58,7 +58,7 @@ public abstract class ScreenInventoryFixProtectionOverlayMixin extends ScreenCon
     }
     @WrapOperation(method = "drawProtectionOverlay", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/container/ScreenInventory;drawGuiIcon(IIIILnet/minecraft/client/render/texture/stitcher/IconCoordinate;)V"))
     private void moveIconForCreativeFix(ScreenInventory instance, int x, int y, int width, int height, IconCoordinate coordinate, Operation<Void> original) {
-        if (this.mc.thePlayer.gamemode.instantPortalTravel() && !this.mc.thePlayer.gamemode.isHiddenFromWorldCreation()) {
+        if (this.mc.thePlayer.gamemode.hasInstantPortalTravel()) {
             original.call(instance, x - 5, y, width, height, coordinate);
             return;
         }
@@ -66,7 +66,7 @@ public abstract class ScreenInventoryFixProtectionOverlayMixin extends ScreenCon
     }
     @WrapOperation(method = "drawProtectionOverlay", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/container/ScreenInventory;drawRectWidthHeight(IIIII)V", ordinal = 0))
     private void moveProtectionBarForCreativeFix(ScreenInventory instance, int x, int y, int width, int height, int argb, Operation<Void> original) {
-        if (this.mc.thePlayer.gamemode.instantPortalTravel() && !this.mc.thePlayer.gamemode.isHiddenFromWorldCreation()) {
+        if (this.mc.thePlayer.gamemode.hasInstantPortalTravel()) {
             original.call(instance, x - 5, y, width, height, argb);
             return;
         }
@@ -74,24 +74,13 @@ public abstract class ScreenInventoryFixProtectionOverlayMixin extends ScreenCon
     }
     @WrapOperation(method = "drawProtectionOverlay", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/container/ScreenInventory;drawRectWidthHeight(IIIII)V", ordinal = 1))
     private void moveFilledProtectionBarForCreativeFix(ScreenInventory instance, int x, int y, int width, int height, int argb, Operation<Void> original, @Share("barWidth") LocalIntRef barWidth) {
-        if (this.mc.thePlayer.gamemode.instantPortalTravel() && !this.mc.thePlayer.gamemode.isHiddenFromWorldCreation()) {
+        if (this.mc.thePlayer.gamemode.hasInstantPortalTravel()) {
             original.call(instance, x - 5, y, barWidth.get(), height, argb);
             return;
         }
         original.call(instance, x, y, barWidth.get(), height, argb);
     }
-    @Definition(id = "hoveredDamageType", field = "Lnet/minecraft/client/gui/container/ScreenInventory;hoveredDamageType:Lnet/minecraft/core/util/helper/DamageType;")
-    @Expression("this.hoveredDamageType != null")
-    @ModifyExpressionValue(method = "drawProtectionOverlay", at = @At("MIXINEXTRAS:EXPRESSION"))
-    private boolean boundNegativePercentValues(boolean original) {
-        return original && ((ScreenContainerAbstractAccessor) this).getTooltipElement() != null;
-    }
-    @Expression("? < 0")
-    @ModifyExpressionValue(method = "drawProtectionOverlay", at = @At("MIXINEXTRAS:EXPRESSION"))
-    private boolean boundNegativePercentValues(boolean original, @Local(name = "protection") LocalIntRef protection) {
-        if (protection.get() < -100) protection.set(-100);
-        return false;
-    }
+
     @WrapOperation(method = "drawProtectionOverlay", at = @At(value = "INVOKE", target = "Lnet/minecraft/core/util/helper/DamageType;shouldDisplay()Z"))
     private boolean modifyIndex(DamageType instance, Operation<Boolean> original, @Local(name = "i") LocalIntRef i) {
         boolean shouldDisplay = original.call(instance);

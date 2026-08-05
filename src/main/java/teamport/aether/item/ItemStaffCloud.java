@@ -14,12 +14,12 @@ public class ItemStaffCloud extends Item {
     }
 
     @Override
-    public ItemStack onUseItem(ItemStack itemstack, World world, Player entityplayer) {
+    public ItemStack onUse(ItemStack itemstack, World world, Player entityplayer) {
         world.playSoundAtEntity(entityplayer, entityplayer, "aether:mob.zephyr.shoot", 0.3F, 1.0F / (itemRand.nextFloat() * -0.2F - 0.4F));
         if (!world.isClientSide) {
-            double lookX = entityplayer.getLookAngle().x;
-            double lookY = entityplayer.getLookAngle().y;
-            double lookZ = entityplayer.getLookAngle().z;
+            double lookX = entityplayer.getViewVector(1.0F).x();
+            double lookY = entityplayer.getViewVector(1.0F).y();
+            double lookZ = entityplayer.getViewVector(1.0F).z();
 
             double perpX = -lookZ;
             double perpZ = lookX;

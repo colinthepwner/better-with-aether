@@ -1,9 +1,10 @@
 package teamport.aether.models;
 
+import net.minecraft.core.world.pos.TilePosc;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.render.block.model.BlockModelHorizontalRotation;
-import net.minecraft.client.render.tessellator.Tessellator;
+import net.minecraft.client.render.tessellator.TessellatorGeneral;
 import net.minecraft.client.render.texture.stitcher.IconCoordinate;
 import net.minecraft.client.render.texture.stitcher.TextureRegistry;
 import net.minecraft.core.block.Block;
@@ -23,17 +24,17 @@ public class BlockModelFreezer<T extends BlockLogic> extends BlockModelHorizonta
     }
 
     @Override
-    public IconCoordinate getBlockTexture(WorldSource blockAccess, int x, int y, int z, Side side) {
-        int data = blockAccess.getBlockMetadata(x, y, z);
-        int index = Sides.orientationLookUpHorizontal[6 * Math.min(data, 5) + side.getId()];
+    public IconCoordinate getBlockTexture(WorldSource blockAccess, net.minecraft.core.world.pos.TilePosc pos, Side side) {
+        int data = blockAccess.getBlockMetadata(pos.x(), pos.y(), pos.z());
+        int index = Sides.orientationLookUpHorizontal[6 * Math.min(data, 5) + side.id];
         if (index >= Sides.orientationLookUpHorizontal.length) {
             return getTextureWithRetroFallback(Side.BOTTOM);
         }
 
-        Side effectiveSide = Side.getSideById(index);
+        Side effectiveSide = Side.fromId(index);
         if (effectiveSide == Side.TOP) {
             IconCoordinate originalTop = getTextureWithRetroFallback(Side.TOP);
-            Container container = (Container) blockAccess.getTileEntity(x, y, z);
+            Container container = (Container) blockAccess.getTileEntity(pos.x(), pos.y(), pos.z());
             if (container != null) {
                 boolean hasOutput = container.getItem(2) != null;
                 if (hasOutput) {
@@ -54,8 +55,8 @@ public class BlockModelFreezer<T extends BlockLogic> extends BlockModelHorizonta
     }
 
     private IconCoordinate getTextureWithRetroFallback(Side side) {
-        if (this.retroBlockTextures.hasTexture() && this.isRetro()) {
-            IconCoordinate retroTexture = this.retroBlockTextures.get(side);
+        if (this.blockTextures.hasTexture()) {
+            IconCoordinate retroTexture = this.blockTextures.get(side);
             return retroTexture != null ? retroTexture : BLOCK_TEXTURE_UNASSIGNED;
         }
         IconCoordinate standardTexture = this.blockTextures.get(side);
@@ -63,8 +64,11 @@ public class BlockModelFreezer<T extends BlockLogic> extends BlockModelHorizonta
     }
 
     @Override
-    public boolean render(Tessellator tessellator, int x, int y, int z) {
-        int meta = renderBlocks.blockAccess.getBlockMetadata(x, y, z);
+    public boolean render(TessellatorGeneral tessellator, WorldSource world, TilePosc pos) {
+		int x = pos.x();
+		int y = pos.y();
+		int z = pos.z();
+        int meta = world.getBlockMetadata(x, y, z);
         Direction direction = BlockLogicRotatable.getDirectionFromMeta(meta);
 
         switch (direction) {
@@ -84,8 +88,7 @@ public class BlockModelFreezer<T extends BlockLogic> extends BlockModelHorizonta
                 break;
         }
 
-        boolean result = this.renderStandardBlock(tessellator, this.block.getBounds(), x, y, z);
-        this.resetRenderBlocks();
-        return result;
+        boolean result = renderBlocks.renderStandardBlock(tessellator, world, this, this.block.getBounds(), x, y, z);
+                return result;
     }
 }

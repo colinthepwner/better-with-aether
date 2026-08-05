@@ -1,5 +1,6 @@
 package teamport.aether.block.dungeon;
 
+import net.minecraft.core.world.pos.TilePos;
 import com.mojang.nbt.tags.CompoundTag;
 import net.minecraft.core.block.Block;
 import net.minecraft.core.block.BlockLogicChest;
@@ -47,9 +48,9 @@ public class BlockLogicChestMimic extends BlockLogicRotatable {
     @Override
     public void onBlockPlacedByMob(World world, int x, int y, int z, @NonNull Side side, Mob mob, double xPlaced, double yPlaced) {
         int metadata = world.getBlockMetadata(x, y, z);
-        Direction direction = mob.getHorizontalPlacementDirection(side).getOpposite();
+        Direction direction = mob.getHorizontalPlacementDirection(side).opposite();
         metadata = getMetaWithDirection(metadata, direction);
-        ItemStack stack = mob.getHeldItem();
+        ItemStack stack = (mob instanceof Player ? ((Player) mob).getHeldItem() : null);
         if (stack != null && stack.getItem() instanceof ItemBlock<?>) {
             CompoundTag loot = stack.getData().getCompound("loot");
             TileEntityChest chest = new TileEntityMimic();
@@ -124,10 +125,10 @@ public class BlockLogicChestMimic extends BlockLogicRotatable {
                 return true;
             }
         }
-        if (player.gamemode == Gamemode.creative) {
+        if (player.gamemode == net.minecraft.core.player.gamemode.Gamemodes.CREATIVE) {
             ItemStack stack = player.getHeldItem();
             if (stack == null || !stack.getItem().hasTag(ItemTags.PREVENT_CREATIVE_MINING)) {
-                player.displayChestScreen(BlockLogicChest.getInventory(world, x, y, z), x, y, z);
+                player.displayChestScreen(BlockLogicChest.getInventory(world, new net.minecraft.core.world.pos.TilePos(new TilePos(x, y, z))), x, y, z);
                 return true;
             }
         }
@@ -147,7 +148,7 @@ public class BlockLogicChestMimic extends BlockLogicRotatable {
             );
             return true;
         }
-        player.displayChestScreen(BlockLogicChest.getInventory(world, x, y, z), x, y, z);
+        player.displayChestScreen(BlockLogicChest.getInventory(world, new net.minecraft.core.world.pos.TilePos(new TilePos(x, y, z))), x, y, z);
         return true;
     }
 
@@ -280,7 +281,7 @@ public class BlockLogicChestMimic extends BlockLogicRotatable {
                 x, y, z,
                 setDirection(
                     world.getBlockMetadata(x, y, z),
-                    Direction.horizontalDirections[random.nextInt(Direction.horizontalDirections.length)]
+                    Direction.horizontal[random.nextInt(Direction.horizontal.length)]
                 )
             );
         }

@@ -14,9 +14,10 @@ import teamport.aether.item.AetherItems;
 
 @Mixin(value = ItemJar.class)
 public abstract class ItemJarMixin {
-    @WrapOperation(method = "onUseItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/core/item/ItemJar;fillJar(Lnet/minecraft/core/entity/player/Player;Lnet/minecraft/core/item/ItemStack;)Z", ordinal = 3))
-    private boolean onGetFireflyColor(Player player, ItemStack itemToGive, Operation<Boolean> original, @Local MobFireflyCluster.FireflyColor colour) {
-        if (colour == AetherMod.SILVER) return original.call(player, new ItemStack(AetherItems.LANTERN_FIREFLY_SILVER, 1));
-        return original.call(player, itemToGive);
+    @org.spongepowered.asm.mixin.injection.Inject(method = "captureFirefly", at = @At("HEAD"), cancellable = true)
+    private static void onCaptureFirefly(MobFireflyCluster firefly, org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable<net.minecraft.core.item.Item> cir) {
+        if (firefly.getColor() == AetherMod.SILVER) {
+            cir.setReturnValue(AetherItems.LANTERN_FIREFLY_SILVER);
+        }
     }
 }

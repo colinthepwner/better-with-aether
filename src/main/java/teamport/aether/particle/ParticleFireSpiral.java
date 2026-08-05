@@ -2,9 +2,9 @@ package teamport.aether.particle;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.entity.particle.Particle;
+import net.minecraft.client.render.particle.Particle;
 import net.minecraft.client.render.LightmapHelper;
-import net.minecraft.client.render.tessellator.Tessellator;
+import net.minecraft.client.render.tessellator.TessellatorParticle;
 import net.minecraft.client.render.texture.stitcher.TextureRegistry;
 import net.minecraft.core.util.helper.MathHelper;
 import net.minecraft.core.world.World;
@@ -22,22 +22,21 @@ public class ParticleFireSpiral extends Particle {
         this.centerX = x;
         this.centerZ = z;
         this.noPhysics = true;
-        this.viewScale = 10.0F;
+        this.setScale(10.0F);
         this.oSize = this.size;
         this.lifetime = 20;
         this.rCol = this.gCol = this.bCol = 1.0F;
-        this.setRot(0.25F + this.random.nextFloat() * 0.1F, 0.25F + this.random.nextFloat() * 0.1F);
-        this.angle = this.random.nextDouble() * Math.PI * 2.0;
-        this.radius = 0.25 + this.random.nextDouble() * 0.5;
+        this.angle = this.random.nextFloat() * Math.PI * 2.0;
+        this.radius = 0.25 + this.random.nextFloat() * 0.5;
         this.yd = 0.24;
     }
 
 
     @Override
-    public void render(Tessellator t, float partialTick, double xOff, double yOff, double zOff, float xa, float ya, float za, float xa2, float za2) {
+    public void render(TessellatorParticle t, float partialTick) {
         float s = (this.age + partialTick) / this.lifetime;
         this.size = this.oSize * (1.0F - s * s * 0.5F);
-        super.render(t, partialTick, xOff, yOff, zOff, xa, ya, za, xa2, za2);
+        super.render(t, partialTick);
     }
 
     @Override
@@ -47,9 +46,10 @@ public class ParticleFireSpiral extends Particle {
     }
 
     @Override
-    public int getLightmapCoord(float partialTick) {
-        return LightmapHelper.setBlocklightValue(super.getLightmapCoord(partialTick), 15);
-    }
+    public byte getLightIndex(float partialTick) {
+		// 8.0 packs the lightmap into a single byte; force the block-light nibble to full.
+		return (byte) ((super.getLightIndex(partialTick) & 0xF0) | 0x0F);
+	}
 
     @Override
     public void tick() {

@@ -3,71 +3,79 @@ package teamport.aether.entity.monster.swet;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.render.entity.MobRenderer;
-import net.minecraft.client.render.model.ModelBase;
 import net.minecraft.core.util.helper.MathHelper;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.lwjgl.opengl.GL11;
+import org.useless.dragonfly.models.entity.StaticEntityModel;
 
+/**
+ * BTA 8.0 removed {@code ModelBase}/{@code ModelSlime} and the {@code prepareArmor} overlay pass, so
+ * the swet's two-pass render (translucent outer shell over an inner body) is now expressed as two
+ * numbered render layers over the DragonFly slime geometry.
+ */
 @Environment(EnvType.CLIENT)
 public class MobRendererSwet extends MobRenderer<MobSwet> {
-    public final ModelBase scaleAmount;
 
-    public MobRendererSwet(ModelBase modelbase, ModelBase modelbase1, float shadowsize) {
-        super(modelbase, shadowsize);
-        this.scaleAmount = modelbase1;
-    }
+	public MobRendererSwet(float shadowSize) {
+		super(shadowSize);
+	}
 
-    private boolean renderSlimePassModel(int renderPass) {
-        if (renderPass == 0) {
-            this.setArmorModel(this.scaleAmount);
-            GL11.glEnable(GL11.GL_NORMALIZE);
-            GL11.glEnable(GL11.GL_BLEND);
-            GL11.glBlendFunc(770, 771);
-            return true;
-        } else if (renderPass == 1) {
-            GL11.glDisable(GL11.GL_BLEND);
-            GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-            return false;
-        }
-        return false;
-    }
+	/** Layer 0 is the inner body, layer 1 the translucent outer shell. */
+	@Override
+	protected int maxRenderLayer(MobSwet swet) {
+		return 2;
+	}
 
-    public void scaleSlime(MobSwet entityswets, float partialTick) {
-        float f2 = 1.0F;
-        float f1 = 1.0F;
-        float f3 = 1.5F;
-        double yd = MathHelper.lerp(entityswets.getYdO(), entityswets.yd, partialTick);
-        if (!entityswets.onGround) {
-            if (yd > 0.85) {
-                f1 = 1.425F;
-                f2 = 0.575F;
-            } else if (yd < -0.85) {
-                f1 = 0.575F;
-                f2 = 1.425F;
-            } else {
-                float f4 = (float) yd * 0.5F;
-                f1 += f4;
-                f2 -= f4;
-            }
-        }
+	@Override
+	protected @Nullable StaticEntityModel getAndSetupModelForLayer(@NonNull MobSwet swet, float brightness, float partialTick, int layer) {
+		if (layer == 1) {
+			// The old renderSlimePassModel enabled blending for the outer shell and turned it back
+			// off afterwards; the layer split gives the same ordering.
+			GL11.glEnable(GL11.GL_NORMALIZE);
+			GL11.glEnable(GL11.GL_BLEND);
+			GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+		} else {
+			GL11.glDisable(GL11.GL_BLEND);
+			GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+		}
 
-        if (entityswets.passenger != null) {
-            f3 = 1.5F + (entityswets.passenger.bbWidth + entityswets.passenger.bbHeight) * 0.75F;
-        }
+		StaticEntityModel model = this.getModel(layer == 1 ? "shell" : "main");
+		if (model != null) model.resetBones();
+		return model;
+	}
 
-        f1 = MathHelper.clamp(f1, 0.1F, 10.0F);
-        f2 = MathHelper.clamp(f2, 0.1F, 10.0F);
-        f3 = MathHelper.clamp(f3, 0.1F, 10.0F);
+	/** The squash-and-stretch on jump; unchanged apart from 8.0's renamed hook. */
+	@Override
+	protected void preRenderTransform(MobSwet swet, double x, double y, double z, float yaw, float partialTick) {
+		super.preRenderTransform(swet, x, y, z, yaw, partialTick);
 
-        GL11.glScalef(f2 * f3, f1 * f3, f2 * f3);
-    }
+		float stretchY = 1.0F;
+		float stretchXZ = 1.0F;
+		float scale = 1.5F;
+		double yd = MathHelper.lerp(swet.getYdO(), swet.yd, partialTick);
+		if (!swet.onGround) {
+			if (yd > 0.85) {
+				stretchY = 1.425F;
+				stretchXZ = 0.575F;
+			} else if (yd < -0.85) {
+				stretchY = 0.575F;
+				stretchXZ = 1.425F;
+			} else {
+				float delta = (float) yd * 0.5F;
+				stretchY += delta;
+				stretchXZ -= delta;
+			}
+		}
 
-    @Override
-    public void setupScale(MobSwet entity, float partialTick) {
-        this.scaleSlime(entity, partialTick);
-    }
+		if (swet.passenger != null) {
+			scale = 1.5F + (swet.passenger.bbWidth + swet.passenger.bbHeight) * 0.75F;
+		}
 
-    @Override
-    public boolean prepareArmor(MobSwet entity, int renderPass, float partialTick) {
-        return this.renderSlimePassModel(renderPass);
-    }
+		stretchY = MathHelper.clamp(stretchY, 0.1F, 10.0F);
+		stretchXZ = MathHelper.clamp(stretchXZ, 0.1F, 10.0F);
+		scale = MathHelper.clamp(scale, 0.1F, 10.0F);
+
+		GL11.glScalef(stretchXZ * scale, stretchY * scale, stretchXZ * scale);
+	}
 }

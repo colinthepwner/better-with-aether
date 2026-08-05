@@ -1,13 +1,15 @@
 package teamport.aether.mixin.gui.hud;
 
+import teamport.aether.util.AetherArmorSlot;
+import net.minecraft.client.option.GameSettings;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.hud.HudIngame;
-import net.minecraft.client.render.Font;
+import net.minecraft.client.render.font.FontRenderer;
 import net.minecraft.client.render.item.model.ItemModelDispatcher;
-import net.minecraft.client.render.tessellator.Tessellator;
+import net.minecraft.client.render.tessellator.TessellatorGeneral;
 import net.minecraft.core.entity.player.Player;
 import net.minecraft.core.item.ItemStack;
 import net.minecraft.core.player.inventory.container.ContainerInventory;
@@ -18,6 +20,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import teamport.aether.helper.ClientRenderHelper;
 import teamport.aether.helper.MixinHelper;
 import teamport.aether.item.AetherItems;
 
@@ -33,9 +36,9 @@ public abstract class ArmorOverlayMixin extends Gui {
         ContainerInventory inv = player.inventory;
 
         int height = this.mc.resolution.getScaledHeightScreenCoords();
-        int sp = (int) (this.mc.gameSettings.screenPadding.value * height / 8.0F);
+        int sp = (int) (GameSettings.SCREEN_PADDING.value * height / 8.0F);
 
-        Font font = this.mc.font;
+        FontRenderer font = this.mc.font;
 
         for (int i = 0; i < inv.armorInventory.length - 4; i++) {
             ItemStack stack = inv.armorInventory[inv.armorInventory.length - 1 - i];
@@ -43,7 +46,7 @@ public abstract class ArmorOverlayMixin extends Gui {
                 int x = 2 + 48 + sp;
                 int y = height - sp - 16 - i * 16;
 
-                ItemModelDispatcher.getInstance().getDispatch(stack).renderItemIntoGui(Tessellator.instance, font, this.mc.textureManager, stack, x, y, 1.0F);
+                ItemModelDispatcher.getInstance().getDispatch(stack).renderGui(net.minecraft.client.render.renderer.GLRenderer.getTessellator(), this.mc.thePlayer, stack, x, y, (byte) 1, 1.0F);
 
                 if (stack.isItemStackDamageable()) {
                     float durability = (float) (stack.getMaxDamage() - stack.getMetadata()) / (float) stack.getMaxDamage();
@@ -52,7 +55,7 @@ public abstract class ArmorOverlayMixin extends Gui {
 
                     GL11.glDisable(GL11.GL_BLEND);
                     GL11.glDisable(GL11.GL_LIGHTING);
-                    font.drawStringWithShadow(String.valueOf(stack.getMaxDamage() - stack.getMetadata() + 1), x + 20, y + 4, color);
+                    this.drawStringShadow(font, String.valueOf(stack.getMaxDamage() - stack.getMetadata() + 1), x + 20, y + 4, color);
                 }
             }
         }
@@ -63,16 +66,16 @@ public abstract class ArmorOverlayMixin extends Gui {
         int width = this.mc.resolution.getScaledWidthScreenCoords();
         int height = this.mc.resolution.getScaledHeightScreenCoords();
 
-        ItemStack trinketOneSlotItem = this.mc.thePlayer.inventory.armorItemInSlot(6);
-        ItemStack trinketTwoSlotItem = this.mc.thePlayer.inventory.armorItemInSlot(7);
+        ItemStack trinketOneSlotItem = this.mc.thePlayer.inventory.armorItemInSlot(AetherArmorSlot.of(6));
+        ItemStack trinketTwoSlotItem = this.mc.thePlayer.inventory.armorItemInSlot(AetherArmorSlot.of(7));
         double velocity = MathHelper.sqrt(this.mc.thePlayer.xd * this.mc.thePlayer.xd + this.mc.thePlayer.zd * this.mc.thePlayer.zd);
 
-        if (this.mc.gameSettings.thirdPersonView.value == 0 &&
+        if (GameSettings.THIRD_PERSON_VIEW.value == 0 &&
             ((trinketOneSlotItem != null && trinketOneSlotItem.itemID == AetherItems.ARMOR_SHIELD_REPULSION.id) ||
                 (trinketTwoSlotItem != null && trinketTwoSlotItem.itemID == AetherItems.ARMOR_SHIELD_REPULSION.id)) &&
             (this.mc.thePlayer.isSneaking() ||
                 (this.mc.thePlayer.onGround && velocity < 0.075D))) {
-            MixinHelper.renderShieldVignette(mc.textureManager, width, height);
+            ClientRenderHelper.renderShieldVignette(mc.textureManager, width, height);
         }
     }
 }

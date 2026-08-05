@@ -1,11 +1,13 @@
 package teamport.aether.models;
 
+import net.minecraft.core.world.pos.TilePosc;
+import net.minecraft.core.world.WorldSource;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.render.LightmapHelper;
 import net.minecraft.client.render.block.color.BlockColorDispatcher;
 import net.minecraft.client.render.block.model.BlockModelCrossedSquares;
-import net.minecraft.client.render.tessellator.Tessellator;
+import net.minecraft.client.render.tessellator.TessellatorGeneral;
 import net.minecraft.client.render.texture.stitcher.IconCoordinate;
 import net.minecraft.core.block.Block;
 import net.minecraft.core.block.BlockLogic;
@@ -19,19 +21,19 @@ public class BlockModelAetherTallgrass<T extends BlockLogic> extends BlockModelC
     }
 
     @Override
-    public boolean render(Tessellator tessellator, int x, int y, int z) {
+    public boolean render(TessellatorGeneral tessellator, WorldSource world, TilePosc pos) {
+		int x = pos.x();
+		int y = pos.y();
+		int z = pos.z();
         float brightness = 1.0F;
-        if (!LightmapHelper.isLightmapEnabled()) {
-            brightness = this.getBlockBrightness(renderBlocks.blockAccess, x, y, z);
-        } else {
-            tessellator.setLightmapCoord(this.block.getLightmapCoord(renderBlocks.blockAccess, x, y, z));
-        }
+        brightness = 1.0F;
+            tessellator.setLightmapCoord1i(this.block.getLightmapCoord(world, pos.x(), pos.y(), pos.z()));
 
-        int color = BlockColorDispatcher.getInstance().getDispatch(this.block).getWorldColor(renderBlocks.blockAccess, x, y, z);
+        int color = BlockColorDispatcher.getInstance().getDispatch(this.block).getWorldColor(world, pos, world.getBlockMetadata(pos.x(), pos.y(), pos.z()));
         float r = (color >> 16 & 255) / 255.0F;
         float g = (color >> 8 & 255) / 255.0F;
         float b = (color & 255) / 255.0F;
-        tessellator.setColorOpaque_F(brightness * r, brightness * g, brightness * b);
+        tessellator.setColorOpaque3f(brightness * r, brightness * g, brightness * b);
         double xd = x;
         double yd = y;
         double zd = z;
@@ -43,7 +45,7 @@ public class BlockModelAetherTallgrass<T extends BlockLogic> extends BlockModelC
             zd += (((dRandom >> 24 & 15L) / 15.0F) - 0.5) * 0.5;
         }
 
-        int metadata = renderBlocks.blockAccess.getBlockMetadata(x, y, z);
+        int metadata = world.getBlockMetadata(x, y, z);
         IconCoordinate texIndex = this.getBlockTextureFromSideAndMetadata(Side.BOTTOM, metadata);
         if (renderBlocks.overrideBlockTexture != null) {
             texIndex = renderBlocks.overrideBlockTexture;

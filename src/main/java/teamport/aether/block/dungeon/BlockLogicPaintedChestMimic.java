@@ -15,9 +15,9 @@ public class BlockLogicPaintedChestMimic extends BlockLogicChestMimic implements
     }
 
     @Override
-    public void removeDye(World world, int x, int y, int z) {
-        int meta = world.getBlockMetadata(x, y, z);
-        world.setBlockAndMetadataWithNotify(x, y, z, unpaintedBlockID, meta & -241);
+    public void removeDye(World world, net.minecraft.core.world.pos.TilePosc pos) {
+        int meta = world.getBlockMetadata(pos.x(), pos.y(), pos.z());
+        world.setBlockAndMetadataWithNotify(pos.x(), pos.y(), pos.z(), unpaintedBlockID, meta & -241);
     }
 
     @Override
@@ -35,8 +35,4 @@ public class BlockLogicPaintedChestMimic extends BlockLogicChestMimic implements
         return meta & -241;
     }
 
-    @Override
-    public void setColor(World world, int x, int y, int z, DyeColor color) {
-        IPainted.super.setColor(world, x, y, z, color);
-    }
 }

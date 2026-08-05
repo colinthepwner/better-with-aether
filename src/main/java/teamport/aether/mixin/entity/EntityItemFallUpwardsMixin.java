@@ -31,7 +31,7 @@ public abstract class EntityItemFallUpwardsMixin extends Entity {
         }
     }
 
-    @ModifyVariable(method = "tick", at = @At(value = "STORE"), ordinal = 0)
+    @ModifyVariable(method = "handleFriction", at = @At(value = "STORE"), ordinal = 0)
     private float flipFriction(float friction) {
         if (!item.getItem().hasTag(AetherItemTags.FALLS_UPWARDS)) {
             return friction;

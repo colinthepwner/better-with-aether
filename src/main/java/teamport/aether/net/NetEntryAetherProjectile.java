@@ -55,7 +55,7 @@ public class NetEntryAetherProjectile implements IVehicleEntry<ProjectileAether>
     }
 
     @Override
-    public int getPacketDelay() {
+    public int getMovementPacketDelay() {
         return 20;
     }
 

@@ -18,15 +18,15 @@ public class BlockModelIncubator<T extends BlockLogic> extends BlockModelStandar
     }
 
     @Override
-    public IconCoordinate getBlockTexture(WorldSource blockAccess, int x, int y, int z, Side side) {
-        if (side.getId() == Side.TOP.getId()) {
+    public IconCoordinate getBlockTexture(WorldSource blockAccess, net.minecraft.core.world.pos.TilePosc pos, Side side) {
+        if (side.id == Side.TOP.id) {
             IconCoordinate texture;
             if (isRetro()) {
-                texture = this.retroBlockTextures.get(Side.TOP);
+                texture = this.blockTextures.get(Side.TOP);
             } else {
                 texture = this.blockTextures.get(Side.TOP);
             }
-            Container container = (Container) blockAccess.getTileEntity(x, y, z);
+            Container container = (Container) blockAccess.getTileEntity(pos.x(), pos.y(), pos.z());
             if (container != null) {
                 boolean hasInput = container.getItem(0) != null;
                 if (hasInput && texture != null) {
@@ -36,8 +36,8 @@ public class BlockModelIncubator<T extends BlockLogic> extends BlockModelStandar
             return texture;
         }
         if (isRetro()) {
-            return this.retroBlockTextures.get(side.getId());
+            return this.blockTextures.get(side.id);
         }
-        return this.blockTextures.get(side.getId());
+        return this.blockTextures.get(side.id);
     }
 }

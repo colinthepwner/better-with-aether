@@ -10,7 +10,7 @@ import net.minecraft.core.achievement.Achievement;
 import net.minecraft.core.item.ItemStack;
 import net.minecraft.core.lang.I18n;
 import net.minecraft.core.util.helper.Color;
-import org.jspecify.annotations.NonNull;
+import teamport.aether.mixin.accessors.IconCoordinateAccessor;
 import teamport.aether.helper.unboxed.IntPair;
 
 import java.util.List;
@@ -24,31 +24,31 @@ public class AchievementPageAether extends AchievementPage implements AetherAchi
 
     private static final IconCoordinate WATER_FLOWING;
 
-    private static final @NonNull IconCoordinate AETHER_GRASS;
-    private static final @NonNull IconCoordinate COBBLED_HOLYSTONE;
-    private static final @NonNull IconCoordinate COBBLED_HOLYSTONE_MOSSY;
-    private static final @NonNull IconCoordinate AETHER_DIRT;
-    private static final @NonNull IconCoordinate QUICKSOIL;
-    private static final @NonNull IconCoordinate LOG_SKYROOT;
-    private static final @NonNull IconCoordinate LEAVES_SKYROOT;
-    private static final @NonNull IconCoordinate BLUE_CLOUD;
-    private static final @NonNull IconCoordinate YELLOW_CLOUD;
-    private static final @NonNull IconCoordinate CLOUD;
+    private static final IconCoordinate AETHER_GRASS;
+    private static final IconCoordinate COBBLED_HOLYSTONE;
+    private static final IconCoordinate COBBLED_HOLYSTONE_MOSSY;
+    private static final IconCoordinate AETHER_DIRT;
+    private static final IconCoordinate QUICKSOIL;
+    private static final IconCoordinate LOG_SKYROOT;
+    private static final IconCoordinate LEAVES_SKYROOT;
+    private static final IconCoordinate BLUE_CLOUD;
+    private static final IconCoordinate YELLOW_CLOUD;
+    private static final IconCoordinate CLOUD;
 
-    private static final @NonNull IconCoordinate AETHER_TALL_GRASS;
-    private static final @NonNull IconCoordinate WHITE_FLOWER;
-    private static final @NonNull IconCoordinate PURPLE_FLOWER;
-    private static final @NonNull IconCoordinate LEAVES_GOLDEN;
-    private static final @NonNull IconCoordinate LOG_GOLDEN;
+    private static final IconCoordinate AETHER_TALL_GRASS;
+    private static final IconCoordinate WHITE_FLOWER;
+    private static final IconCoordinate PURPLE_FLOWER;
+    private static final IconCoordinate LEAVES_GOLDEN;
+    private static final IconCoordinate LOG_GOLDEN;
 
-    private static final @NonNull IconCoordinate AMBROSIUM;
-    private static final @NonNull IconCoordinate GRAVITITE;
-    private static final @NonNull IconCoordinate ICE_STONE;
+    private static final IconCoordinate AMBROSIUM;
+    private static final IconCoordinate GRAVITITE;
+    private static final IconCoordinate ICE_STONE;
 
-    private static final @NonNull IconCoordinate SLIDER_TOP_LEFT;
-    private static final @NonNull IconCoordinate SLIDER_BOTTOM_LEFT;
-    private static final @NonNull IconCoordinate SLIDER_TOP_RIGHT;
-    private static final @NonNull IconCoordinate SLIDER_BOTTOM_RIGHT;
+    private static final IconCoordinate SLIDER_TOP_LEFT;
+    private static final IconCoordinate SLIDER_BOTTOM_LEFT;
+    private static final IconCoordinate SLIDER_TOP_RIGHT;
+    private static final IconCoordinate SLIDER_BOTTOM_RIGHT;
 
     private static final IconCoordinate[] TERRAIN_MAP;
 
@@ -60,9 +60,9 @@ public class AchievementPageAether extends AchievementPage implements AetherAchi
 
     static {
         IconCoordinate water = TextureRegistry.getTexture("aether:block/jank/water_flow");
-        WATER_FLOWING = new IconCoordinate(water.parentAtlas, water.namespaceId, water.getImageSource());
+        WATER_FLOWING = new IconCoordinate(water.parentAtlas, water.namespaceId);
         WATER_FLOWING.setDimension(water.width / 2, water.height / 2);
-        WATER_FLOWING.setPosition(water.iconX, water.iconY);
+        ((IconCoordinateAccessor) WATER_FLOWING).aether$setPosition(water.iconX, water.iconY);
 
         AETHER_GRASS = TextureRegistry.getTexture("aether:block/grass_aether/side_retro");
         AETHER_DIRT = TextureRegistry.getTexture("aether:block/dirt_aether");
@@ -91,20 +91,20 @@ public class AchievementPageAether extends AchievementPage implements AetherAchi
         ICE_STONE = TextureRegistry.getTexture("aether:block/icestone");
 
         IconCoordinate sliderSheet = TextureRegistry.getTexture("aether:block/jank/slider");
-        SLIDER_TOP_LEFT     = new IconCoordinate(sliderSheet.parentAtlas, sliderSheet.namespaceId, sliderSheet.getImageSource());
-        SLIDER_BOTTOM_LEFT  = new IconCoordinate(sliderSheet.parentAtlas, sliderSheet.namespaceId, sliderSheet.getImageSource());
-        SLIDER_TOP_RIGHT    = new IconCoordinate(sliderSheet.parentAtlas, sliderSheet.namespaceId, sliderSheet.getImageSource());
-        SLIDER_BOTTOM_RIGHT = new IconCoordinate(sliderSheet.parentAtlas, sliderSheet.namespaceId, sliderSheet.getImageSource());
+        SLIDER_TOP_LEFT     = new IconCoordinate(sliderSheet.parentAtlas, sliderSheet.namespaceId);
+        SLIDER_BOTTOM_LEFT  = new IconCoordinate(sliderSheet.parentAtlas, sliderSheet.namespaceId);
+        SLIDER_TOP_RIGHT    = new IconCoordinate(sliderSheet.parentAtlas, sliderSheet.namespaceId);
+        SLIDER_BOTTOM_RIGHT = new IconCoordinate(sliderSheet.parentAtlas, sliderSheet.namespaceId);
 
         SLIDER_TOP_LEFT.setDimension(16, 16);
         SLIDER_BOTTOM_LEFT.setDimension(16, 16);
         SLIDER_TOP_RIGHT.setDimension(16, 16);
         SLIDER_BOTTOM_RIGHT.setDimension(16, 16);
 
-        SLIDER_TOP_LEFT.setPosition(sliderSheet.iconX,             sliderSheet.iconY);
-        SLIDER_BOTTOM_LEFT.setPosition(sliderSheet.iconX,          sliderSheet.iconY + 16);
-        SLIDER_TOP_RIGHT.setPosition(sliderSheet.iconX    + 16, sliderSheet.iconY);
-        SLIDER_BOTTOM_RIGHT.setPosition(sliderSheet.iconX + 16, sliderSheet.iconY + 16);
+        ((IconCoordinateAccessor) SLIDER_TOP_LEFT).aether$setPosition(sliderSheet.iconX,             sliderSheet.iconY);
+        ((IconCoordinateAccessor) SLIDER_BOTTOM_LEFT).aether$setPosition(sliderSheet.iconX,          sliderSheet.iconY + 16);
+        ((IconCoordinateAccessor) SLIDER_TOP_RIGHT).aether$setPosition(sliderSheet.iconX    + 16, sliderSheet.iconY);
+        ((IconCoordinateAccessor) SLIDER_BOTTOM_RIGHT).aether$setPosition(sliderSheet.iconX + 16, sliderSheet.iconY + 16);
 
         TERRAIN_MAP = new IconCoordinate[21];
         TERRAIN_MAP[0] = null;
@@ -199,7 +199,7 @@ public class AchievementPageAether extends AchievementPage implements AetherAchi
 
 
     @Override
-    public @NonNull ItemStack getIcon() {
+    public ItemStack getIcon() {
         return this.icon;
     }
 
@@ -215,7 +215,7 @@ public class AchievementPageAether extends AchievementPage implements AetherAchi
 
     @Override
     public IconCoordinate getAchievementIcon(Achievement achievement) {
-        return TextureRegistry.getTexture(achievement.getType().texture);
+        return TextureRegistry.getTexture(achievement.getType().texture());
     }
 
     @Override
@@ -234,17 +234,17 @@ public class AchievementPageAether extends AchievementPage implements AetherAchi
     }
 
     @Override
-    public @NonNull String getName() {
-        return I18n.getInstance().translateNameKey(name);
+    public String getName() {
+        return I18n.getInstance().translateKey(name);
     }
 
     @Override
-    public @NonNull String getDescription() {
-        return I18n.getInstance().translateNameKey(name);
+    public String getDescription() {
+        return I18n.getInstance().translateKey(name);
     }
 
     @Override
-    public @NonNull AchievementEntry onOpenAchievement() {
+    public AchievementEntry onOpenAchievement() {
         return Objects.requireNonNull(this.getEntry(AetherAchievements.HOSTILE_PARADISE));
     }
 

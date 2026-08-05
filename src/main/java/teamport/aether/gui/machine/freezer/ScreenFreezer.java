@@ -39,8 +39,8 @@ public class ScreenFreezer extends ScreenAetherMachine {
     @Override
     public void drawGuiContainerForegroundLayer() {
         I18n i18n = I18n.getInstance();
-        this.font.drawString(i18n.translateKey("aether.gui.freezer.title"), 60, 6, 0xFF404040);
-        this.font.drawString(i18n.translateKey("gui.furnace.label.inventory"), 8, this.ySize - 96 + 2, 4210752);
+        this.drawStringNoShadow(this.fontRenderer, i18n.translateKey("aether.gui.freezer.title"), 60, 6, 0xFF404040);
+        this.drawStringNoShadow(this.fontRenderer, i18n.translateKey("gui.furnace.label.inventory"), 8, this.ySize - 96 + 2, 4210752);
     }
 
     @Override

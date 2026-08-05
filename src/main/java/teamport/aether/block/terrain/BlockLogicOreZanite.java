@@ -1,5 +1,6 @@
 package teamport.aether.block.terrain;
 
+import it.unimi.dsi.fastutil.ints.Int2IntArrayMap;
 import net.minecraft.core.block.Block;
 import net.minecraft.core.block.BlockLogic;
 import net.minecraft.core.block.entity.TileEntity;
@@ -11,7 +12,7 @@ import net.minecraft.core.world.generate.feature.WorldFeatureOre;
 import teamport.aether.item.AetherItems;
 
 public class BlockLogicOreZanite extends BlockLogic {
-    public static final WorldFeatureOre.OreMap variantMap = new WorldFeatureOre.OreMap();
+    public static final Int2IntArrayMap variantMap = new Int2IntArrayMap();
 
     public BlockLogicOreZanite(Block<?> block, Block<?> parentBlock, Material material) {
         super(block, material);

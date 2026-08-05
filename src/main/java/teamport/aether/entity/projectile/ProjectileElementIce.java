@@ -1,5 +1,6 @@
 package teamport.aether.entity.projectile;
 
+import teamport.aether.util.HitResults;
 import net.minecraft.core.entity.Entity;
 import net.minecraft.core.entity.Mob;
 import net.minecraft.core.entity.player.Player;
@@ -54,14 +55,14 @@ public class ProjectileElementIce extends ProjectileElementBase implements Aethe
     @Override
     public void onHit(HitResult hitResult) {
         if (this.world != null && !this.world.isClientSide
-            && hitResult.entity != null
-            && !(hitResult.entity instanceof ProjectileElementBase)
+            && HitResults.entity(hitResult) != null
+            && !(HitResults.entity(hitResult) instanceof ProjectileElementBase)
         ) {
-            if (hitResult.entity instanceof MobBossSunspirit) {
+            if (HitResults.entity(hitResult) instanceof MobBossSunspirit) {
                 if (this.owner instanceof Player) {
                     // The sunspirit only takes damage from ice projectiles, so, we set this here directly.
                     // This is jank btw. I know.
-                    hitResult.entity.hurt(this, this.damage, DamageType.GENERIC);
+                    HitResults.entity(hitResult).hurt(this, this.damage, DamageType.GENERIC);
 
                     doExplosion();
                     this.remove();
@@ -70,9 +71,9 @@ public class ProjectileElementIce extends ProjectileElementBase implements Aethe
 
                 super.onHit(hitResult);
                 return;
-            } else if (hitResult.entity instanceof MobFireMinion) {
+            } else if (HitResults.entity(hitResult) instanceof MobFireMinion) {
                 if (this.owner instanceof Player) {
-                    hitResult.entity.hurt(this, 100, DamageType.GENERIC);
+                    HitResults.entity(hitResult).hurt(this, 100, DamageType.GENERIC);
 
                     doExplosion();
                     this.remove();
@@ -81,8 +82,8 @@ public class ProjectileElementIce extends ProjectileElementBase implements Aethe
 
                 super.onHit(hitResult);
                 return;
-            } else if (hitResult.entity instanceof Mob) {
-                hitResult.entity.hurt(this.owner, this.damage, DamageType.GENERIC);
+            } else if (HitResults.entity(hitResult) instanceof Mob) {
+                HitResults.entity(hitResult).hurt(this.owner, this.damage, DamageType.GENERIC);
                 this.remove();
 
                 return;
@@ -100,9 +101,9 @@ public class ProjectileElementIce extends ProjectileElementBase implements Aethe
                 this.owner = (Player) entity;
             }
 
-            Vec3 lookAngle = entity.getLookAngle();
+            org.joml.Vector3dc lookAngle = entity.getViewVector(1.0F);
             if (lookAngle != null) {
-                this.setHeading(lookAngle.x, lookAngle.y, lookAngle.z, 0.5f, 0.0F);
+                this.setHeading(lookAngle.x(), lookAngle.y(), lookAngle.z(), 0.5f, 0.0F);
                 bounceCount = 18;
             }
 

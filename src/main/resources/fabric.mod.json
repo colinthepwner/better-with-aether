@@ -58,7 +58,6 @@
     "preLaunch": ["teamport.aether.compat.waila.AetherWailaLoadMixins"],
 
     "btwaila": ["teamport.aether.compat.waila.AetherWailaPlugin"],
-    "uselessNumerical": ["teamport.aether.compat.uselessnumerical.Allias"],
     "commandly": ["teamport.aether.compat.commandly.AetherCommandlyPlugin"]
   },
 
@@ -66,11 +65,9 @@
 
   "depends": {
     "fabricloader": ">=${fabricloader}",
-    "dragonfly": ">=${dragonfly}",
     "halplibe": ">=${halplibe}",
     "catalyst-core": ">=${catalystcore}",
     "catalyst-effects": ">=${catalysteffects}",
-    "uselessnumerical": ">=${uselessnumerical}",
     "minecraft": "*",
     "java": ">=${java}"
   },

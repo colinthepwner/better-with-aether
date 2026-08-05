@@ -7,6 +7,7 @@ import net.minecraft.core.item.ItemStack;
 import net.minecraft.core.player.inventory.container.ContainerInventory;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Mutable;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -21,19 +22,22 @@ public abstract class ContainerInventoryMixinAccessory {
     public ItemStack[] armorInventory;
     @Shadow
     public ItemStack[] mainInventory;
-    // armor inventory expanded to fit the extra 4 accessory slots
-    @Inject(method = "<init>", at = @At("TAIL"))
-    private void setNewSize(Player player, CallbackInfo ci) {
-        ((ContainerInventory) (Object) this).armorInventory = new ItemStack[4 + 4];
-    }
-    // change hardcoded size of the armor inventory
-    @ModifyExpressionValue(method = "readFromNBT", at = @At(value = "CONSTANT", args = "intValue=4"))
-    private int modifyArmourSize(int original) {
-        return original + 4;
-    }
-    @ModifyExpressionValue(method = "getContainerSize", at = @At(value = "CONSTANT", args = "intValue=4"))
-    private int modifyContainerSize(int original) {
-        return this.armorInventory.length;
+
+    @Mutable
+    @Shadow
+    public static int ARMOR_INVENTORY_SIZE;
+
+    /// Widens the armour inventory by the four accessory slots.
+    ///
+    /// 7.3 hardcoded `4` in three separate places -- the constructor's array allocation, the bounds
+    /// check in `load`, and `getContainerSize` -- so this needed three hooks that each had to be
+    /// kept in step. 8.0 derives all three from a single `ARMOR_INVENTORY_SIZE`, initialised in
+    /// `<clinit>` to `HumanArmorShape.values().length`. Widening that one field at the tail of
+    /// `<clinit>` sizes the array, the save bounds and the container size together, so the other
+    /// two hooks are gone rather than ported.
+    @Inject(method = "<clinit>", at = @At("TAIL"))
+    private static void expandArmorInventoryForAccessories(CallbackInfo ci) {
+        ARMOR_INVENTORY_SIZE += 4;
     }
 
     @Inject(method = "decrementAnimations", at = @At("TAIL"))
@@ -41,7 +45,7 @@ public abstract class ContainerInventoryMixinAccessory {
         ContainerInventory inv = (ContainerInventory) (Object) this;
         for (int slot = 0; slot < inv.armorInventory.length; slot++) {
             if (inv.armorInventory[slot] != null && inv.player.world != null) {
-                inv.armorInventory[slot].updateAnimation(inv.player.world, inv.player, slot + inv.mainInventory.length, inv.getCurrentItemIndex() == slot);
+                inv.armorInventory[slot].updateAnimation(inv.player.world, inv.player, slot + inv.mainInventory.length, inv.getCurrentSlot() == slot);
             }
         }
     }
@@ -80,7 +84,7 @@ public abstract class ContainerInventoryMixinAccessory {
         }
     }
 
-    @Inject(method = "readFromNBT", at = @At("TAIL"))
+    @Inject(method = "load", at = @At("TAIL"))
     public void activateAccessories(ListTag nbttaglist, CallbackInfo ci) {
         ContainerInventory inv = (ContainerInventory) (Object) this;
         for (ItemStack item : inv.armorInventory) {

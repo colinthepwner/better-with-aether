@@ -3,6 +3,7 @@ package teamport.aether.mixin.accessory.cape;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.render.entity.MobRendererPlayer;
+import net.minecraft.client.render.tessellator.TessellatorGeneral;
 import net.minecraft.core.entity.player.Player;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -13,9 +14,12 @@ import teamport.aether.AetherGlobals;
 @Environment(EnvType.CLIENT)
 @Mixin(MobRendererPlayer.class)
 public abstract class AetherDevCapeMixin {
+    // 8.0 threads the tessellator through rendering and passes the interpolated position instead of
+    // a partial tick, so the handler mirrors the new descriptor. Spelled out in full rather than
+    // wildcarded because MobRendererPlayer also carries a synthetic renderSpecials(.., Mob, ..) bridge.
     @SuppressWarnings("java:S131")
-    @Inject(method = "renderSpecials*", at = @At("HEAD"))
-    private void injectCapeOverride(Player player, float partialTick, CallbackInfo ci) {
+    @Inject(method = "renderSpecials(Lnet/minecraft/client/render/tessellator/TessellatorGeneral;Lnet/minecraft/core/entity/player/Player;DDD)V", at = @At("HEAD"))
+    private void injectCapeOverride(TessellatorGeneral tessellator, Player player, double x, double y, double z, CallbackInfo ci) {
         switch (player.uuid.toString()) {
             case AetherGlobals.UUID_LUKEISSTUFF: // LukeisStuff
             case AetherGlobals.UUID_OLYPOLYU: // Olypolyu / Kheprep

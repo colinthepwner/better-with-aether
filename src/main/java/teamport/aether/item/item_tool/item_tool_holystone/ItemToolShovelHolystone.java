@@ -18,9 +18,9 @@ public class ItemToolShovelHolystone extends ItemToolShovelAether {
     }
 
     @Override
-    public boolean onBlockDestroyed(World world, ItemStack itemstack, int i, int x, int y, int z, Side side, Mob mob) {
-        Block<?> block = Blocks.blocksList[i];
-        if (block != null) {
+    public boolean onBlockDestroyed(ItemStack itemstack, World world, Mob mob, Block<?> block, net.minecraft.core.world.pos.TilePosc pos, Side side) {
+        int x = pos.x(); int y = pos.y(); int z = pos.z(); int i = block.id();
+                if (block != null) {
             if (block.getHardness() > 0.0F || this.isSilkTouch()) {
                 itemstack.damageItem(1, mob);
             }

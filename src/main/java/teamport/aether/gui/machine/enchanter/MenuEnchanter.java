@@ -10,6 +10,7 @@ import teamport.aether.block.entity.TileEntityEnchanter;
 
 import java.util.Collections;
 import java.util.List;
+import it.unimi.dsi.fastutil.ints.IntList;
 
 public class MenuEnchanter extends MenuAbstract {
     private final TileEntityEnchanter enchanter;
@@ -35,7 +36,7 @@ public class MenuEnchanter extends MenuAbstract {
     }
 
     @Override
-    public List<Integer> getMoveSlots(InventoryAction inventoryAction, Slot slot, int target, Player player) {
+    public IntList getMoveSlots(InventoryAction inventoryAction, Slot slot, int target, Player player) {
         if (slot.index >= 0 && slot.index <= 3) {
             return this.getSlots(slot.index, 1, false);
         } else {
@@ -54,7 +55,7 @@ public class MenuEnchanter extends MenuAbstract {
     }
 
     @Override
-    public List<Integer> getTargetSlots(InventoryAction inventoryAction, Slot slot, int target, Player player) {
+    public IntList getTargetSlots(InventoryAction inventoryAction, Slot slot, int target, Player player) {
         if (slot.index >= 3 && slot.index <= 39) {
             if (inventoryAction != InventoryAction.MOVE_ALL) {
                 if (target == 1) {
@@ -78,7 +79,7 @@ public class MenuEnchanter extends MenuAbstract {
         if (slot.index >= 0 && slot.index <= 2) {
             return slot.index == 2 ? this.getSlots(3, 36, true) : this.getSlots(3, 36, false);
         } else {
-            return Collections.emptyList();
+            return it.unimi.dsi.fastutil.ints.IntLists.EMPTY_LIST;
         }
     }
 

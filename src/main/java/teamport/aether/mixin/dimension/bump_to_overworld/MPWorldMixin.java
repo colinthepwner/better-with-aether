@@ -16,16 +16,20 @@ import teamport.aether.world.AetherDimension;
 
 @Environment(EnvType.SERVER)
 @Mixin(value = WorldServer.class)
-public abstract class MPWorldMixin extends World {
+public abstract class MPWorldMixin {
+    @Unique
+    private World aether$getWorld() {
+        return (World) (Object) this;
+    }
     @Unique
     private int cooldown = Global.TICKS_PER_SECOND;
     @Inject(method = "tick", at = @At("RETURN"))
     private void tick(CallbackInfo ci) {
         cooldown--;
-        if (cooldown < 0 && dimension.id == Dimension.OVERWORLD.id) {
-            cooldown = Global.TICKS_PER_SECOND / 2 + rand.nextInt(Global.TICKS_PER_SECOND / 2);
-            for (Player player : players) {
-                AetherDimension.loadEntitiesNearPlayer(player, this);
+        if (cooldown < 0 && aether$getWorld().dimension.id == Dimension.OVERWORLD.id) {
+            cooldown = Global.TICKS_PER_SECOND / 2 + aether$getWorld().rand.nextInt(Global.TICKS_PER_SECOND / 2);
+            for (Player player : aether$getWorld().players) {
+                AetherDimension.loadEntitiesNearPlayer(player, aether$getWorld());
             }
         }
     }

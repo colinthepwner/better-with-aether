@@ -20,7 +20,7 @@ import static teamport.aether.item.accessory.SlotAccessory.TRINKET_2_SLOT;
 @Mixin(value = PlayerController.class)
 public abstract class PlayerControllerDiamondDelayMixin {
     @Shadow
-    protected int blockHitDelay;
+    protected int destroyDelay;
     @Shadow
     @Final
     protected Minecraft mc;
@@ -29,10 +29,10 @@ public abstract class PlayerControllerDiamondDelayMixin {
         if (this.mc.thePlayer == null) return;
         ItemStack[] armor = this.mc.thePlayer.inventory.armorInventory;
         if (armor[TRINKET_1_SLOT] != null && armor[TRINKET_1_SLOT].getItem().namespaceID.equals(AetherItems.ARMOR_TALISMAN_DIAMOND.namespaceID)) {
-            blockHitDelay = blockHitDelay / 2;
+            destroyDelay = destroyDelay / 2;
         }
         if (armor[TRINKET_2_SLOT] != null && armor[TRINKET_2_SLOT].getItem().namespaceID.equals(AetherItems.ARMOR_TALISMAN_DIAMOND.namespaceID)) {
-            blockHitDelay = blockHitDelay / 2;
+            destroyDelay = destroyDelay / 2;
         }
     }
 }

@@ -19,7 +19,7 @@ public class BlockModelDungeonDoor<T extends BlockLogic> extends BlockModelRotat
     private final int width;
     private final int height;
 
-    private final IconCoordinate buffer = new IconCoordinate(TextureRegistry.blockAtlas, null, null);
+    private final IconCoordinate buffer = new IconCoordinate(TextureRegistry.worldAtlas, null);
 
     private IconCoordinate particleTexture = TextureRegistry.getTexture("minecraft:block/texture_missing");
     private IconCoordinate particleTextureRetro = TextureRegistry.getTexture("minecraft:block/texture_missing");
@@ -32,36 +32,36 @@ public class BlockModelDungeonDoor<T extends BlockLogic> extends BlockModelRotat
         this.height = height;
     }
 
-    protected IconCoordinate ctm(TextureLayer layer, IconCoordinate fallback, WorldSource blockAccess, int x, int y, int z, Side side) {
-        int meta = blockAccess.getBlockMetadata(x, y, z);
+    protected IconCoordinate ctm(TextureLayer layer, IconCoordinate fallback, WorldSource blockAccess, net.minecraft.core.world.pos.TilePosc pos, Side side) {
+        int meta = blockAccess.getBlockMetadata(pos.x(), pos.y(), pos.z());
 
-        Side sideRotated = Side.getSideById(Sides.orientationLookUpHorizontal[6 * Math.min(meta & BlockLogicRotatable.MASK_DIRECTION, 5) + side.getId()]);
+        Side sideRotated = Side.fromId(Sides.orientationLookUpHorizontal[6 * Math.min(meta & BlockLogicRotatable.MASK_DIRECTION, 5) + side.id]);
         IconCoordinate baseTex = layer.get(sideRotated);
 
         if (baseTex == null) return fallback;
 
         Direction dir = BlockLogicRotatable.getDirectionFromMeta(meta);
-        Direction offsetLeft = dir.rotate(-1);
-        Direction offsetRight = dir.rotate(1);
+        Direction offsetLeft = dir.rotateY(-1);
+        Direction offsetRight = dir.rotateY(1);
 
         if (dir == Direction.WEST || dir == Direction.SOUTH) {
-            offsetLeft = offsetLeft.getOpposite();
-            offsetRight = offsetRight.getOpposite();
+            offsetLeft = offsetLeft.opposite();
+            offsetRight = offsetRight.opposite();
         }
 
-        boolean up = blockAccess.getBlockId(x, y + 1, z) == block.id();
-        boolean down = blockAccess.getBlockId(x, y - 1, z) == block.id();
+        boolean up = blockAccess.getBlockId(pos.x(), pos.y() + 1, pos.z()) == block.id();
+        boolean down = blockAccess.getBlockId(pos.x(), pos.y() - 1, pos.z()) == block.id();
 
         boolean right = blockAccess.getBlockId(
-            x + offsetRight.getOffsetX(),
-            y + offsetRight.getOffsetY(),
-            z + offsetRight.getOffsetZ()
+            pos.x() + offsetRight.offsetX(),
+            pos.y() + offsetRight.offsetY(),
+            pos.z() + offsetRight.offsetZ()
         ) == block.id();
 
         boolean left = blockAccess.getBlockId(
-            x + offsetLeft.getOffsetX(),
-            y + offsetLeft.getOffsetY(),
-            z + offsetLeft.getOffsetZ()
+            pos.x() + offsetLeft.offsetX(),
+            pos.y() + offsetLeft.offsetY(),
+            pos.z() + offsetLeft.offsetZ()
         ) == block.id();
 
         int u;
@@ -72,7 +72,7 @@ public class BlockModelDungeonDoor<T extends BlockLogic> extends BlockModelRotat
         else {
             v = 0;
             while (v < height - 1) {
-                if (blockAccess.getBlockId(x, y + 1 + v, z) == block.id()) v++;
+                if (blockAccess.getBlockId(pos.x(), pos.y() + 1 + v, pos.z()) == block.id()) v++;
                 else break;
             }
         }
@@ -81,7 +81,7 @@ public class BlockModelDungeonDoor<T extends BlockLogic> extends BlockModelRotat
         else if (!right) u = width - 1;
         else {
             u = 0;
-            WorldFeaturePoint p = new WorldFeaturePoint(x, y, z);
+            WorldFeaturePoint p = new WorldFeaturePoint(pos.x(), pos.y(), pos.z());
             while (u < width - 1) {
                 p = p.moveInDirection(offsetRight).copy();
                 if (blockAccess.getBlockId(p.getX(), p.getY(), p.getZ()) == block.id()) u++;
@@ -96,25 +96,24 @@ public class BlockModelDungeonDoor<T extends BlockLogic> extends BlockModelRotat
         int textWidth = baseTex.width / width;
         int textHeight = baseTex.height / height;
 
-        buffer.setPosition(baseTex.iconX + u * textWidth, baseTex.iconY + v * textHeight);
+        // buffer.setPosition removed
         buffer.setDimension(textWidth, textHeight);
         return buffer;
     }
 
     @Override
-    public IconCoordinate getBlockTexture(WorldSource blockAccess, int x, int y, int z, Side side) {
+    public IconCoordinate getBlockTexture(WorldSource blockAccess, net.minecraft.core.world.pos.TilePosc pos, Side side) {
         if (isRetro()) {
-            return ctm(this.retroBlockTextures, TextureRegistry.getTexture("minecraft:block/texture_missing"), blockAccess, x, y, z, side);
+            return ctm(this.blockTextures, TextureRegistry.getTexture("minecraft:block/texture_missing"), blockAccess, pos, side);
         }
-        return ctm(this.blockTextures, TextureRegistry.getTexture("minecraft:block/texture_missing"), blockAccess, x, y, z, side);
+        return ctm(this.blockTextures, TextureRegistry.getTexture("minecraft:block/texture_missing"), blockAccess, pos, side);
     }
 
-    @Override
-    public IconCoordinate getBlockOverbrightTexture(WorldSource blockAccess, int x, int y, int z, int side) {
+    public IconCoordinate getBlockOverbrightTexture(WorldSource blockAccess, net.minecraft.core.world.pos.TilePosc pos, int side) {
         if (isRetro()) {
-            return ctm(this.retroOverbrightTextures, TextureRegistry.getTexture("minecraft:block/texture_missing"), blockAccess, x, y, z, Side.getSideById(side));
+            return ctm(this.blockTextures, TextureRegistry.getTexture("minecraft:block/texture_missing"), blockAccess, pos, Side.fromId(side));
         }
-        return ctm(this.overbrightTextures, TextureRegistry.getTexture("minecraft:block/texture_missing"), blockAccess, x, y, z, Side.getSideById(side));
+        return ctm(this.blockTextures, TextureRegistry.getTexture("minecraft:block/texture_missing"), blockAccess, pos, Side.fromId(side));
     }
 
     @Override
@@ -125,7 +124,6 @@ public class BlockModelDungeonDoor<T extends BlockLogic> extends BlockModelRotat
         return this.particleTexture;
     }
 
-    @Override
     public IconCoordinate getBlockOverbrightTextureFromSideAndMeta(Side side, int metadata) {
         if (isRetro()) {
             return particleOverbrightTextureRetro;

@@ -1,19 +1,23 @@
 package teamport.aether.models;
 
+import org.joml.primitives.AABBdc;
+import net.minecraft.core.world.pos.TilePosc;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.render.RenderBlocks;
+import net.minecraft.client.render.block.model.RenderBlocks;
 import net.minecraft.client.render.block.color.BlockColorDispatcher;
 import net.minecraft.client.render.block.model.BlockModelStandard;
-import net.minecraft.client.render.tessellator.Tessellator;
+import net.minecraft.client.render.tessellator.TessellatorGeneral;
 import net.minecraft.client.render.texture.stitcher.IconCoordinate;
 import net.minecraft.client.render.texture.stitcher.TextureRegistry;
 import net.minecraft.core.block.Block;
 import net.minecraft.core.block.BlockLogic;
 import net.minecraft.core.block.material.Material;
+import net.minecraft.core.block.material.Materials;
 import net.minecraft.core.util.helper.Axis;
 import net.minecraft.core.util.helper.Side;
 import net.minecraft.core.util.phys.AABB;
+import org.joml.primitives.AABBdc;
 import net.minecraft.core.world.WorldSource;
 import org.jspecify.annotations.Nullable;
 import org.lwjgl.opengl.GL11;
@@ -36,46 +40,48 @@ public class BlockModelGrassAether<T extends BlockLogic> extends BlockModelStand
     }
 
     @Override
-    public boolean render(Tessellator tessellator, int x, int y, int z) {
-        AABB bounds = this.block.getBounds();
-        boolean didRender = this.isRetro() ? this.renderStandardBlock(tessellator, bounds, x, y, z, 1.0F, 1.0F, 1.0F) : this.renderStandardBlock(tessellator, bounds, x, y, z);
-        if (RenderBlocks.fancyGrass && (!this.retroBlockTextures.hasTexture() || !this.isRetro())) {
+    public boolean render(TessellatorGeneral tessellator, WorldSource world, TilePosc pos) {
+		int x = pos.x();
+		int y = pos.y();
+		int z = pos.z();
+        AABBdc bounds = this.block.getBounds();
+        boolean didRender = this.isRetro() ? renderBlocks.renderStandardBlock(tessellator, world, this, bounds, pos) : renderBlocks.renderStandardBlock(tessellator, world, this, bounds, pos);
+        if (!this.blockTextures.hasTexture() || !this.isRetro()) {
             useOverlay = true;
-            didRender |= this.renderStandardBlock(tessellator, bounds, x, y, z);
+            didRender |= renderBlocks.renderStandardBlock(tessellator, world, this, bounds, pos);
             useOverlay = false;
         }
 
         return didRender;
     }
 
-    @Override
-    public void renderBlockOnInventory(Tessellator tessellator, int metadata, float brightness, float alpha, @Nullable Integer lightmapCoordinate) {
+    public void renderBlockOnInventory(TessellatorGeneral tessellator, int metadata, float brightness, float alpha, @Nullable Integer lightmapCoordinate) {
         GL11.glColor4f(brightness, brightness, brightness, alpha);
         float yOffset = 0.5F;
-        AABB bounds = this.getBlockBoundsForItemRender();
+        AABBdc bounds = this.getBlockBoundsForItemRender();
         GL11.glTranslatef(-0.5F, 0.0F - yOffset, -0.5F);
         tessellator.startDrawingQuads();
         tessellator.setNormal(0.0F, -1.0F, 0.0F);
-        this.renderBottomFace(tessellator, bounds, 0.0F, 0.0F, 0.0F, this.getBlockTextureFromSideAndMetadata(Side.BOTTOM, metadata));
+        renderBlocks.renderBottomFace(tessellator, bounds, 0.0F, 0.0F, 0.0F, this.getBlockTextureFromSideAndMetadata(Side.BOTTOM, metadata));
         tessellator.draw();
         tessellator.startDrawingQuads();
         tessellator.setNormal(0.0F, 0.0F, -1.0F);
-        this.renderNorthFace(tessellator, bounds, 0.0F, 0.0F, 0.0F, this.getBlockTextureFromSideAndMetadata(Side.NORTH, metadata));
+        renderBlocks.renderNorthFace(tessellator, bounds, 0.0F, 0.0F, 0.0F, this.getBlockTextureFromSideAndMetadata(Side.NORTH, metadata));
         tessellator.draw();
         tessellator.startDrawingQuads();
         tessellator.setNormal(0.0F, 0.0F, 1.0F);
-        this.renderSouthFace(tessellator, bounds, 0.0F, 0.0F, 0.0F, this.getBlockTextureFromSideAndMetadata(Side.SOUTH, metadata));
+        renderBlocks.renderSouthFace(tessellator, bounds, 0.0F, 0.0F, 0.0F, this.getBlockTextureFromSideAndMetadata(Side.SOUTH, metadata));
         tessellator.draw();
         tessellator.startDrawingQuads();
         tessellator.setNormal(-1.0F, 0.0F, 0.0F);
-        this.renderWestFace(tessellator, bounds, 0.0F, 0.0F, 0.0F, this.getBlockTextureFromSideAndMetadata(Side.WEST, metadata));
+        renderBlocks.renderWestFace(tessellator, bounds, 0.0F, 0.0F, 0.0F, this.getBlockTextureFromSideAndMetadata(Side.WEST, metadata));
         tessellator.draw();
         tessellator.startDrawingQuads();
         tessellator.setNormal(1.0F, 0.0F, 0.0F);
-        this.renderEastFace(tessellator, bounds, 0.0F, 0.0F, 0.0F, this.getBlockTextureFromSideAndMetadata(Side.EAST, metadata));
+        renderBlocks.renderEastFace(tessellator, bounds, 0.0F, 0.0F, 0.0F, this.getBlockTextureFromSideAndMetadata(Side.EAST, metadata));
         tessellator.draw();
         if (renderBlocks.useInventoryTint && !this.isRetro()) {
-            int l = BlockColorDispatcher.getInstance().getDispatch(this.block).getFallbackColor(metadata);
+            int l = BlockColorDispatcher.getInstance().getDispatch(this.block).getFallbackColor(metadata, 0);
             float f4 = (l >> 16 & 255) / 255.0F;
             float f8 = (l >> 8 & 255) / 255.0F;
             float f9 = (l & 255) / 255.0F;
@@ -84,25 +90,25 @@ public class BlockModelGrassAether<T extends BlockLogic> extends BlockModelStand
 
         tessellator.startDrawingQuads();
         tessellator.setNormal(0.0F, 1.0F, 0.0F);
-        this.renderTopFace(tessellator, bounds, 0.0F, 0.0F, 0.0F, this.getBlockTextureFromSideAndMetadata(Side.TOP, metadata));
+        renderBlocks.renderTopFace(tessellator, bounds, 0.0F, 0.0F, 0.0F, this.getBlockTextureFromSideAndMetadata(Side.TOP, metadata));
         tessellator.draw();
-        if (RenderBlocks.fancyGrass && !this.isRetro()) {
+        if (!this.isRetro()) {
             useOverlay = true;
             tessellator.startDrawingQuads();
             tessellator.setNormal(0.0F, 0.0F, -1.0F);
-            this.renderNorthFace(tessellator, bounds, 0.0F, 0.0F, 0.0F, this.getBlockTextureFromSideAndMetadata(Side.NORTH, metadata));
+            renderBlocks.renderNorthFace(tessellator, bounds, 0.0F, 0.0F, 0.0F, this.getBlockTextureFromSideAndMetadata(Side.NORTH, metadata));
             tessellator.draw();
             tessellator.startDrawingQuads();
             tessellator.setNormal(0.0F, 0.0F, 1.0F);
-            this.renderSouthFace(tessellator, bounds, 0.0F, 0.0F, 0.0F, this.getBlockTextureFromSideAndMetadata(Side.SOUTH, metadata));
+            renderBlocks.renderSouthFace(tessellator, bounds, 0.0F, 0.0F, 0.0F, this.getBlockTextureFromSideAndMetadata(Side.SOUTH, metadata));
             tessellator.draw();
             tessellator.startDrawingQuads();
             tessellator.setNormal(-1.0F, 0.0F, 0.0F);
-            this.renderWestFace(tessellator, bounds, 0.0F, 0.0F, 0.0F, this.getBlockTextureFromSideAndMetadata(Side.WEST, metadata));
+            renderBlocks.renderWestFace(tessellator, bounds, 0.0F, 0.0F, 0.0F, this.getBlockTextureFromSideAndMetadata(Side.WEST, metadata));
             tessellator.draw();
             tessellator.startDrawingQuads();
             tessellator.setNormal(1.0F, 0.0F, 0.0F);
-            this.renderEastFace(tessellator, bounds, 0.0F, 0.0F, 0.0F, this.getBlockTextureFromSideAndMetadata(Side.EAST, metadata));
+            renderBlocks.renderEastFace(tessellator, bounds, 0.0F, 0.0F, 0.0F, this.getBlockTextureFromSideAndMetadata(Side.EAST, metadata));
             tessellator.draw();
             useOverlay = false;
         }
@@ -111,30 +117,29 @@ public class BlockModelGrassAether<T extends BlockLogic> extends BlockModelStand
     }
 
     @Override
-    public IconCoordinate getBlockTexture(WorldSource blockAccess, int x, int y, int z, Side side) {
-        Material above = blockAccess.getBlockMaterial(x, y + 1, z);
-        boolean isSnowy = (above == Material.topSnow || above == Material.snow);
+    public IconCoordinate getBlockTexture(WorldSource blockAccess, TilePosc pos, Side side) {
+        Material above = blockAccess.getBlockMaterial(pos.x(), pos.y() + 1, pos.z());
+        boolean isSnowy = (above == Materials.TOP_SNOW || above == Materials.SNOW);
 
-        if (isSnowy && side.getAxis() != Axis.Y) {
+        if (isSnowy && side.axis() != Axis.Y) {
             return this.isRetro() ? retroSnowSide : snowSide;
         }
 
-        return super.getBlockTexture(blockAccess, x, y, z, side);
+        return super.getBlockTexture(blockAccess, pos, side);
     }
 
     @Override
     public IconCoordinate getBlockTextureFromSideAndMetadata(Side side, int data) {
-        return useOverlay ? overlayIndices[side.getId()] : super.getBlockTextureFromSideAndMetadata(side, data);
+        return useOverlay ? overlayIndices[side.id] : super.getBlockTextureFromSideAndMetadata(side, data);
     }
 
     @Override
-    public boolean shouldSideBeColored(WorldSource blockAccess, int x, int y, int z, int side, int meta) {
-        Material material = blockAccess.getBlockMaterial(x, y + 1, z);
-        if (material != Material.topSnow && material != Material.snow) {
-            return useOverlay || side == Side.TOP.getId();
+    public boolean shouldSideBeColored(WorldSource blockAccess, TilePosc pos, Side side, int meta) {
+        Material material = blockAccess.getBlockMaterial(pos.x(), pos.y() + 1, pos.z());
+        if (material != Materials.TOP_SNOW && material != Materials.SNOW) {
+            return useOverlay || side.id == Side.TOP.id;
         } else {
             return false;
         }
     }
 }
-

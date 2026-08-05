@@ -4,7 +4,11 @@ import net.minecraft.core.item.IArmorItem;
 import net.minecraft.core.item.material.ArmorMaterial;
 import org.jspecify.annotations.Nullable;
 
-public class ItemCombatPendant extends ItemPendant implements IArmorItem {
+public class ItemCombatPendant extends ItemPendant implements IArmorItem<net.minecraft.core.enums.IArmorShape> {
+    @Override
+    public net.minecraft.core.enums.IArmorShape getArmorShape() {
+        return null;
+    }
 
 
     public ItemCombatPendant(String translationKey, String namespaceId, int id, ArmorMaterial material) {
@@ -27,7 +31,6 @@ public class ItemCombatPendant extends ItemPendant implements IArmorItem {
         return 1;
     }
 
-    @Override
     public int getArmorPiece() {
         return -1;
     }}

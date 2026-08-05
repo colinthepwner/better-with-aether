@@ -1,10 +1,13 @@
 package teamport.aether.block.terrain;
 
+import net.minecraft.core.world.pos.TilePosc;
 import net.minecraft.core.block.Block;
 import net.minecraft.core.block.BlockLogic;
+import net.minecraft.core.world.pos.TilePosc;
 import net.minecraft.core.block.Blocks;
 import net.minecraft.core.block.entity.TileEntity;
 import net.minecraft.core.block.material.Material;
+import net.minecraft.core.block.material.Materials;
 import net.minecraft.core.data.gamerule.GameRules;
 import net.minecraft.core.entity.Mob;
 import net.minecraft.core.entity.player.Player;
@@ -28,14 +31,17 @@ public class BlockLogicGrassAether extends BlockLogic implements IBonemealable {
     public final Block<?> dirt;
 
     public BlockLogicGrassAether(Block<?> block, Block<?> dirt) {
-        super(block, Material.grass);
+        super(block, Materials.GRASS);
         block.setTicking(true);
         this.dirt = dirt;
     }
 
     @SuppressWarnings("java:S5411")
     @Override
-    public void updateTick(World world, int x, int y, int z, Random rand) {
+    public void updateTick(World world, TilePosc pos, Random rand, boolean isRandomTick) {
+		int x = pos.x();
+		int y = pos.y();
+		int z = pos.z();
         if (!world.isClientSide) {
             if (world.getBlockLightValue(x, y + 1, z) < 4 && Blocks.lightBlock[world.getBlockId(x, y + 1, z)] > 2) {
                 if (rand.nextInt(4) != 0) {
@@ -77,7 +83,8 @@ public class BlockLogicGrassAether extends BlockLogic implements IBonemealable {
     }
 
     @SuppressWarnings("java:S1119")
-    public boolean onBonemealUsed(ItemStack itemstack, Player player, World world, int blockX, int blockY, int blockZ, Side side, double xPlaced, double yPlaced) {
+    public boolean onBonemealUsed(ItemStack itemstack, Player player, World world, TilePosc pos, Side side, double xPlaced, double yPlaced) {
+        int blockX = pos.x(); int blockY = pos.y(); int blockZ = pos.z();
         if (!world.isClientSide) {
             Random random = world.rand;
             label175:
@@ -115,7 +122,7 @@ public class BlockLogicGrassAether extends BlockLogic implements IBonemealable {
                 }
             }
 
-            if (player.getGamemode().consumeBlocks()) {
+            if (player.getGamemode().hasBlockConsumption()) {
                 --itemstack.stackSize;
             }
         }
@@ -136,7 +143,7 @@ public class BlockLogicGrassAether extends BlockLogic implements IBonemealable {
     @Override
     public void onBlockDestroyedByPlayer(World world, int x, int y, int z, Side side, int meta, Player player, Item item) {
         ItemStack heldItem = player.getHeldItem();
-        if (heldItem != null && heldItem.getItem().equals(AetherItems.TOOL_SHOVEL_SKYROOT) && meta == 0 && player.getGamemode().consumeBlocks()) {
+        if (heldItem != null && heldItem.getItem().equals(AetherItems.TOOL_SHOVEL_SKYROOT) && meta == 0 && player.getGamemode().hasBlockConsumption()) {
             this.harvestBlock(world, player, x, y, z, 1, world.getTileEntity(x, y, z));
         }
     }

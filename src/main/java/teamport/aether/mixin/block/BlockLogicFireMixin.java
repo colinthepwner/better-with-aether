@@ -1,5 +1,6 @@
 package teamport.aether.mixin.block;
 
+import net.minecraft.core.world.pos.TilePosc;
 import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import net.minecraft.core.block.Block;
@@ -17,8 +18,11 @@ public abstract class BlockLogicFireMixin extends BlockLogic {
         super(block, material);
     }
 
-    @WrapMethod(method = "onBlockPlacedByWorld")
-    private void onBlockPlacedByWorld(World world, int x, int y, int z, Operation<Void> original) {
+    @WrapMethod(method = "onPlacedByWorld")
+    private void onBlockPlacedByWorld(World world, TilePosc pos, Operation<Void> original) {
+    	int x = pos.x();
+    	int y = pos.y();
+    	int z = pos.z();
         if (world.dimension == AetherDimension.getAether()) {
             Block<?> below = world.getBlock(x, y - 1, z);
             boolean infiniteBurn = below != null && below.hasTag(BlockTags.INFINITE_BURN);
@@ -29,6 +33,6 @@ public abstract class BlockLogicFireMixin extends BlockLogic {
             }
         }
 
-        original.call(world, x, y, z);
+        original.call(world, pos);
     }
 }

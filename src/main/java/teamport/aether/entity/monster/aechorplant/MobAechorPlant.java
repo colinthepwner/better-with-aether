@@ -1,5 +1,6 @@
 package teamport.aether.entity.monster.aechorplant;
 
+
 import com.mojang.nbt.tags.CompoundTag;
 import net.minecraft.core.WeightedRandomLootObject;
 import net.minecraft.core.block.Block;
@@ -8,7 +9,7 @@ import net.minecraft.core.entity.Entity;
 import net.minecraft.core.entity.monster.Enemy;
 import net.minecraft.core.entity.player.Player;
 import net.minecraft.core.enums.LightLayer;
-import net.minecraft.core.item.ItemBucketEmpty;
+import net.minecraft.core.item.ItemBucket;
 import net.minecraft.core.item.ItemStack;
 import net.minecraft.core.util.collection.NamespaceID;
 import net.minecraft.core.util.helper.DamageType;
@@ -136,7 +137,7 @@ public class MobAechorPlant extends MobMonsterAether implements Enemy, AetherDea
         int belowZ = MathHelper.floor(this.z);
         int belowId = this.world.getBlockId(belowX, belowY, belowZ);
         Block<?> belowBlock = Blocks.blocksList[belowId];
-        double blockTopY = (belowBlock != null) ? (belowY + belowBlock.getBlockBoundsFromState(this.world, belowX, belowY, belowZ).maxY) : (belowY + 1.0);
+        double blockTopY = (belowBlock != null) ? (belowY + belowBlock.getBoundsFromState(this.world, new net.minecraft.core.world.pos.TilePos(belowX, belowY, belowZ)).maxY()) : (belowY + 1.0);
         double gap = this.bb.minY - blockTopY;
         this.onGround = (belowId != 0) && (gap <= 0.001D);
 
@@ -201,7 +202,7 @@ public class MobAechorPlant extends MobMonsterAether implements Enemy, AetherDea
 
     @Override
     public boolean canEntityBeSeen(Entity entity) {
-        return this.world != null && this.world.checkBlockCollisionBetweenPoints(Vec3.getTempVec3(this.x, this.y + this.getHeadHeight(), this.z), Vec3.getTempVec3(entity.x, entity.y + entity.getHeadHeight(), entity.z),
+        return this.world != null && this.world.checkBlockCollisionBetweenPoints(new org.joml.Vector3d(this.x, this.y + this.getHeadHeight(), this.z), new org.joml.Vector3d(entity.x, entity.y + entity.getHeadHeight(), entity.z),
             false, true, false) == null;
     }
 
@@ -268,7 +269,8 @@ public class MobAechorPlant extends MobMonsterAether implements Enemy, AetherDea
     public boolean interact(@NonNull Player player) {
         ItemStack itemstack = player.inventory.getCurrentItem();
         if (itemstack != null && itemstack.itemID == AetherItems.BUCKET_SKYROOT.id) {
-            ItemBucketEmpty.useBucket(player, new ItemStack(AetherItems.BUCKET_SKYROOT_POISON));
+            itemstack.consumeItem(player);
+                player.inventory.insertItem(new ItemStack(teamport.aether.item.AetherItems.BUCKET_SKYROOT_POISON, 1), false);
             return true;
         } else {
             return super.interact(player);

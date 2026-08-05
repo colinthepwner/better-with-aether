@@ -9,7 +9,7 @@ import teamport.aether.entity.AetherDeathMessage;
 
 @Mixin(value = Player.class)
 public abstract class PlayerDeathMessageMixin {
-    @ModifyReturnValue(method = "getDeathMessage", at = @At("RETURN"))
+    @ModifyReturnValue(method = "getDeathMessageKey", at = @At("RETURN"))
     private String sendAetherDeathMessages(String original, Entity entityKilledBy) {
         Player player = (Player) (Object) this;
         if (!(entityKilledBy instanceof AetherDeathMessage)) return original;

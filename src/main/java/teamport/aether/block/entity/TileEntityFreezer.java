@@ -22,8 +22,8 @@ public class TileEntityFreezer extends AetherTileEntityMachine {
     private static final Map<Integer, Integer> buckets = new HashMap<>();
 
     static {
-        buckets.put(Items.BUCKET_WATER.id, Items.BUCKET.id);
-        buckets.put(Items.BUCKET_LAVA.id, Items.BUCKET.id);
+        buckets.put(Items.BUCKET_IRON.id, Items.BUCKET_IRON.id);
+        buckets.put(Items.BUCKET_IRON.id, Items.BUCKET_IRON.id);
         buckets.put(AetherItems.BUCKET_SKYROOT_WATER.id, AetherItems.BUCKET_SKYROOT.id);
     }
 
@@ -98,7 +98,7 @@ public class TileEntityFreezer extends AetherTileEntityMachine {
 
     public boolean eternallyLit(boolean updateMachine) {
         if ((this.worldObj == null
-            || this.worldObj.getBlockId(this.x, this.y, this.z) == AetherBlocks.FREEZER_IDLE.id())
+            || this.worldObj.getBlockId(this.tilePos.x, this.tilePos.y, this.tilePos.z) == AetherBlocks.FREEZER_IDLE.id())
             && this.getCurrentEnergyTime() == 0 && this.containerItemStacks[0] == null
             && this.containerItemStacks[1] != null
             && this.containerItemStacks[1].itemID == AetherItems.ARMOR_TALISMAN_ICE.id
@@ -171,7 +171,7 @@ public class TileEntityFreezer extends AetherTileEntityMachine {
         }
 
         if (this.worldObj != null && wasEmpty && this.containerItemStacks[2] != null) {
-            this.worldObj.markBlockNeedsUpdate(this.x, this.y, this.z);
+            this.worldObj.markBlockNeedsUpdate(this.tilePos.x, this.tilePos.y, this.tilePos.z);
         }
     }
 
@@ -194,7 +194,7 @@ public class TileEntityFreezer extends AetherTileEntityMachine {
     @Override
     public void updateContainer(boolean forceLit) {
         if (this.worldObj != null) {
-            BlockLogicFreezer.updateFurnaceBlockState(forceLit || this.getCurrentEnergyTime() > 0, this.worldObj, this.x, this.y, this.z);
+            BlockLogicFreezer.updateFurnaceBlockState(forceLit || this.getCurrentEnergyTime() > 0, this.worldObj, this.tilePos.x, this.tilePos.y, this.tilePos.z);
             return;
         }
         if (this.carriedBlock != null) {

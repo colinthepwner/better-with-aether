@@ -4,12 +4,12 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.render.Lighting;
-import net.minecraft.client.render.RenderBlocks;
+import net.minecraft.client.render.block.model.RenderBlocks;
 import net.minecraft.client.render.TileEntityRenderDispatcher;
 import net.minecraft.client.render.block.model.BlockModel;
 import net.minecraft.client.render.block.model.BlockModelDispatcher;
 import net.minecraft.client.render.entity.EntityRenderer;
-import net.minecraft.client.render.tessellator.Tessellator;
+import net.minecraft.client.render.tessellator.TessellatorGeneral;
 import net.minecraft.client.render.texture.stitcher.TextureRegistry;
 import net.minecraft.client.render.tileentity.TileEntityRenderer;
 import net.minecraft.core.block.Blocks;
@@ -25,23 +25,22 @@ public class EntityRendererFloatingBlock extends EntityRenderer<EntityFloatingBl
     private RenderBlocks containerRenderBlock = null;
 
     public EntityRendererFloatingBlock() {
-        this.shadowSize = 0.5F;
     }
 
-    public void render(Tessellator tessellator, EntityFloatingBlock floatingBlock, double x, double y, double z, float yaw, float partialTick) {
+    public void render(TessellatorGeneral tessellator, EntityFloatingBlock floatingBlock, double x, double y, double z, float yaw, float partialTick) {
         if (this.container == null || this.container.world != floatingBlock.world) {
             this.container = new BlocksContainer(floatingBlock.world);
-            this.containerRenderBlock = new RenderBlocks(this.container);
+            
         }
 
         GL11.glPushMatrix();
         GL11.glTranslated(x, y, z);
-        TextureRegistry.blockAtlas.bind();
+        net.minecraft.client.render.texture.stitcher.TextureRegistry.worldAtlas.bind();
         Lighting.disable();
         GL11.glBlendFunc(770, 771);
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glDisable(GL11.GL_CULL_FACE);
-        if (this.mc.isAmbientOcclusionEnabled()) {
+        if (net.minecraft.client.option.GameSettings.AMBIENT_OCCLUSION.value) {
             GL11.glShadeModel(7425);
         } else {
             GL11.glShadeModel(7424);
@@ -53,12 +52,12 @@ public class EntityRendererFloatingBlock extends EntityRenderer<EntityFloatingBl
 
         tessellator.startDrawingQuads();
         tessellator.setTranslation((-blockX) - 0.5, (-blockY) - 0.5, (-blockZ) - 0.5);
-        BlockModel.setRenderBlocks(this.containerRenderBlock);
+        
 
         this.container.setLightReferenceEntity(floatingBlock);
         this.container.setBlock(blockX, blockY, blockZ, floatingBlock.getCarriedBlock().blockId, floatingBlock.getCarriedBlock().metadata, floatingBlock.getCarriedBlock().entity);
 
-        BlockModelDispatcher.getInstance().getDispatch(Blocks.getBlock(floatingBlock.getCarriedBlock().blockId)).renderNoCulling(Tessellator.instance, blockX, blockY, blockZ);
+        net.minecraft.client.render.block.model.BlockModelDispatcher.getInstance().getDispatch(net.minecraft.core.block.Blocks.getBlock(floatingBlock.getCarriedBlock().blockId)).renderNoCulling(tessellator, this.container, new net.minecraft.core.world.pos.TilePos(blockX, blockY, blockZ));
 
         this.container.setLightReferenceEntity(null);
         this.container.clear();

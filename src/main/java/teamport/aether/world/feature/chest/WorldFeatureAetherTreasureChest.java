@@ -33,7 +33,7 @@ public class WorldFeatureAetherTreasureChest extends WorldFeature {
 
     @Override
     public boolean place(World world, Random random, int ix, int iy, int iz) {
-        Container inventory = BlockLogicChest.getInventory(world, ix, iy, iz);
+        Container inventory = BlockLogicChest.getInventory(world, new net.minecraft.core.world.pos.TilePos(ix, iy, iz));
         Block<?> block = world.getBlock(ix, iy, iz);
         if (block != null && inventory != null && block.getLogic() instanceof BlockLogicChestLocked) {
             for (int i = 0; i < inventory.getContainerSize(); i++) {
@@ -48,7 +48,7 @@ public class WorldFeatureAetherTreasureChest extends WorldFeature {
     }
 
     public void setTreasure(World world, Random random, int ix, int iy, int iz) {
-        Container inventory = BlockLogicChest.getInventory(world, ix, iy, iz);
+        Container inventory = BlockLogicChest.getInventory(world, new net.minecraft.core.world.pos.TilePos(ix, iy, iz));
         if (inventory == null) return;
         int quantity = AetherMathHelper.invertedExponentialCapped(random, 1, 9);
         List<ItemStack> normalLoot = lootGenerator.generate(random);

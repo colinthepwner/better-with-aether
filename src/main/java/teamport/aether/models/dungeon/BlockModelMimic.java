@@ -1,9 +1,10 @@
 package teamport.aether.models.dungeon;
 
+import net.minecraft.core.world.pos.TilePosc;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.render.block.model.BlockModelRotatable;
-import net.minecraft.client.render.tessellator.Tessellator;
+import net.minecraft.client.render.tessellator.TessellatorGeneral;
 import net.minecraft.client.render.texture.stitcher.IconCoordinate;
 import net.minecraft.client.render.texture.stitcher.TextureRegistry;
 import net.minecraft.core.block.Block;
@@ -28,8 +29,11 @@ public class BlockModelMimic<T extends BlockLogicChestMimic> extends BlockModelR
 
     @SuppressWarnings("java:S131")
     @Override
-    public boolean render(Tessellator tessellator, int x, int y, int z) {
-        int meta = renderBlocks.blockAccess.getBlockMetadata(x, y, z);
+    public boolean render(TessellatorGeneral tessellator, WorldSource world, TilePosc pos) {
+		int x = pos.x();
+		int y = pos.y();
+		int z = pos.z();
+        int meta = world.getBlockMetadata(x, y, z);
         Direction dir = BlockLogicChest.getDirectionFromMeta(meta);
         switch (dir) {
             case NORTH:
@@ -45,15 +49,14 @@ public class BlockModelMimic<T extends BlockLogicChestMimic> extends BlockModelR
                 renderBlocks.uvRotateBottom = 2;
         }
 
-        this.renderStandardBlock(tessellator, this.block.getBlockBoundsFromState(renderBlocks.blockAccess, x, y, z), x, y, z);
-        this.resetRenderBlocks();
-        return true;
+        renderBlocks.renderStandardBlock(tessellator, world, this, this.block.getBlockBoundsFromState(world, x, y, z), x, y, z);
+                return true;
     }
 
     @Override
-    public IconCoordinate getBlockTexture(WorldSource blockAccess, int x, int y, int z, Side side) {
-        int meta = blockAccess.getBlockMetadata(x, y, z);
-        Side facing = BlockLogicChest.getDirectionFromMeta(meta).getSide();
+    public IconCoordinate getBlockTexture(WorldSource blockAccess, net.minecraft.core.world.pos.TilePosc pos, Side side) {
+        int meta = blockAccess.getBlockMetadata(pos.x(), pos.y(), pos.z());
+        Side facing = BlockLogicChest.getDirectionFromMeta(meta).side();
         if (side == Side.TOP || side == Side.BOTTOM) {
             return topTexture;
         }

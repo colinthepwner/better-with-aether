@@ -40,7 +40,7 @@ public class AetherWailaPlugin implements BTWailaCustomTooltipPlugin {
         addEntityIcon(MobPhyg.class, Items.FOOD_PORKCHOP_RAW);
         addEntityIcon(MobSheepuff.class, Blocks.WOOL);
 
-        addEntityIcon(MobAerwhale.class, Items.BUCKET_ICECREAM);
+        addEntityIcon(MobAerwhale.class, teamport.aether.item.AetherItems.BUCKET_SKYROOT_ICECREAM);
 
         addEntityIcon(MobWhirly.class, AetherItems.AMMO_WINDBALL);
         addEntityIcon(MobTempest.class, AetherItems.PROJECTILE_LIGHTNING);
