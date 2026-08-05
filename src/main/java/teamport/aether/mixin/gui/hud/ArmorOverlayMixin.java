@@ -30,7 +30,13 @@ public abstract class ArmorOverlayMixin extends Gui {
     @Shadow
     protected Minecraft mc;
 
-    @Inject(method = "renderGameOverlay", at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/GL11;glDisable(I)V", ordinal = 5))
+    /// Draws the equipped accessories down the side of the HUD.
+    ///
+    /// 7.3 anchored this to the sixth `GL11.glDisable` in `renderGameOverlay`. 8.0 routes GL state
+    /// through `GLRenderer.disableState`, so there are no raw `glDisable` calls left to count --
+    /// and an ordinal into vanilla's GL calls was brittle anyway. TAIL keeps the accessories drawn
+    /// last, on top of the rest of the HUD, without depending on vanilla's internal call sequence.
+    @Inject(method = "renderGameOverlay(FZII)V", at = @At("TAIL"))
     private void renderAetherArmour(float partialTicks, boolean flag, int mouseX, int mouseY, CallbackInfo ci) {
         Player player = this.mc.thePlayer;
         ContainerInventory inv = player.inventory;
