@@ -7,6 +7,7 @@ import net.minecraft.core.entity.Entity;
 import net.minecraft.core.entity.animal.MobWolf;
 import net.minecraft.core.entity.player.Player;
 import net.minecraft.core.item.Item;
+import net.minecraft.core.item.ItemStack;
 import net.minecraft.core.item.Items;
 import net.minecraft.core.item.material.ArmorMaterial;
 import net.minecraft.core.player.inventory.container.ContainerInventory;
@@ -64,10 +65,19 @@ public class MixinHelper {
         ParticleMaker.spawnSmokeParticles(player.world, x, y, z, bbHeight, bbWidth);
     }
 
+    /// Whether this wolf's armour makes it immune to fire.
+    ///
+    /// Every step here is optional and has to be checked. `getArmorItem()` is null for an unarmoured
+    /// wolf -- which is every wild one -- and this runs from `Entity.isInWaterOrRain`, so an
+    /// unguarded dereference crashes the moment any wolf moves. The item need not be armour either,
+    /// since a wolf can carry other things in that slot.
     public static boolean isImmuneToFire(MobWolf mobWolf) {
-        ArmorMaterial armorMaterial = ((net.minecraft.core.item.IArmorItem) mobWolf.getArmorItem().getItem()).getArmorMaterial();
-        if (armorMaterial == null) return false;
-        return armorMaterial.equals(AetherArmorMaterial.PHOENIX);
+        ItemStack armor = mobWolf.getArmorItem();
+        if (armor == null || !(armor.getItem() instanceof net.minecraft.core.item.IArmorItem)) {
+            return false;
+        }
+        ArmorMaterial armorMaterial = ((net.minecraft.core.item.IArmorItem) armor.getItem()).getArmorMaterial();
+        return armorMaterial != null && armorMaterial.equals(AetherArmorMaterial.PHOENIX);
     }
 
     public static boolean isBrokenAABB(AABBdc aabb) {
