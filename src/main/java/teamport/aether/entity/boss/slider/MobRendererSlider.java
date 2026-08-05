@@ -8,6 +8,8 @@ import net.minecraft.client.render.tessellator.TessellatorGeneral;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import net.minecraft.client.render.renderer.GLRenderer;
+import net.minecraft.client.render.renderer.State;
+import net.minecraft.client.render.renderer.BlendFactor;
 import org.lwjgl.opengl.GL11;
 import org.useless.dragonfly.models.entity.StaticEntityModel;
 
@@ -34,10 +36,10 @@ public class MobRendererSlider extends MobRenderer<MobBossSlider> {
 		if (layer == 1) {
 			this.bindTexture(glowTexture(slider));
 			net.minecraft.client.render.renderer.GLRenderer.setLightmapCoord2i(255, 255);
-			GL11.glEnable(GL11.GL_BLEND);
+			GLRenderer.enableState(State.BLEND);
 			net.minecraft.client.render.renderer.GLRenderer.setAlphaTest(0.0F);
-			GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-			GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+			GLRenderer.setBlendFunc(BlendFactor.SRC_ALPHA, BlendFactor.ONE_MINUS_SRC_ALPHA);
+			GLRenderer.setColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		}
 
 		StaticEntityModel model = this.getModel("main");

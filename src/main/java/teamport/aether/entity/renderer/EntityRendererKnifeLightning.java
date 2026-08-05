@@ -33,7 +33,6 @@ public class EntityRendererKnifeLightning extends EntityRenderer<ProjectileKnife
         TessellatorGeneral tessellator = net.minecraft.client.render.renderer.GLRenderer.getTessellator();
         float size = 1.0F;
         float thickness = 0.0625F;
-        GL11.glEnable(GL12.GL_RESCALE_NORMAL);
         GLRenderer.modelM4f().translate(-0.5F, 0.0F, -0.5F);
         tessellator.startDrawingQuads();
 
@@ -94,7 +93,6 @@ public class EntityRendererKnifeLightning extends EntityRenderer<ProjectileKnife
         }
 
         tessellator.draw();
-        GL11.glDisable(GL12.GL_RESCALE_NORMAL);
         GLRenderer.popFrame();
     }
 

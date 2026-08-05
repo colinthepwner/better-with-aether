@@ -11,6 +11,7 @@ import net.minecraft.client.gui.hud.component.HudComponentMovable;
 import net.minecraft.client.gui.hud.component.layout.Layout;
 import net.minecraft.core.entity.Mob;
 import net.minecraft.core.lang.I18n;
+import net.minecraft.client.render.renderer.GLRenderer;
 import org.lwjgl.opengl.GL11;
 import teamport.aether.entity.boss.AetherBossList;
 import teamport.aether.entity.boss.EnemyBoss;
@@ -90,7 +91,7 @@ public class HudComponentBossBar extends HudComponentMovable {
         float progress = (float) health / (float) maxHealth;
         int progressWidth = (int) (BAR_WIDTH * progress);
 
-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+        GLRenderer.setColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         mc.textureManager.bindTexture(mc.textureManager.loadTexture("/assets/aether/textures/gui/boss_healthbar.png"));
         gui.drawTexturedModalRect(barX, barY, 0, 16, BAR_WIDTH, BAR_HEIGHT); // Background
         gui.drawTexturedModalRect(barX, barY, 0, 0, progressWidth, BAR_HEIGHT); // LifeBar

@@ -21,6 +21,7 @@ import net.minecraft.core.item.Item;
 import net.minecraft.core.item.ItemStack;
 import net.minecraft.core.player.gamemode.Gamemode;
 import net.minecraft.client.render.renderer.GLRenderer;
+import net.minecraft.client.render.renderer.State;
 import org.lwjgl.opengl.GL11;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -46,7 +47,7 @@ public abstract class MobRendererPlayerMixinCapeRender extends MobRenderer<Playe
             return;
         }
         original.call(red, blue, green, 0.0F);
-        GL11.glEnable(GL11.GL_BLEND);
+        GLRenderer.enableState(State.BLEND);
     }
 
     ///  Afterward we need to restore the GL11 state back so rendering can resume as is

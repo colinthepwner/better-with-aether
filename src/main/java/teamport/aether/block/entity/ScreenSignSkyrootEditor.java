@@ -16,6 +16,7 @@ import net.minecraft.core.net.packet.PacketSignUpdate;
 import net.minecraft.core.util.helper.NetCharacters;
 import org.lwjgl.input.Keyboard;
 import net.minecraft.client.render.renderer.GLRenderer;
+import net.minecraft.client.render.renderer.State;
 import org.lwjgl.opengl.GL11;
 import teamport.aether.block.AetherBlocks;
 import teamport.aether.block.skyroot.BlockLogicPaintableSignSkyroot;
@@ -172,16 +173,16 @@ public class ScreenSignSkyrootEditor extends Screen {
             this.entitySign.lineBeingEdited = this.editLine;
         }
 
-        GL11.glEnable(GL11.GL_BLEND);
+        GLRenderer.enableState(State.BLEND);
         TileEntityRenderDispatcher.instance.renderTileEntity(net.minecraft.client.render.renderer.GLRenderer.getTessellator(), this.entitySign, -0.5, -0.75, -0.5, 0.0F);
         this.entitySign.lineBeingEdited = -1;
-        GL11.glDisable(GL11.GL_BLEND);
+        GLRenderer.disableState(State.BLEND);
         GLRenderer.popFrame();
-        GL11.glDisable(GL11.GL_DEPTH_TEST);
+        GLRenderer.disableState(State.DEPTH_TEST);
         EnumSignPicture enumsignpicture = this.entitySign.getPicture();
         if (enumsignpicture != null)
             this.drawStringCenteredShadow(this.fontRenderer, I18n.getInstance().translateKey(enumsignpicture.getLanguageKey()), this.width / 2, 150 + this.yOffset, 16777215);
-        GL11.glEnable(GL11.GL_DEPTH_TEST);
+        GLRenderer.enableState(State.DEPTH_TEST);
         super.render(mx, my, partialTick);
     }
 

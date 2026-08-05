@@ -6,6 +6,7 @@ import net.minecraft.core.util.helper.MathHelper;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import net.minecraft.client.render.renderer.GLRenderer;
+import net.minecraft.client.render.renderer.State;
 import org.lwjgl.opengl.GL11;
 import org.useless.dragonfly.models.entity.BoneTransform;
 import org.useless.dragonfly.models.entity.StaticEntityModel;
@@ -40,13 +41,11 @@ public class MobRendererWhirly extends MobRenderer<MobWhirly> {
             float wobbleStrength = 0.12F;
             float wobble = MathHelper.sin(time * wobbleSpeed) * wobbleStrength;
 
-            GL11.glMatrixMode(GL11.GL_TEXTURE);
             GLRenderer.pushFrame();
-            GL11.glLoadIdentity();
-            GLRenderer.modelM4f().translate(-scroll, 0.0F, 0.0F);
+            // scrolls the TEXTURE matrix, not the model one -- 8.0 keeps them separate
+            GLRenderer.textureM4f().identity().translate(-scroll, 0.0F, 0.0F);
 
-            GL11.glMatrixMode(GL11.GL_MODELVIEW);
-            GL11.glEnable(GL11.GL_BLEND);
+            GLRenderer.enableState(State.BLEND);
 
             BoneTransform wind = model.getTransform("wind");
             wind.rotY = time * spinSpeed;
@@ -65,11 +64,8 @@ public class MobRendererWhirly extends MobRenderer<MobWhirly> {
             wind4.rotX = wobble * 0.35F;
 
         } else if (layer == 2) {
-            GL11.glMatrixMode(GL11.GL_TEXTURE);
             GLRenderer.popFrame();
-            GL11.glLoadIdentity();
-            GL11.glMatrixMode(GL11.GL_MODELVIEW);
-            GL11.glDisable(GL11.GL_BLEND);
+            GLRenderer.disableState(State.BLEND);
         } else {
             float bodyYaw = this.getBodyYaw(whirly, partialTick);
             float headYaw = this.getHeadYaw(whirly, partialTick) - bodyYaw;

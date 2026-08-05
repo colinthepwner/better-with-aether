@@ -48,7 +48,7 @@ public class BlockModelAetherStoneMossy<T extends BlockLogic> extends BlockModel
         float r = (color >> 16 & 255) / 255.0F;
         float g = (color >> 8 & 255) / 255.0F;
         float b = (color & 255) / 255.0F;
-        GL11.glColor4f(r * brightness, g * brightness, b * brightness, alpha);
+        GLRenderer.setColor4f(r * brightness, g * brightness, b * brightness, alpha);
         AABBdc bounds = this.block.getBounds();
         IconCoordinate mossCoord = this.mossOverlay;
         tessellator.startDrawingQuads();

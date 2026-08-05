@@ -30,7 +30,6 @@ public class EntityRendererArrowFlaming extends EntityRenderer<ProjectileArrowFl
         float tailMinV = 5.0F / 32.0F;
         float tailMaxV = 10.0F / 32.0F;
         float scale = 0.05625F;
-        GL11.glEnable(GL12.GL_RESCALE_NORMAL);
         float shakeAmount = arrow.shake - partialTick;
         if (shakeAmount > 0.0F) {
             float shakeAngle = -MathHelper.sin(shakeAmount * 3.0F) * shakeAmount;
@@ -40,14 +39,14 @@ public class EntityRendererArrowFlaming extends EntityRenderer<ProjectileArrowFl
         GLRenderer.modelM4f().rotate(org.joml.Math.toRadians((float) (45.0F)), 1.0F, 0.0F, 0.0F);
         GLRenderer.modelM4f().scale(scale, scale, scale);
         GLRenderer.modelM4f().translate(-4.0F, 0.0F, 0.0F);
-        GL11.glNormal3f(scale, 0.0F, 0.0F);
+        tessellator.setNormal(scale, 0.0F, 0.0F);
         tessellator.startDrawingQuads();
         tessellator.addVertexWithUV(-7.0, -2.0, -2.0, tailMinU, tailMinV);
         tessellator.addVertexWithUV(-7.0, -2.0, 2.0, tailMaxU, tailMinV);
         tessellator.addVertexWithUV(-7.0, 2.0, 2.0, tailMaxU, tailMaxV);
         tessellator.addVertexWithUV(-7.0, 2.0, -2.0, tailMinU, tailMaxV);
         tessellator.draw();
-        GL11.glNormal3f(-scale, 0.0F, 0.0F);
+        tessellator.setNormal(-scale, 0.0F, 0.0F);
         tessellator.startDrawingQuads();
         tessellator.addVertexWithUV(-7.0, 2.0, -2.0, tailMinU, tailMinV);
         tessellator.addVertexWithUV(-7.0, 2.0, 2.0, tailMaxU, tailMinV);
@@ -57,7 +56,7 @@ public class EntityRendererArrowFlaming extends EntityRenderer<ProjectileArrowFl
 
         for (int i = 0; i < 4; ++i) {
             GLRenderer.modelM4f().rotate(org.joml.Math.toRadians((float) (90.0F)), 1.0F, 0.0F, 0.0F);
-            GL11.glNormal3f(0.0F, 0.0F, scale);
+            tessellator.setNormal(0.0F, 0.0F, scale);
             tessellator.startDrawingQuads();
             tessellator.addVertexWithUV(-8.0, -2.0, 0.0, bodyMinU, bodyMinV);
             tessellator.addVertexWithUV(8.0, -2.0, 0.0, bodyMaxU, bodyMinV);
@@ -66,7 +65,6 @@ public class EntityRendererArrowFlaming extends EntityRenderer<ProjectileArrowFl
             tessellator.draw();
         }
 
-        GL11.glDisable(GL12.GL_RESCALE_NORMAL);
         GLRenderer.popFrame();
     }
 }

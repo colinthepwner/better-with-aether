@@ -62,7 +62,7 @@ public class RecipePageFreezer extends RecipePageAetherMachines {
             this.drawStringNoShadow(mc.font, timeString, 0, 0, -12566464);
             GLRenderer.popFrame();
             re.loadTexture("/assets/minecraft/textures/gui/container/guidebook/guidebook.png").bind();
-            GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+            GLRenderer.setColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         }
 
     }

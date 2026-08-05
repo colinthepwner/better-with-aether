@@ -16,6 +16,7 @@ import net.minecraft.core.entity.EntityDispatcher;
 import net.minecraft.core.lang.I18n;
 import net.minecraft.core.player.inventory.slot.Slot;
 import org.jspecify.annotations.NonNull;
+import net.minecraft.client.render.renderer.GLRenderer;
 import org.lwjgl.opengl.GL11;
 import teamport.aether.AetherMod;
 import teamport.aether.recipe.RecipeEntryIncubator;
@@ -123,7 +124,7 @@ public class RecipePageIncubator extends RecipePage<RecipeEntryIncubator> {
                 mouseOverSlot = slot;
             }
 
-            GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+            GLRenderer.setColor4f(1.0F, 1.0F, 1.0F, 1.0F);
             if (mouseOverSlot != null && mouseOverSlot.hasItem()) {
                 boolean showDescription = DescriptionPromptEnum.showDescription();
                 String str = this.tooltipElement.getTooltipText(mouseOverSlot.getItemStack(), showDescription, mouseOverSlot);

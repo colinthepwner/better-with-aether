@@ -5,6 +5,7 @@ import net.fabricmc.api.Environment;
 import net.minecraft.core.item.ItemStack;
 import net.minecraft.core.lang.I18n;
 import net.minecraft.core.player.inventory.container.ContainerInventory;
+import net.minecraft.client.render.renderer.GLRenderer;
 import org.lwjgl.opengl.GL11;
 import teamport.aether.AetherRecipes;
 import teamport.aether.block.entity.TileEntityFreezer;
@@ -24,7 +25,7 @@ public class ScreenFreezer extends ScreenAetherMachine {
     @Override
     public void drawGuiContainerBackgroundLayer(float f) {
         this.mc.textureManager.loadTexture("/assets/aether/textures/gui/container/freezer.png").bind();
-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+        GLRenderer.setColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         int j = (width - xSize) / 2;
         int k = (height - ySize) / 2;
         this.drawTexturedModalRect(j, k, 0, 0, this.xSize, this.ySize);

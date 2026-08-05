@@ -16,6 +16,8 @@ import net.minecraft.core.entity.player.Player;
 import net.minecraft.core.item.Item;
 import net.minecraft.core.item.ItemStack;
 import net.minecraft.client.render.renderer.GLRenderer;
+import net.minecraft.client.render.renderer.State;
+import net.minecraft.client.render.renderer.BlendFactor;
 import org.lwjgl.opengl.GL11;
 import teamport.aether.item.DartInterface;
 
@@ -46,27 +48,27 @@ public class ItemModelShooter extends ItemModelStandard {
         Minecraft mc = Minecraft.getMinecraft();
         Item nextDart = this.getNextDart(mc.thePlayer);
         if (itemStack == mc.thePlayer.getHeldItem() && nextDart != null) {
-            GL11.glEnable(GL11.GL_BLEND);
-            GL11.glBlendFunc(770, 771);
-            GL11.glEnable(GL11.GL_CULL_FACE);
+            GLRenderer.enableState(State.BLEND);
+            GLRenderer.setBlendFunc(BlendFactor.SRC_ALPHA, BlendFactor.ONE_MINUS_SRC_ALPHA);
+            GLRenderer.enableState(State.CULL_FACE);
             ItemModelStandard dartModel = (ItemModelStandard) ItemModelDispatcher.getInstance().getDispatch(nextDart);
             IconCoordinate textureIndex = dartModel.getIcon(mc.thePlayer, nextDart.getDefaultStack());
-            GL11.glDisable(GL11.GL_LIGHTING);
+            GLRenderer.globalSetLightEnabled(false);
             textureIndex.parentAtlas.bind();
             if (true) {
                 int color = this.getColor(itemStack);
                 float r = (color >> 16 & 255) / 255.0F;
                 float g = (color >> 8 & 255) / 255.0F;
                 float b = (color & 255) / 255.0F;
-                GL11.glColor4f(r * 1.0F, g * 1.0F, b * 1.0F, alpha);
+                GLRenderer.setColor4f(r * 1.0F, g * 1.0F, b * 1.0F, alpha);
             } else {
-                GL11.glColor4f(1.0F, 1.0F, 1.0F, alpha);
+                GLRenderer.setColor4f(1.0F, 1.0F, 1.0F, alpha);
             }
 
             this.renderCoordinate(tessellator, textureIndex, (byte)0, 0, false, false);
-            GL11.glEnable(GL11.GL_LIGHTING);
-            GL11.glEnable(GL11.GL_CULL_FACE);
-            GL11.glDisable(GL11.GL_BLEND);
+            GLRenderer.globalSetLightEnabled(true);
+            GLRenderer.enableState(State.CULL_FACE);
+            GLRenderer.disableState(State.BLEND);
         }
 
         super.renderItemOverlayIntoGUI(tessellator, font, textureManager, itemStack, x, y, text, alpha);

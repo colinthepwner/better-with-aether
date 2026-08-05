@@ -61,7 +61,7 @@ public abstract class MobRendererMixinPlayerRender<T extends Mob> {
             boolean hasHelmet = ((Player) entity).inventory.armorInventory[3] != null;
 
             GLRenderer.pushFrame();
-            GL11.glColor4f(1F, 1F, 1F, 1F);
+            GLRenderer.setColor4f(1F, 1F, 1F, 1F);
             GLRenderer.modelM4f().scale(0.80F, 0.80F, 0.80F);
             if (hasHelmet) {
                 GLRenderer.modelM4f().translate(0, 0.1875F, 0);

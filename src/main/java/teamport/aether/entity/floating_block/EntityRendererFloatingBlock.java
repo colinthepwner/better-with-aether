@@ -17,6 +17,8 @@ import net.minecraft.core.block.entity.TileEntity;
 import net.minecraft.core.util.helper.MathHelper;
 import net.minecraft.core.world.BlocksContainer;
 import net.minecraft.client.render.renderer.GLRenderer;
+import net.minecraft.client.render.renderer.State;
+import net.minecraft.client.render.renderer.BlendFactor;
 import org.lwjgl.opengl.GL11;
 
 @Environment(EnvType.CLIENT)
@@ -35,18 +37,13 @@ public class EntityRendererFloatingBlock extends EntityRenderer<EntityFloatingBl
         }
 
         GLRenderer.pushFrame();
-        GL11.glTranslated(x, y, z);
+        // was glTranslated; the JOML model matrix is single precision
+        GLRenderer.modelM4f().translate((float) x, (float) y, (float) z);
         net.minecraft.client.render.texture.stitcher.TextureRegistry.worldAtlas.bind();
         Lighting.disable();
-        GL11.glBlendFunc(770, 771);
-        GL11.glEnable(GL11.GL_BLEND);
-        GL11.glDisable(GL11.GL_CULL_FACE);
-        if (net.minecraft.client.option.GameSettings.AMBIENT_OCCLUSION.value) {
-            GL11.glShadeModel(7425);
-        } else {
-            GL11.glShadeModel(7424);
-        }
-
+        GLRenderer.setBlendFunc(BlendFactor.SRC_ALPHA, BlendFactor.ONE_MINUS_SRC_ALPHA);
+        GLRenderer.enableState(State.BLEND);
+        GLRenderer.disableState(State.CULL_FACE);
         int blockX = MathHelper.floor(floatingBlock.x);
         int blockY = MathHelper.floor(floatingBlock.y);
         int blockZ = MathHelper.floor(floatingBlock.z);

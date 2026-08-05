@@ -5,6 +5,7 @@ import net.fabricmc.api.Environment;
 import net.minecraft.core.item.ItemStack;
 import net.minecraft.core.lang.I18n;
 import net.minecraft.core.player.inventory.container.ContainerInventory;
+import net.minecraft.client.render.renderer.GLRenderer;
 import org.lwjgl.opengl.GL11;
 import teamport.aether.AetherRecipes;
 import teamport.aether.block.entity.TileEntityIncubator;
@@ -26,7 +27,7 @@ public class ScreenIncubator extends ScreenAetherMachine {
     @Override
     public void drawGuiContainerBackgroundLayer(float f) {
         this.mc.textureManager.loadTexture("/assets/aether/textures/gui/container/incubator.png").bind();
-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+        GLRenderer.setColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         int x = (width - xSize) / 2;
         int y = (height - ySize) / 2;
         this.drawTexturedModalRect(x, y, 0, 0, this.xSize, this.ySize);

@@ -10,6 +10,8 @@ import net.minecraft.client.gui.hud.component.HudComponentMovable;
 import net.minecraft.client.gui.hud.component.layout.Layout;
 import net.minecraft.client.render.texture.stitcher.IconCoordinate;
 import net.minecraft.client.render.texture.stitcher.TextureRegistry;
+import net.minecraft.client.render.renderer.GLRenderer;
+import net.minecraft.client.render.renderer.State;
 import org.lwjgl.opengl.GL11;
 import teamport.aether.entity.AetherJumpAmount;
 
@@ -37,8 +39,8 @@ public class HudComponentJumpBar extends HudComponentMovable {
         int baseX = this.getLayout().getComponentX(this, xSizeScreen);
         int baseY = this.getLayout().getComponentY(this, ySizeScreen);
 
-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        GL11.glDisable(GL11.GL_BLEND);
+        GLRenderer.setColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+        GLRenderer.disableState(State.BLEND);
 
         for (int i = 0; i < maxJumps; i++) {
             int row = i / 10;
@@ -57,8 +59,8 @@ public class HudComponentJumpBar extends HudComponentMovable {
         int x = layout.getComponentX(this, screenWidth);
         int y = layout.getComponentY(this, screenHeight);
 
-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        GL11.glDisable(GL11.GL_BLEND);
+        GLRenderer.setColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+        GLRenderer.disableState(State.BLEND);
 
         int previewFilled = 5;
 

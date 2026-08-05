@@ -29,6 +29,9 @@ import net.minecraft.core.item.ItemStack;
 import net.minecraft.core.item.Items;
 import net.minecraft.core.player.gamemode.Gamemode;
 import org.jspecify.annotations.NonNull;
+import net.minecraft.client.render.renderer.GLRenderer;
+import net.minecraft.client.render.renderer.State;
+import net.minecraft.client.render.renderer.BlendFactor;
 import org.lwjgl.opengl.GL11;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -108,7 +111,7 @@ public abstract class MobRendererPlayerMixinAccessoryRender extends net.minecraf
 
         textureManager.loadTexture(path).bind();
 
-        GL11.glDisable(GL11.GL_CULL_FACE);
+        GLRenderer.disableState(State.CULL_FACE);
 
         modelArmorChestplate.onGround = 0.0F;
         modelArmorChestplate.isRiding = false;
@@ -211,17 +214,17 @@ public abstract class MobRendererPlayerMixinAccessoryRender extends net.minecraf
                 }
 
                 renderDispatcher.textureManager.loadTexture(path).bind();
-                GLManager.glEnable(GL11.GL_CULL_FACE);
-                GLManager.glEnable(GL11.GL_BLEND);
+                GLManager.enable(State.CULL_FACE);
+                GLManager.enable(State.BLEND);
                 if (PlayerUtil.isInvisible(entity)) {
-                    GL11.glColor4f(1.0F, 1.0F, 1.0F, 0.25F);
-                    GL11.glEnable(GL11.GL_BLEND);
+                    GLRenderer.setColor4f(1.0F, 1.0F, 1.0F, 0.25F);
+                    GLRenderer.enableState(State.BLEND);
                 } else {
-                    GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-                    GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+                    GLRenderer.setColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+                    GLRenderer.setBlendFunc(BlendFactor.SRC_ALPHA, BlendFactor.ONE_MINUS_SRC_ALPHA);
                 }
                 renderModelBiped(tessellator, shield, entity, partialTick);
-                GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+                GLRenderer.setColor4f(1.0F, 1.0F, 1.0F, 1.0F);
                 return;
             }
 
@@ -318,17 +321,17 @@ public abstract class MobRendererPlayerMixinAccessoryRender extends net.minecraf
                     modelBubble.legRight.visible = false;
 
                     renderDispatcher.textureManager.loadTexture(path).bind();
-                    GLManager.glEnable(GL11.GL_CULL_FACE);
-                    GLManager.glEnable(GL11.GL_BLEND);
+                    GLManager.enable(State.CULL_FACE);
+                    GLManager.enable(State.BLEND);
                     if (PlayerUtil.isInvisible(entity)) {
-                        GL11.glColor4f(1.0F, 1.0F, 1.0F, 0.25F);
-                        GL11.glEnable(GL11.GL_BLEND);
+                        GLRenderer.setColor4f(1.0F, 1.0F, 1.0F, 0.25F);
+                        GLRenderer.enableState(State.BLEND);
                     } else {
-                        GL11.glColor4f(1.0F, 1.0F, 1.0F, 0.5F);
-                        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+                        GLRenderer.setColor4f(1.0F, 1.0F, 1.0F, 0.5F);
+                        GLRenderer.setBlendFunc(BlendFactor.SRC_ALPHA, BlendFactor.ONE_MINUS_SRC_ALPHA);
                     }
                     renderModelBiped(tessellator, modelBubble, entity, partialTick);
-                    GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+                    GLRenderer.setColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 
                     return;
                 }

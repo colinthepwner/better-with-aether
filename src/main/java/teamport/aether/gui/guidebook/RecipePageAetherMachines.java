@@ -12,6 +12,7 @@ import net.minecraft.client.render.TextureManager;
 import net.minecraft.core.data.registry.recipe.SearchQuery;
 import net.minecraft.core.lang.I18n;
 import net.minecraft.core.player.inventory.slot.Slot;
+import net.minecraft.client.render.renderer.GLRenderer;
 import org.lwjgl.opengl.GL11;
 import teamport.aether.recipe.RecipeEntryAetherMachine;
 
@@ -141,7 +142,7 @@ public abstract class RecipePageAetherMachines extends RecipePage<RecipeEntryAet
                 mouseOverSlot = slot;
             }
 
-            GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+            GLRenderer.setColor4f(1.0F, 1.0F, 1.0F, 1.0F);
             if (mouseOverSlot != null && mouseOverSlot.hasItem()) {
                 boolean showDescription = DescriptionPromptEnum.showDescription();
                 String str = this.tooltipElement.getTooltipText(mouseOverSlot.getItemStack(), showDescription, mouseOverSlot);

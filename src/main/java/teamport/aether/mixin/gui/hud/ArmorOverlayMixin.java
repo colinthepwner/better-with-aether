@@ -14,6 +14,8 @@ import net.minecraft.core.entity.player.Player;
 import net.minecraft.core.item.ItemStack;
 import net.minecraft.core.player.inventory.container.ContainerInventory;
 import net.minecraft.core.util.helper.MathHelper;
+import net.minecraft.client.render.renderer.GLRenderer;
+import net.minecraft.client.render.renderer.State;
 import org.lwjgl.opengl.GL11;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -59,8 +61,8 @@ public abstract class ArmorOverlayMixin extends Gui {
                     int l = (int) (durability * 255.0F);
                     int color = 255 - l << 16 | l << 8;
 
-                    GL11.glDisable(GL11.GL_BLEND);
-                    GL11.glDisable(GL11.GL_LIGHTING);
+                    GLRenderer.disableState(State.BLEND);
+                    GLRenderer.globalSetLightEnabled(false);
                     this.drawStringShadow(font, String.valueOf(stack.getMaxDamage() - stack.getMetadata() + 1), x + 20, y + 4, color);
                 }
             }

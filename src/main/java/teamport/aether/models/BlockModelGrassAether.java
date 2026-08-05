@@ -57,7 +57,7 @@ public class BlockModelGrassAether<T extends BlockLogic> extends BlockModelStand
     }
 
     public void renderBlockOnInventory(TessellatorGeneral tessellator, int metadata, float brightness, float alpha, @Nullable Integer lightmapCoordinate) {
-        GL11.glColor4f(brightness, brightness, brightness, alpha);
+        GLRenderer.setColor4f(brightness, brightness, brightness, alpha);
         float yOffset = 0.5F;
         AABBdc bounds = this.getBlockBoundsForItemRender();
         GLRenderer.modelM4f().translate(-0.5F, 0.0F - yOffset, -0.5F);
@@ -86,7 +86,7 @@ public class BlockModelGrassAether<T extends BlockLogic> extends BlockModelStand
             float f4 = (l >> 16 & 255) / 255.0F;
             float f8 = (l >> 8 & 255) / 255.0F;
             float f9 = (l & 255) / 255.0F;
-            GL11.glColor4f(f4 * brightness, f8 * brightness, f9 * brightness, alpha);
+            GLRenderer.setColor4f(f4 * brightness, f8 * brightness, f9 * brightness, alpha);
         }
 
         tessellator.startDrawingQuads();
