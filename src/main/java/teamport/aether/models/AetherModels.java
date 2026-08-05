@@ -93,7 +93,13 @@ public class AetherModels implements ModelEntrypoint {
         this.setBlockCloudModels(dispatcher);
 
 
-        dispatcher.addDispatch(new BlockModelGenericPortal<>(AetherBlocks.PORTAL_AETHER, "aether"));
+        // The second argument is a model path PREFIX that is concatenated with each dye colour's id
+        // and nothing else -- vanilla passes "minecraft:block/portal_nether/" and
+        // "minecraft:block/portal_drift/". Passing a bare namespace asks for models called
+        // "aetherblue", "aetherred" and so on; `loadDataModel` returns an empty model for those
+        // rather than failing, so nothing is logged and the portal simply has no model. The HUD then
+        // reads its in-portal overlay straight off that model and crashes on the null.
+        dispatcher.addDispatch(new BlockModelGenericPortal<>(AetherBlocks.PORTAL_AETHER, "aether:block/portal_aether/"));
 
         dispatcher.addDispatch(new BlockModelGrassAether<>(AetherBlocks.GRASS_AETHER)
             .setTex("aether:block/grass_aether/top", Side.TOP)
@@ -212,7 +218,9 @@ public class AetherModels implements ModelEntrypoint {
         dispatcher.addDispatch(new BlockModelSlab<>(AetherBlocks.SLAB_BRICK_ZANITE));
 
 
-        dispatcher.addDispatch(AetherBlocks.TORCH_AMBROSIUM, new BlockModelGenericTorch<>(AetherBlocks.TORCH_AMBROSIUM, "aether"));
+        // Full texture path, as vanilla passes ("minecraft:block/torch_coal") -- a bare namespace
+        // resolves to nothing. Same mistake as the portal prefix above.
+        dispatcher.addDispatch(AetherBlocks.TORCH_AMBROSIUM, new BlockModelGenericTorch<>(AetherBlocks.TORCH_AMBROSIUM, "aether:block/torch_ambrosium"));
 
 
         dispatcher.addDispatch(AetherBlocks.LANTERN_FIREFLY_SILVER, new BlockModelStandard<>(AetherBlocks.LANTERN_FIREFLY_SILVER).setAllTextures("aether:block/lantern_firefly_silver"));
