@@ -6,6 +6,7 @@ import net.minecraft.client.render.tessellator.TessellatorGeneral;
 import net.minecraft.core.util.helper.MathHelper;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
+import net.minecraft.client.render.renderer.GLRenderer;
 import org.lwjgl.opengl.GL11;
 import org.useless.dragonfly.models.entity.BoneTransform;
 import org.useless.dragonfly.models.entity.StaticEntityModel;
@@ -38,10 +39,10 @@ public class MobRendererZephyr extends MobRenderer<MobZephyr> {
 
     @Override
     public void renderPreview(@NonNull TessellatorGeneral tessellator, @NonNull MobZephyr mobZephyr, double x, double y, double z, float yaw, float partialTick) {
-        GL11.glPushMatrix();
-        GL11.glTranslatef(0.0F, 1.0F, 0.0F);
-        GL11.glScalef(0.25F, 0.25F, 0.25F);
+        GLRenderer.pushFrame();
+        GLRenderer.modelM4f().translate(0.0F, 1.0F, 0.0F);
+        GLRenderer.modelM4f().scale(0.25F, 0.25F, 0.25F);
         super.renderPreview(tessellator, mobZephyr, x, y, z, yaw, partialTick);
-        GL11.glPopMatrix();
+        GLRenderer.popFrame();
     }
 }

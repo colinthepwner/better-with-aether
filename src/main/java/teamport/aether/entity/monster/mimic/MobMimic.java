@@ -53,6 +53,8 @@ import static net.minecraft.core.net.command.TextFormatting.RED;
 import static net.minecraft.core.net.command.TextFormatting.RESET;
 import static net.minecraft.core.util.helper.Direction.*;
 import static teamport.aether.AetherMod.TRANSLATOR;
+import teamport.aether.helper.ChestHelper;
+
 import static teamport.aether.entity.monster.mimic.MimicRegistry.DEFAULT;
 import static teamport.aether.world.feature.util.WorldFeaturePoint.wfp;
 
@@ -380,7 +382,7 @@ public class MobMimic extends MobMonsterAether implements Enemy, AetherDeathMess
 
     private void populateChest(WorldFeaturePoint point) {
         if (this.world == null) return;
-        Container inventory = BlockLogicChest.getInventory(world, new net.minecraft.core.world.pos.TilePos(point.getX(), point.getY(), point.getZ()));
+        Container inventory = ChestHelper.inventoryAt(world, new net.minecraft.core.world.pos.TilePos(point.getX(), point.getY(), point.getZ()));
         if (inventory == null) {
             return;
         }

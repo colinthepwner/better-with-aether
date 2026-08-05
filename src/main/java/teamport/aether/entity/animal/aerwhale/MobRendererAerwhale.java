@@ -5,6 +5,7 @@ import net.fabricmc.api.Environment;
 import net.minecraft.client.render.tessellator.TessellatorGeneral;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
+import net.minecraft.client.render.renderer.GLRenderer;
 import org.lwjgl.opengl.GL11;
 import org.useless.dragonfly.models.entity.BoneTransform;
 import org.useless.dragonfly.models.entity.StaticEntityModel;
@@ -40,10 +41,10 @@ public class MobRendererAerwhale extends MobRenderer<MobAerwhale> {
 
     @Override
     public void renderPreview(@NonNull TessellatorGeneral tessellator, @NonNull MobAerwhale aerwhale, double x, double y, double z, float yaw, float partialTick) {
-        GL11.glPushMatrix();
-        GL11.glScalef(0.1F, 0.1F, 0.1F);
+        GLRenderer.pushFrame();
+        GLRenderer.modelM4f().scale(0.1F, 0.1F, 0.1F);
         super.renderPreview(tessellator, aerwhale, x - 2, y + 10, z, yaw, partialTick);
-        GL11.glPopMatrix();
+        GLRenderer.popFrame();
     }
 
 }

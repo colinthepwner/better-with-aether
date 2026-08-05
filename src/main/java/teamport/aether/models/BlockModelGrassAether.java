@@ -20,6 +20,7 @@ import net.minecraft.core.util.phys.AABB;
 import org.joml.primitives.AABBdc;
 import net.minecraft.core.world.WorldSource;
 import org.jspecify.annotations.Nullable;
+import net.minecraft.client.render.renderer.GLRenderer;
 import org.lwjgl.opengl.GL11;
 
 @Environment(EnvType.CLIENT)
@@ -59,7 +60,7 @@ public class BlockModelGrassAether<T extends BlockLogic> extends BlockModelStand
         GL11.glColor4f(brightness, brightness, brightness, alpha);
         float yOffset = 0.5F;
         AABBdc bounds = this.getBlockBoundsForItemRender();
-        GL11.glTranslatef(-0.5F, 0.0F - yOffset, -0.5F);
+        GLRenderer.modelM4f().translate(-0.5F, 0.0F - yOffset, -0.5F);
         tessellator.startDrawingQuads();
         tessellator.setNormal(0.0F, -1.0F, 0.0F);
         renderBlocks.renderBottomFace(tessellator, bounds, 0.0F, 0.0F, 0.0F, this.getBlockTextureFromSideAndMetadata(Side.BOTTOM, metadata));
@@ -113,7 +114,7 @@ public class BlockModelGrassAether<T extends BlockLogic> extends BlockModelStand
             useOverlay = false;
         }
 
-        GL11.glTranslatef(0.5F, 0.5F, 0.5F);
+        GLRenderer.modelM4f().translate(0.5F, 0.5F, 0.5F);
     }
 
     @Override

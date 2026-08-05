@@ -7,6 +7,7 @@ import net.minecraft.client.render.item.model.ItemModelStandard;
 import net.minecraft.core.entity.Entity;
 import net.minecraft.core.item.Item;
 import net.minecraft.core.item.ItemStack;
+import net.minecraft.client.render.renderer.GLRenderer;
 import org.lwjgl.opengl.GL11;
 import teamport.aether.entity.monster.valkyrie.MobValkyrie;
 
@@ -17,14 +18,14 @@ public class ItemModelLance extends ItemModelStandard {
     }
 
     public void heldTransformThirdPerson(ItemRenderer renderer, Entity entity, ItemStack itemStack) {
-        GL11.glScalef(1.25F, 1.25F, 1.25F);
+        GLRenderer.modelM4f().scale(1.25F, 1.25F, 1.25F);
         if (entity instanceof MobValkyrie) {
-            GL11.glTranslatef(0.05F, 0.55F, -0.45F);
+            GLRenderer.modelM4f().translate(0.05F, 0.55F, -0.45F);
         } else {
-            GL11.glTranslatef(0.025F, 0.50F, -0.45F);
+            GLRenderer.modelM4f().translate(0.025F, 0.50F, -0.45F);
         }
-        GL11.glScalef(0.625F, -0.625F, 0.625F);
-        GL11.glRotatef(-35.0F, 1.0F, 0.0F, 0.0F);
-        GL11.glRotatef(40.0F, 0.0F, 1.0F, 0.0F);
+        GLRenderer.modelM4f().scale(0.625F, -0.625F, 0.625F);
+        GLRenderer.modelM4f().rotate(org.joml.Math.toRadians((float) (-35.0F)), 1.0F, 0.0F, 0.0F);
+        GLRenderer.modelM4f().rotate(org.joml.Math.toRadians((float) (40.0F)), 0.0F, 1.0F, 0.0F);
     }
 }

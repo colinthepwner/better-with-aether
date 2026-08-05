@@ -17,6 +17,8 @@ import java.util.function.Consumer;
 import static net.minecraft.core.util.helper.Direction.*;
 import static teamport.aether.world.feature.util.WorldFeatureBlock.wfb;
 
+import teamport.aether.helper.ChestHelper;
+
 public class WorldFeatureComponent {
     private WorldFeaturePoint tail;
     private final List<WorldFeatureBlock> blockList;
@@ -74,7 +76,7 @@ public class WorldFeatureComponent {
         WorldFeatureBlock wfb,
         LootGenerator lootGenerator
     ) {
-        Container inventory = BlockLogicChest.getInventory(world, new net.minecraft.core.world.pos.TilePos(wfb.getX(), wfb.getY(), wfb.getZ()));
+        Container inventory = ChestHelper.inventoryAt(world, new net.minecraft.core.world.pos.TilePos(wfb.getX(), wfb.getY(), wfb.getZ()));
 
         if (inventory == null) return;
         List<ItemStack> stacks = lootGenerator.generate(random);

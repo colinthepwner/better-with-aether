@@ -4,6 +4,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.render.entity.EntityRenderer;
 import net.minecraft.client.render.tessellator.TessellatorGeneral;
+import net.minecraft.client.render.renderer.GLRenderer;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 import teamport.aether.entity.projectile.ProjectileKnifeLightning;
@@ -22,18 +23,18 @@ public class EntityRendererKnifeLightning extends EntityRenderer<ProjectileKnife
         float texMaxX = 1.0F;
         float texMinY = 0.0F;
         float texMaxY = 1.0F;
-        GL11.glPushMatrix();
-        GL11.glTranslatef((float) x, (float) y, (float) z);
-        GL11.glRotatef(yaw, 0.0F, 1.0F, 0.0F);
-        GL11.glRotatef(-(knife.xRotO + (knife.xRot - knife.xRotO) * partialTick), 1.0F, 0.0F, 0.0F);
-        GL11.glRotatef(45.0F, 0.0F, 1.0F, 0.0F);
+        GLRenderer.pushFrame();
+        GLRenderer.modelM4f().translate((float) x, (float) y, (float) z);
+        GLRenderer.modelM4f().rotate(org.joml.Math.toRadians((float) (yaw)), 0.0F, 1.0F, 0.0F);
+        GLRenderer.modelM4f().rotate(org.joml.Math.toRadians((float) (-(knife.xRotO + (knife.xRot - knife.xRotO) * partialTick))), 1.0F, 0.0F, 0.0F);
+        GLRenderer.modelM4f().rotate(org.joml.Math.toRadians((float) (45.0F)), 0.0F, 1.0F, 0.0F);
 
         this.bindTexture("/assets/aether/textures/item/tool_knife_lightning.png");
         TessellatorGeneral tessellator = net.minecraft.client.render.renderer.GLRenderer.getTessellator();
         float size = 1.0F;
         float thickness = 0.0625F;
         GL11.glEnable(GL12.GL_RESCALE_NORMAL);
-        GL11.glTranslatef(-0.5F, 0.0F, -0.5F);
+        GLRenderer.modelM4f().translate(-0.5F, 0.0F, -0.5F);
         tessellator.startDrawingQuads();
 
         tessellator.setNormal(0.0F, 0.0F, 1.0F);
@@ -94,7 +95,7 @@ public class EntityRendererKnifeLightning extends EntityRenderer<ProjectileKnife
 
         tessellator.draw();
         GL11.glDisable(GL12.GL_RESCALE_NORMAL);
-        GL11.glPopMatrix();
+        GLRenderer.popFrame();
     }
 
 }

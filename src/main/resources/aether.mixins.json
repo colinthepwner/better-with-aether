@@ -120,7 +120,6 @@
     "accessory.cape.invisibility_cape.render.HideDebugBoxes",
     "accessory.cape.invisibility_cape.render.MakeHeldBlockInvisible",
     "accessory.cape.invisibility_cape.render.MakeHeldItemInvisible",
-    "accessory.gloves.MobRendererMixinExtendArmor",
     "accessory.quiver.MobRendererPlayerMixinCapeQuiver",
     "accessory.trinket.ItemElementMixinHoverShowSlot",
     "accessory.trinket.PlayerControllerDiamondDelayMixin",

@@ -15,6 +15,7 @@ import net.minecraft.core.entity.Entity;
 import net.minecraft.core.entity.player.Player;
 import net.minecraft.core.item.Item;
 import net.minecraft.core.item.ItemStack;
+import net.minecraft.client.render.renderer.GLRenderer;
 import org.lwjgl.opengl.GL11;
 import teamport.aether.item.DartInterface;
 
@@ -34,8 +35,8 @@ public class ItemModelShooter extends ItemModelStandard {
         }
 
         if (nextDart != null) {
-            GL11.glRotatef(-90.0F, 0.0F, 0.0F, 1.0F);
-            GL11.glTranslatef(-1.2F, 0.3F, 0.0625F);
+            GLRenderer.modelM4f().rotate(org.joml.Math.toRadians((float) (-90.0F)), 0.0F, 0.0F, 1.0F);
+            GLRenderer.modelM4f().translate(-1.2F, 0.3F, 0.0625F);
             ItemModelDispatcher.getInstance().getDispatch(nextDart).renderGui(tessellator, entity, itemstack, 0, 0, (byte)0, brightness);
         }
 
@@ -82,10 +83,10 @@ public class ItemModelShooter extends ItemModelStandard {
     }
 
     public void heldTransformThirdPerson(ItemRenderer renderer, Entity entity, ItemStack itemStack) {
-        GL11.glTranslatef(0.0F, 0.125F, 0.3125F);
-        GL11.glRotatef(-20.0F, 0.0F, 1.0F, 0.0F);
-        GL11.glScalef(0.625F, -0.625F, 0.625F);
-        GL11.glRotatef(-100.0F, 1.0F, 0.0F, 0.0F);
-        GL11.glRotatef(45.0F, 0.0F, 1.0F, 0.0F);
+        GLRenderer.modelM4f().translate(0.0F, 0.125F, 0.3125F);
+        GLRenderer.modelM4f().rotate(org.joml.Math.toRadians((float) (-20.0F)), 0.0F, 1.0F, 0.0F);
+        GLRenderer.modelM4f().scale(0.625F, -0.625F, 0.625F);
+        GLRenderer.modelM4f().rotate(org.joml.Math.toRadians((float) (-100.0F)), 1.0F, 0.0F, 0.0F);
+        GLRenderer.modelM4f().rotate(org.joml.Math.toRadians((float) (45.0F)), 0.0F, 1.0F, 0.0F);
     }
 }

@@ -20,6 +20,7 @@ import net.minecraft.core.entity.player.Player;
 import net.minecraft.core.item.Item;
 import net.minecraft.core.item.ItemStack;
 import net.minecraft.core.player.gamemode.Gamemode;
+import net.minecraft.client.render.renderer.GLRenderer;
 import org.lwjgl.opengl.GL11;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -51,13 +52,13 @@ public abstract class MobRendererPlayerMixinCapeRender extends MobRenderer<Playe
     ///  Afterward we need to restore the GL11 state back so rendering can resume as is
     @Inject(method = "renderSpecials(Lnet/minecraft/client/render/tessellator/TessellatorGeneral;Lnet/minecraft/core/entity/player/Player;DDD)V", at = @At("HEAD"))
     private void pushGL11AlphaTestRef(TessellatorGeneral tessellator, Player player, double d1, double d2, double d3, CallbackInfo ci, @Share("alphaTest") LocalFloatRef alphaTest) {
-        alphaTest.set(GL11.glGetFloat(GL11.GL_ALPHA_TEST_REF));
-        GL11.glAlphaFunc(GL11.GL_GREATER, 0.0F);
+        alphaTest.set(GLRenderer.getAlphaTest());
+        GLRenderer.setAlphaTest(0.0F);
     }
 
     @Inject(method = "renderSpecials(Lnet/minecraft/client/render/tessellator/TessellatorGeneral;Lnet/minecraft/core/entity/player/Player;DDD)V", at = @At("RETURN"))
     private void popGL11AlphaTestRef(TessellatorGeneral tessellator, Player player, double d1, double d2, double d3, CallbackInfo ci, @Share("alphaTest") LocalFloatRef alphaTest) {
-        GL11.glAlphaFunc(GL11.GL_GREATER, alphaTest.get());
+        GLRenderer.setAlphaTest(alphaTest.get());
     }
 
     // 8.0 moved the gamemode constants out of Gamemode (now a plain final class) into a Gamemodes

@@ -5,6 +5,7 @@ import net.fabricmc.api.Environment;
 import net.minecraft.client.render.entity.EntityRenderer;
 import net.minecraft.client.render.tessellator.TessellatorGeneral;
 import net.minecraft.core.util.helper.MathHelper;
+import net.minecraft.client.render.renderer.GLRenderer;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 import teamport.aether.entity.projectile.ProjectileNeedle;
@@ -16,10 +17,10 @@ public class EntityRendererNeedle extends EntityRenderer<ProjectileNeedle> {
     @Override
     public void render(TessellatorGeneral tessellator, ProjectileNeedle needle, double x, double y, double z, float yaw, float partialTick) {
         this.bindTexture("/assets/aether/textures/entity/needle.png");
-        GL11.glPushMatrix();
-        GL11.glTranslatef((float) x, (float) y, (float) z);
-        GL11.glRotatef(needle.yRotO + (needle.yRot - needle.yRotO) * partialTick - 90.0F, 0.0F, 1.0F, 0.0F);
-        GL11.glRotatef(needle.xRotO + (needle.xRot - needle.xRotO) * partialTick, 0.0F, 0.0F, 1.0F);
+        GLRenderer.pushFrame();
+        GLRenderer.modelM4f().translate((float) x, (float) y, (float) z);
+        GLRenderer.modelM4f().rotate(org.joml.Math.toRadians((float) (needle.yRotO + (needle.yRot - needle.yRotO) * partialTick - 90.0F)), 0.0F, 1.0F, 0.0F);
+        GLRenderer.modelM4f().rotate(org.joml.Math.toRadians((float) (needle.xRotO + (needle.xRot - needle.xRotO) * partialTick)), 0.0F, 0.0F, 1.0F);
         float bodyMinU = 0.0F;
         float bodyMaxU = 0.5F;
         float bodyMinV = 0.0f / 32.0F;
@@ -33,12 +34,12 @@ public class EntityRendererNeedle extends EntityRenderer<ProjectileNeedle> {
         float shakeAmount = (float) needle.getShake() - partialTick;
         if (shakeAmount > 0.0F) {
             float shakeAngle = -MathHelper.sin(shakeAmount * 3.0F) * shakeAmount;
-            GL11.glRotatef(shakeAngle, 0.0F, 0.0F, 1.0F);
+            GLRenderer.modelM4f().rotate(org.joml.Math.toRadians((float) (shakeAngle)), 0.0F, 0.0F, 1.0F);
         }
 
-        GL11.glRotatef(45.0F, 1.0F, 0.0F, 0.0F);
-        GL11.glScalef(scale, scale, scale);
-        GL11.glTranslatef(-4.0F, 0.0F, 0.0F);
+        GLRenderer.modelM4f().rotate(org.joml.Math.toRadians((float) (45.0F)), 1.0F, 0.0F, 0.0F);
+        GLRenderer.modelM4f().scale(scale, scale, scale);
+        GLRenderer.modelM4f().translate(-4.0F, 0.0F, 0.0F);
         GL11.glNormal3f(scale, 0.0F, 0.0F);
         tessellator.startDrawingQuads();
         tessellator.addVertexWithUV(-7.0, -2.0, -2.0, tailMinU, tailMinV);
@@ -56,7 +57,7 @@ public class EntityRendererNeedle extends EntityRenderer<ProjectileNeedle> {
 
 
         for (int i = 0; i < 8; ++i) {
-            GL11.glRotatef(45.0F, 1.0F, 0.0F, 0.0F);
+            GLRenderer.modelM4f().rotate(org.joml.Math.toRadians((float) (45.0F)), 1.0F, 0.0F, 0.0F);
             GL11.glNormal3f(0.0F, 0.0F, scale);
             tessellator.startDrawingQuads();
             tessellator.addVertexWithUV(-8.0, -2.0, 0.0, bodyMinU, bodyMinV);
@@ -67,6 +68,6 @@ public class EntityRendererNeedle extends EntityRenderer<ProjectileNeedle> {
         }
 
         GL11.glDisable(GL12.GL_RESCALE_NORMAL);
-        GL11.glPopMatrix();
+        GLRenderer.popFrame();
     }
 }

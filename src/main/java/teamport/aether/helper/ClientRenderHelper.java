@@ -20,13 +20,16 @@ public final class ClientRenderHelper {
     }
 
     public static void renderShieldVignette(TextureManager textureManager, int xSize, int ySize) {
-        GL11.glPushMatrix();
+        GLRenderer.pushFrame();
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glDisable(GL11.GL_DEPTH_TEST);
         GL11.glDepthMask(false);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        GL11.glDisable(GL11.GL_ALPHA_TEST);
+        // 8.0's context has no fixed-function alpha test; the threshold lives on GLRenderer, and 0
+        // is "accept everything", which is what glDisable(GL_ALPHA_TEST) meant here.
+        float previousAlphaTest = GLRenderer.getAlphaTest();
+        GLRenderer.setAlphaTest(0.0F);
 
         textureManager.loadTexture("/assets/aether/textures/other/shieldvignette.png").bind();
 
@@ -40,9 +43,9 @@ public final class ClientRenderHelper {
 
         GL11.glDepthMask(true);
         GL11.glEnable(GL11.GL_DEPTH_TEST);
-        GL11.glEnable(GL11.GL_ALPHA_TEST);
+        GLRenderer.setAlphaTest(previousAlphaTest);
         GL11.glDisable(GL11.GL_BLEND);
-        GL11.glPopMatrix();
+        GLRenderer.popFrame();
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
     }
 }

@@ -4,6 +4,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.render.entity.EntityRenderer;
 import net.minecraft.client.render.tessellator.TessellatorGeneral;
+import net.minecraft.client.render.renderer.GLRenderer;
 import org.lwjgl.opengl.GL11;
 import org.useless.dragonfly.models.entity.StaticEntityModel;
 
@@ -24,8 +25,8 @@ public class EntityRendererParachute extends EntityRenderer<EntityParachute> {
 
 	@Override
 	public void render(TessellatorGeneral tessellator, EntityParachute entity, double x, double y, double z, float yaw, float partialTick) {
-		GL11.glPushMatrix();
-		GL11.glTranslatef((float) x, (float) y, (float) z);
+		GLRenderer.pushFrame();
+		GLRenderer.modelM4f().translate((float) x, (float) y, (float) z);
 
 		this.bindTexture("/assets/aether/textures/entity/parachute.png");
 
@@ -36,10 +37,10 @@ public class EntityRendererParachute extends EntityRenderer<EntityParachute> {
 
 		// The 7.3 renderer flipped both X and Y because the legacy model system drew Y-down.
 		// DragonFly geometry is authored Y-up, so only the mirror across X is kept.
-		GL11.glScalef(-1.0F, 1.0F, 1.0F);
+		GLRenderer.modelM4f().scale(-1.0F, 1.0F, 1.0F);
 		StaticEntityModel model = this.getModel("main");
 		model.resetBones();
 		model.render();
-		GL11.glPopMatrix();
+		GLRenderer.popFrame();
 	}
 }

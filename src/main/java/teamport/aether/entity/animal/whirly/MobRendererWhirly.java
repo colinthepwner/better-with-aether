@@ -5,6 +5,7 @@ import net.fabricmc.api.Environment;
 import net.minecraft.core.util.helper.MathHelper;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
+import net.minecraft.client.render.renderer.GLRenderer;
 import org.lwjgl.opengl.GL11;
 import org.useless.dragonfly.models.entity.BoneTransform;
 import org.useless.dragonfly.models.entity.StaticEntityModel;
@@ -40,9 +41,9 @@ public class MobRendererWhirly extends MobRenderer<MobWhirly> {
             float wobble = MathHelper.sin(time * wobbleSpeed) * wobbleStrength;
 
             GL11.glMatrixMode(GL11.GL_TEXTURE);
-            GL11.glPushMatrix();
+            GLRenderer.pushFrame();
             GL11.glLoadIdentity();
-            GL11.glTranslatef(-scroll, 0.0F, 0.0F);
+            GLRenderer.modelM4f().translate(-scroll, 0.0F, 0.0F);
 
             GL11.glMatrixMode(GL11.GL_MODELVIEW);
             GL11.glEnable(GL11.GL_BLEND);
@@ -65,7 +66,7 @@ public class MobRendererWhirly extends MobRenderer<MobWhirly> {
 
         } else if (layer == 2) {
             GL11.glMatrixMode(GL11.GL_TEXTURE);
-            GL11.glPopMatrix();
+            GLRenderer.popFrame();
             GL11.glLoadIdentity();
             GL11.glMatrixMode(GL11.GL_MODELVIEW);
             GL11.glDisable(GL11.GL_BLEND);

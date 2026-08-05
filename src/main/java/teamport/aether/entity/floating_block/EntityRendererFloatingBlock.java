@@ -16,6 +16,7 @@ import net.minecraft.core.block.Blocks;
 import net.minecraft.core.block.entity.TileEntity;
 import net.minecraft.core.util.helper.MathHelper;
 import net.minecraft.core.world.BlocksContainer;
+import net.minecraft.client.render.renderer.GLRenderer;
 import org.lwjgl.opengl.GL11;
 
 @Environment(EnvType.CLIENT)
@@ -33,7 +34,7 @@ public class EntityRendererFloatingBlock extends EntityRenderer<EntityFloatingBl
             
         }
 
-        GL11.glPushMatrix();
+        GLRenderer.pushFrame();
         GL11.glTranslated(x, y, z);
         net.minecraft.client.render.texture.stitcher.TextureRegistry.worldAtlas.bind();
         Lighting.disable();
@@ -65,13 +66,13 @@ public class EntityRendererFloatingBlock extends EntityRenderer<EntityFloatingBl
         tessellator.setTranslation(0.0, 0.0, 0.0);
         tessellator.draw();
         Lighting.enableLight();
-        GL11.glPopMatrix();
+        GLRenderer.popFrame();
         TileEntityRenderer<TileEntity> renderer = TileEntityRenderDispatcher.instance.getRenderer(floatingBlock.getCarriedBlock().entity);
 
         if (renderer != null) {
-            GL11.glPushMatrix();
+            GLRenderer.pushFrame();
             renderer.doRender(tessellator, floatingBlock.getCarriedBlock().entity, x - 0.5, y - 0.5, z - 0.5, partialTick);
-            GL11.glPopMatrix();
+            GLRenderer.popFrame();
         }
     }
 }

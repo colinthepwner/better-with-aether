@@ -7,6 +7,7 @@ import net.minecraft.client.render.entity.MobRenderer;
 import net.minecraft.client.render.tessellator.TessellatorGeneral;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
+import net.minecraft.client.render.renderer.GLRenderer;
 import org.lwjgl.opengl.GL11;
 import org.useless.dragonfly.models.entity.StaticEntityModel;
 
@@ -34,7 +35,7 @@ public class MobRendererSlider extends MobRenderer<MobBossSlider> {
 			this.bindTexture(glowTexture(slider));
 			net.minecraft.client.render.renderer.GLRenderer.setLightmapCoord2i(255, 255);
 			GL11.glEnable(GL11.GL_BLEND);
-			GL11.glDisable(GL11.GL_ALPHA_TEST);
+			net.minecraft.client.render.renderer.GLRenderer.setAlphaTest(0.0F);
 			GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 			GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		}
@@ -52,11 +53,11 @@ public class MobRendererSlider extends MobRenderer<MobBossSlider> {
 
 	@Override
 	public void renderPreview(TessellatorGeneral tessellator, MobBossSlider slider, double x, double y, double z, float yaw, float partialTick) {
-		GL11.glPushMatrix();
-		GL11.glScalef(0.75F, 0.75F, 0.75F);
+		GLRenderer.pushFrame();
+		GLRenderer.modelM4f().scale(0.75F, 0.75F, 0.75F);
 		this.bindTexture("/assets/aether/textures/entity/boss_slider/slider_awake.png");
 		super.renderPreview(tessellator, slider, x, y + 0.5, z, yaw, partialTick);
-		GL11.glPopMatrix();
+		GLRenderer.popFrame();
 	}
 
 	/** 8.0 renamed the pre-render hook; the squash-on-slam tilt is unchanged. */
@@ -64,7 +65,7 @@ public class MobRendererSlider extends MobRenderer<MobBossSlider> {
 	protected void preRenderTransform(MobBossSlider slider, double x, double y, double z, float yaw, float partialTick) {
 		super.preRenderTransform(slider, x, y, z, yaw, partialTick);
 		if (slider.getDeformX() > 0.01F) {
-			GL11.glRotatef(slider.getDeformX() * -30.0F, slider.getDeformY(), 0.0F, slider.getDeformZ());
+			GLRenderer.modelM4f().rotate(org.joml.Math.toRadians((float) (slider.getDeformX() * -30.0F)), slider.getDeformY(), 0.0F, slider.getDeformZ());
 		}
 	}
 }

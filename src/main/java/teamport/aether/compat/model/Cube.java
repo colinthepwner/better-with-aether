@@ -1,6 +1,7 @@
 package teamport.aether.compat.model;
 
 import net.minecraft.client.render.tessellator.TessellatorGeneral;
+import net.minecraft.client.render.renderer.GLRenderer;
 import org.lwjgl.opengl.GL11;
 
 /**
@@ -152,11 +153,11 @@ public class Cube {
 	public void render(TessellatorGeneral tessellator, float scale) {
 		if (!this.visible || this.quads == null || tessellator == null) return;
 
-		GL11.glPushMatrix();
-		GL11.glTranslatef(this.x * scale, this.y * scale, this.z * scale);
-		if (this.zRot != 0.0F) GL11.glRotatef(this.zRot * 57.295776F, 0.0F, 0.0F, 1.0F);
-		if (this.yRot != 0.0F) GL11.glRotatef(this.yRot * 57.295776F, 0.0F, 1.0F, 0.0F);
-		if (this.xRot != 0.0F) GL11.glRotatef(this.xRot * 57.295776F, 1.0F, 0.0F, 0.0F);
+		GLRenderer.pushFrame();
+		GLRenderer.modelM4f().translate(this.x * scale, this.y * scale, this.z * scale);
+		if (this.zRot != 0.0F) GLRenderer.modelM4f().rotate(org.joml.Math.toRadians((float) (this.zRot * 57.295776F)), 0.0F, 0.0F, 1.0F);
+		if (this.yRot != 0.0F) GLRenderer.modelM4f().rotate(org.joml.Math.toRadians((float) (this.yRot * 57.295776F)), 0.0F, 1.0F, 0.0F);
+		if (this.xRot != 0.0F) GLRenderer.modelM4f().rotate(org.joml.Math.toRadians((float) (this.xRot * 57.295776F)), 1.0F, 0.0F, 0.0F);
 
 		tessellator.startDrawingQuads();
 		for (float[] quad : this.quads) {
@@ -168,7 +169,7 @@ public class Cube {
 		}
 		tessellator.draw();
 
-		GL11.glPopMatrix();
+		GLRenderer.popFrame();
 	}
 
 	/** Face normal from the first three vertices, so lighting matches the 7.3 output. */

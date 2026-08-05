@@ -4,6 +4,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.render.entity.EntityRenderer;
 import net.minecraft.client.render.tessellator.TessellatorGeneral;
+import net.minecraft.client.render.renderer.GLRenderer;
 import org.lwjgl.opengl.GL11;
 import org.useless.dragonfly.models.entity.StaticEntityModel;
 
@@ -24,8 +25,8 @@ public class EntityRendererParachuteGold extends EntityRenderer<EntityParachuteG
 
 	@Override
 	public void render(TessellatorGeneral tessellator, EntityParachuteGold entity, double x, double y, double z, float yaw, float partialTick) {
-		GL11.glPushMatrix();
-		GL11.glTranslatef((float) x, (float) y, (float) z);
+		GLRenderer.pushFrame();
+		GLRenderer.modelM4f().translate((float) x, (float) y, (float) z);
 
 		this.bindTexture("/assets/aether/textures/entity/parachute_gold.png");
 
@@ -34,10 +35,10 @@ public class EntityRendererParachuteGold extends EntityRenderer<EntityParachuteG
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, .75F);
 
-		GL11.glScalef(-1.0F, 1.0F, 1.0F);
+		GLRenderer.modelM4f().scale(-1.0F, 1.0F, 1.0F);
 		StaticEntityModel model = this.getModel("main");
 		model.resetBones();
 		model.render();
-		GL11.glPopMatrix();
+		GLRenderer.popFrame();
 	}
 }

@@ -5,6 +5,7 @@ import net.fabricmc.api.Environment;
 import net.minecraft.client.render.entity.EntityRenderer;
 import net.minecraft.client.render.tessellator.TessellatorGeneral;
 import net.minecraft.core.util.helper.MathHelper;
+import net.minecraft.client.render.renderer.GLRenderer;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 import teamport.aether.entity.projectile.ProjectileArrowFlaming;
@@ -16,10 +17,10 @@ public class EntityRendererArrowFlaming extends EntityRenderer<ProjectileArrowFl
     @Override
     public void render(TessellatorGeneral tessellator, ProjectileArrowFlaming arrow, double x, double y, double z, float yaw, float partialTick) {
         this.bindTexture("/assets/aether/textures/other/FlamingArrows.png");
-        GL11.glPushMatrix();
-        GL11.glTranslatef((float) x, (float) y, (float) z);
-        GL11.glRotatef(arrow.yRotO + (arrow.yRot - arrow.yRotO) * partialTick - 90.0F, 0.0F, 1.0F, 0.0F);
-        GL11.glRotatef(arrow.xRotO + (arrow.xRot - arrow.xRotO) * partialTick, 0.0F, 0.0F, 1.0F);
+        GLRenderer.pushFrame();
+        GLRenderer.modelM4f().translate((float) x, (float) y, (float) z);
+        GLRenderer.modelM4f().rotate(org.joml.Math.toRadians((float) (arrow.yRotO + (arrow.yRot - arrow.yRotO) * partialTick - 90.0F)), 0.0F, 1.0F, 0.0F);
+        GLRenderer.modelM4f().rotate(org.joml.Math.toRadians((float) (arrow.xRotO + (arrow.xRot - arrow.xRotO) * partialTick)), 0.0F, 0.0F, 1.0F);
         float bodyMinU = 0.0F;
         float bodyMaxU = 0.5F;
         float bodyMinV = 0.0F / 32.0F;
@@ -33,12 +34,12 @@ public class EntityRendererArrowFlaming extends EntityRenderer<ProjectileArrowFl
         float shakeAmount = arrow.shake - partialTick;
         if (shakeAmount > 0.0F) {
             float shakeAngle = -MathHelper.sin(shakeAmount * 3.0F) * shakeAmount;
-            GL11.glRotatef(shakeAngle, 0.0F, 0.0F, 1.0F);
+            GLRenderer.modelM4f().rotate(org.joml.Math.toRadians((float) (shakeAngle)), 0.0F, 0.0F, 1.0F);
         }
 
-        GL11.glRotatef(45.0F, 1.0F, 0.0F, 0.0F);
-        GL11.glScalef(scale, scale, scale);
-        GL11.glTranslatef(-4.0F, 0.0F, 0.0F);
+        GLRenderer.modelM4f().rotate(org.joml.Math.toRadians((float) (45.0F)), 1.0F, 0.0F, 0.0F);
+        GLRenderer.modelM4f().scale(scale, scale, scale);
+        GLRenderer.modelM4f().translate(-4.0F, 0.0F, 0.0F);
         GL11.glNormal3f(scale, 0.0F, 0.0F);
         tessellator.startDrawingQuads();
         tessellator.addVertexWithUV(-7.0, -2.0, -2.0, tailMinU, tailMinV);
@@ -55,7 +56,7 @@ public class EntityRendererArrowFlaming extends EntityRenderer<ProjectileArrowFl
         tessellator.draw();
 
         for (int i = 0; i < 4; ++i) {
-            GL11.glRotatef(90.0F, 1.0F, 0.0F, 0.0F);
+            GLRenderer.modelM4f().rotate(org.joml.Math.toRadians((float) (90.0F)), 1.0F, 0.0F, 0.0F);
             GL11.glNormal3f(0.0F, 0.0F, scale);
             tessellator.startDrawingQuads();
             tessellator.addVertexWithUV(-8.0, -2.0, 0.0, bodyMinU, bodyMinV);
@@ -66,6 +67,6 @@ public class EntityRendererArrowFlaming extends EntityRenderer<ProjectileArrowFl
         }
 
         GL11.glDisable(GL12.GL_RESCALE_NORMAL);
-        GL11.glPopMatrix();
+        GLRenderer.popFrame();
     }
 }

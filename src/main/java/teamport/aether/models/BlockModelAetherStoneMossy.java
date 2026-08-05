@@ -15,6 +15,7 @@ import net.minecraft.core.block.BlockLogic;
 import net.minecraft.core.util.phys.AABB;
 import org.joml.primitives.AABBdc;
 import org.jspecify.annotations.Nullable;
+import net.minecraft.client.render.renderer.GLRenderer;
 import org.lwjgl.opengl.GL11;
 
 @Environment(EnvType.CLIENT)
@@ -42,7 +43,7 @@ public class BlockModelAetherStoneMossy<T extends BlockLogic> extends BlockModel
         renderBlocks.useInventoryTint = false;
         // removed
         renderBlocks.useInventoryTint = true;
-        GL11.glTranslatef(-0.5F, -0.5F, -0.5F);
+        GLRenderer.modelM4f().translate(-0.5F, -0.5F, -0.5F);
         int color = (BlockColorDispatcher.getInstance().getDispatch(this.block)).getFallbackColor(metadata, 0);
         float r = (color >> 16 & 255) / 255.0F;
         float g = (color >> 8 & 255) / 255.0F;
@@ -74,6 +75,6 @@ public class BlockModelAetherStoneMossy<T extends BlockLogic> extends BlockModel
         tessellator.setNormal(1.0F, 0.0F, 0.0F);
         renderBlocks.renderEastFace(tessellator, bounds, 0.0F, 0.0F, 0.0F, mossCoord);
         tessellator.draw();
-        GL11.glTranslatef(0.5F, 0.5F, 0.5F);
+        GLRenderer.modelM4f().translate(0.5F, 0.5F, 0.5F);
     }
 }

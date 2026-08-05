@@ -6,6 +6,7 @@ import net.minecraft.client.render.entity.MobRenderer;
 import net.minecraft.core.util.helper.MathHelper;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
+import net.minecraft.client.render.renderer.GLRenderer;
 import org.lwjgl.opengl.GL11;
 import org.useless.dragonfly.models.entity.StaticEntityModel;
 
@@ -76,6 +77,6 @@ public class MobRendererSwet extends MobRenderer<MobSwet> {
 		stretchXZ = MathHelper.clamp(stretchXZ, 0.1F, 10.0F);
 		scale = MathHelper.clamp(scale, 0.1F, 10.0F);
 
-		GL11.glScalef(stretchXZ * scale, stretchY * scale, stretchXZ * scale);
+		GLRenderer.modelM4f().scale(stretchXZ * scale, stretchY * scale, stretchXZ * scale);
 	}
 }
