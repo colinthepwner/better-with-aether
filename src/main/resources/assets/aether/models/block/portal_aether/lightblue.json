@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/template_portal",
+  "textures": {
+    "all": "aether:block/portal_aether/lightblue"
+  }
+}
