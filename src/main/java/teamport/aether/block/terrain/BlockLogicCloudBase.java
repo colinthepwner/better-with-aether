@@ -55,9 +55,10 @@ public class BlockLogicCloudBase extends BlockLogicTransparent {
 
     @Override
     public boolean collidesWithEntity(Entity entity, World world, TilePosc pos) {
-        int x = pos.x(); int y = pos.y(); int z = pos.z();
         if (entity instanceof Projectile || entity instanceof MobZephyr) return false;
-        return super.collidesWithEntity(entity, world, x, y, z);
+        // Must pass the TilePosc through. The int overload is a default that wraps its arguments
+        // and calls this one, so handing it x/y/z recurses until the stack gives out.
+        return super.collidesWithEntity(entity, world, pos);
     }
 
     @Override
