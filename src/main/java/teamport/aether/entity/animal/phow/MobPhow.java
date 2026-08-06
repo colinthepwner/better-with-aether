@@ -7,7 +7,6 @@ import net.minecraft.core.item.ItemBucket;
 import net.minecraft.core.item.ItemStack;
 import net.minecraft.core.item.Items;
 import net.minecraft.core.item.tag.ItemTags;
-import net.minecraft.core.util.collection.NamespaceID;
 import net.minecraft.core.world.World;
 import org.jspecify.annotations.NonNull;
 import teamport.aether.entity.animal.MobAetherAnimalRideable;
@@ -24,7 +23,7 @@ public class MobPhow extends MobAetherAnimalRideable {
     public MobPhow(World world) {
         super(world);
         this.maxJumps = 1;
-        this.textureIdentifier = NamespaceID.getPermanent("aether", "phow");
+        this.setTextureIdentifier("aether", "phow");
         this.setSize(0.9F, 1.3F);
         this.rideFootSize = 1.0f;
 

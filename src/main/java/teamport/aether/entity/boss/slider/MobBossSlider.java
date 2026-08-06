@@ -13,7 +13,6 @@ import net.minecraft.core.item.tool.ItemToolPickaxe;
 import net.minecraft.core.lang.I18n;
 import net.minecraft.core.net.command.TextFormatting;
 import net.minecraft.core.sound.SoundCategory;
-import net.minecraft.core.util.collection.NamespaceID;
 import net.minecraft.core.util.helper.DamageType;
 import net.minecraft.core.util.helper.Direction;
 import net.minecraft.core.util.helper.MathHelper;
@@ -104,7 +103,7 @@ public class MobBossSlider extends MobBoss {
         this.speed = BASE_SPEED;
         this.scoreValue = 10000;
         this.setSize(2F, 2F);
-        this.textureIdentifier = NamespaceID.getPermanent("aether", "boss_slider");
+        this.setTextureIdentifier("aether", "boss_slider");
         this.chatColor = (byte) (TextFormatting.BROWN.id & 255);
     }
 

@@ -3,6 +3,7 @@ package teamport.aether.block.skyroot;
 import net.minecraft.core.block.Block;
 import net.minecraft.core.block.BlockLogicFencePainted;
 import net.minecraft.core.world.World;
+import net.minecraft.core.world.pos.TilePosc;
 
 public class BlockLogicPaintedFence extends BlockLogicFencePainted {
     protected final int unpaintedBlockID;
@@ -13,7 +14,10 @@ public class BlockLogicPaintedFence extends BlockLogicFencePainted {
     }
 
     @Override
-    public void removeDye(World world, int x, int y, int z) {
+    public void removeDye(World world, TilePosc pos) {
+        int x = pos.x();
+        int y = pos.y();
+        int z = pos.z();
         world.setBlockWithNotify(x, y, z, unpaintedBlockID);
     }
 }

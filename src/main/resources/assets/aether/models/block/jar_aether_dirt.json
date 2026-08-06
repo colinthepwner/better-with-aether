@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/template_jar",
+  "textures": {
+    "all": "aether:block/jar_aether_dirt"
+  }
+}

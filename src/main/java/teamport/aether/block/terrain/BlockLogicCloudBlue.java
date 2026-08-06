@@ -27,7 +27,10 @@ public class BlockLogicCloudBlue extends BlockLogicCloudBase {
     }
 
     @Override
-    public void onEntityCollidedWithBlock(World world, int x, int y, int z, Entity entity) {
+    public void onEntityCollision(World world, TilePosc pos, Entity entity) {
+        int x = pos.x();
+        int y = pos.y();
+        int z = pos.z();
         //don't reference particles on the server. It will crash.
         if (!EnvironmentHelper.isServerEnvironment()) {
             if (entity instanceof Player) {

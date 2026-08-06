@@ -4,7 +4,6 @@ import net.minecraft.core.entity.Entity;
 import net.minecraft.core.entity.monster.Enemy;
 import net.minecraft.core.entity.player.Player;
 import net.minecraft.core.sound.SoundCategory;
-import net.minecraft.core.util.collection.NamespaceID;
 import net.minecraft.core.util.helper.DamageType;
 import net.minecraft.core.world.World;
 import org.jspecify.annotations.NonNull;
@@ -26,7 +25,7 @@ public class MobTempest extends MobMonsterAether implements Enemy, AetherDeathMe
     public MobTempest(World world) {
         super(world);
         this.setSize(1.0F, 2.0F);
-        this.textureIdentifier = NamespaceID.getPermanent("aether", "tempest");
+        this.setTextureIdentifier("aether", "tempest");
         this.maxLifetime = this.random.nextInt(1024) + 1024;
         this.scoreValue = 400;
         this.footSize = 1.0f;

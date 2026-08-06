@@ -7,6 +7,7 @@ import net.minecraft.core.enums.EnumDropCause;
 import net.minecraft.core.item.ItemStack;
 import net.minecraft.core.util.helper.DyeColor;
 import net.minecraft.core.world.World;
+import net.minecraft.core.world.pos.TilePosc;
 import teamport.aether.item.AetherItems;
 
 public class BlockLogicPaintedSignSkyroot extends BlockLogicPaintableSignSkyroot implements IPainted {
@@ -31,7 +32,10 @@ public class BlockLogicPaintedSignSkyroot extends BlockLogicPaintableSignSkyroot
     }
 
     @Override
-    public void setColor(World world, int x, int y, int z, DyeColor color) {
+    public void setColor(World world, TilePosc pos, DyeColor color) {
+        int x = pos.x();
+        int y = pos.y();
+        int z = pos.z();
         world.setBlockMetadataWithNotify(x, y, z, color.blockMeta << 4 | this.stripColorFromMetadata(world.getBlockMetadata(x, y, z)));
     }
 

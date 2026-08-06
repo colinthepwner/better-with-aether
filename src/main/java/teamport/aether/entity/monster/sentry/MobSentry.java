@@ -5,7 +5,6 @@ import net.minecraft.core.entity.monster.Enemy;
 import net.minecraft.core.entity.player.Player;
 import net.minecraft.core.item.ItemStack;
 import net.minecraft.core.item.tool.ItemToolPickaxe;
-import net.minecraft.core.util.collection.NamespaceID;
 import net.minecraft.core.util.helper.DamageType;
 import net.minecraft.core.world.World;
 import teamport.aether.block.AetherBlocks;
@@ -21,7 +20,7 @@ public class MobSentry extends MobMonsterAether implements Enemy, AetherDeathMes
 
     public MobSentry(World world) {
         super(world);
-        this.textureIdentifier = NamespaceID.getPermanent("aether", "sentry");
+        this.setTextureIdentifier("aether", "sentry");
         this.scoreValue = 200;
         this.setSize(1f, 1f);
         this.activated = false;

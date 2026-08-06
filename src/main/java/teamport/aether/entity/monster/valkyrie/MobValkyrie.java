@@ -11,7 +11,6 @@ import net.minecraft.core.entity.MobPathfinder;
 import net.minecraft.core.entity.monster.Enemy;
 import net.minecraft.core.entity.player.Player;
 import net.minecraft.core.item.ItemStack;
-import net.minecraft.core.util.collection.NamespaceID;
 import net.minecraft.core.util.helper.DamageType;
 import net.minecraft.core.util.helper.MathHelper;
 import net.minecraft.core.world.World;
@@ -34,7 +33,7 @@ public class MobValkyrie extends MobPathfinder implements Enemy, AetherDeathMess
 
     public MobValkyrie(World world) {
         super(world);
-        this.textureIdentifier = NamespaceID.getPermanent("aether", "valkyrie");
+        this.setTextureIdentifier("aether", "valkyrie");
         this.setSize(0.8F, 1.9F);
         this.mobDrops.add(new WeightedRandomLootObject(AetherItems.MEDAL_VICTORY.getDefaultStack(), 1));
         this.moveSpeed = 0.5F;

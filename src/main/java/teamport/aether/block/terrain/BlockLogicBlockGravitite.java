@@ -5,6 +5,7 @@ import net.minecraft.core.block.BlockLogic;
 import net.minecraft.core.block.material.Material;
 import net.minecraft.core.world.World;
 import teamport.aether.entity.floating_block.EntityFloatingBlock;
+import net.minecraft.core.world.pos.TilePosc;
 
 public class BlockLogicBlockGravitite extends BlockLogic {
 
@@ -13,7 +14,10 @@ public class BlockLogicBlockGravitite extends BlockLogic {
     }
 
     @Override
-    public void onNeighborBlockChange(World world, int x, int y, int z, int blockId) {
+    public void onNeighborChanged(World world, TilePosc pos, Block<?> neighborBlock) {
+        int x = pos.x();
+        int y = pos.y();
+        int z = pos.z();
         if (!world.isClientSide) {
             int meta = world.getBlockMetadata(x, y, z);
             boolean wasPowered = (meta & 1) != 0;

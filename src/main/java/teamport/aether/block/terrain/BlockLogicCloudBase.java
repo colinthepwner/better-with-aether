@@ -29,8 +29,8 @@ public class BlockLogicCloudBase extends BlockLogicTransparent {
     }
 
     @Override
-    public void onEntityWalking(World world, int x, int y, int z, Entity entity) {
-        this.onEntityCollidedWithBlock(world, x, y, z, entity);
+    public void onEntityWalkedOn(World world, TilePosc pos, Entity entity) {
+        this.onEntityCollision(world, pos, entity);
     }
 
     @Override
@@ -42,10 +42,7 @@ public class BlockLogicCloudBase extends BlockLogicTransparent {
 
     @Override
     public void onEntityInside(World world, TilePosc pos, Entity entity, org.joml.Vector3d entityVelocity) {
-		int x = pos.x();
-		int y = pos.y();
-		int z = pos.z();
-        this.onEntityCollidedWithBlock(world, x, y, z, entity);
+        this.onEntityCollision(world, pos, entity);
     }
 
     @Override
@@ -86,7 +83,7 @@ public class BlockLogicCloudBase extends BlockLogicTransparent {
     }
 
     @Override
-    public void onEntityCollidedWithBlock(World world, int x, int y, int z, Entity entity) {
+    public void onEntityCollision(World world, TilePosc pos, Entity entity) {
         if (!(entity instanceof MobZephyr)) {
             if (!entity.isSneaking() && entity.yd < 0.0) {
                 entity.yd *= 0.005;

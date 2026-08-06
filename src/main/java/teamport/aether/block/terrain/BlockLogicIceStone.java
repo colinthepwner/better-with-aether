@@ -50,13 +50,16 @@ public class BlockLogicIceStone extends BlockLogic {
     }
 
     @Override
-    public void onBlockPlacedByMob(World world, int x, int y, int z, @NonNull Side side, Mob mob, double xPlaced, double yPlaced) {
+    public void onPlacedByMob(World world, TilePosc pos, @NonNull Side side, Mob mob, double xPlaced, double yPlaced) {
+        int x = pos.x();
+        int y = pos.y();
+        int z = pos.z();
         attemptFreeze(true, world, x, y, z);
         attemptFreeze(true, world, x, y, z);
         attemptFreeze(true, world, x, y, z);
         attemptFreeze(true, world, x, y, z);
         attemptFreeze(true, world, x, y, z);
-        super.onBlockPlacedByMob(world, x, y, z, side, mob, xPlaced, yPlaced);
+        super.onPlacedByMob(world, pos, side, mob, xPlaced, yPlaced);
     }
 
     public void attemptFreeze(boolean onPlace, World world, int x, int y, int z) {

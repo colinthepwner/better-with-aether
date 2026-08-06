@@ -37,6 +37,7 @@ import teamport.aether.recipe.RecipeEntryIncubator;
 import teamport.aether.world.AetherDimension;
 import teamport.aether.world.biome.AetherBiomes;
 import teamport.aether.world.feature.AetherWorldFeatures;
+import turniplabs.halplibe.HalpLibe;
 import turniplabs.halplibe.helper.network.NetworkHandler;
 import turniplabs.halplibe.util.GameStartEntrypoint;
 
@@ -47,7 +48,12 @@ import static net.minecraft.core.entity.animal.MobFireflyCluster.FireflyColor.re
 
 @SuppressWarnings({"java:S1104", "java:S1444", "java:S3008"})
 public class AetherMod implements GameStartEntrypoint, ModInitializer {
-    public static final String MOD_ID = "aether";
+    // Registers "aether" in Registries.NAMESPACES. Everything that discovers our assets by
+    // walking the namespace registry depends on this: Language$Default.loadNamespace (all
+    // translations), TextureRegistry.init (bulk atlas stitching), SoundRepository, and
+    // DragonFly's EntityGeometryMojangData cache (all .geo.json mob models). Without it those
+    // scans simply never visit assets/aether/ and fail silently.
+    public static final String MOD_ID = HalpLibe.registerMod("aether");
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
     @SuppressWarnings("OptionalGetWithoutIsPresent")
     public static final String VERSION_STRING = FabricLoader.getInstance().getModContainer(MOD_ID).get().getMetadata().getVersion().getFriendlyString();

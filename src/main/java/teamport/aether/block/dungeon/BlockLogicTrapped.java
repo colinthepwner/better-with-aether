@@ -24,6 +24,7 @@ import teamport.aether.helper.ParticleMaker;
 import turniplabs.halplibe.helper.EnvironmentHelper;
 
 import java.util.Random;
+import net.minecraft.core.world.pos.TilePos;
 
 public class BlockLogicTrapped extends BlockLogicDungeon implements AetherBlockTriggerStandOn {
     public final Class<? extends Entity> monster;
@@ -62,11 +63,14 @@ public class BlockLogicTrapped extends BlockLogicDungeon implements AetherBlockT
 
     @Override
     public void onEntityStandOn(World world, int x, int y, int z, Entity entity) {
-        this.onEntityWalking(world, x, y, z, entity);
+        this.onEntityWalkedOn(world, new TilePos(x, y, z), entity);
     }
 
     @Override
-    public void onEntityWalking(World world, int x, int y, int z, Entity entity) {
+    public void onEntityWalkedOn(World world, TilePosc pos, Entity entity) {
+        int x = pos.x();
+        int y = pos.y();
+        int z = pos.z();
         if (EnvironmentHelper.isClientWorld()
             || !(entity instanceof Player)
             || world.getBlockMetadata(x, y, z) != 0

@@ -47,7 +47,10 @@ public class BlockLogicChestMimic extends BlockLogicRotatable {
     }
 
     @Override
-    public void onBlockPlacedByMob(World world, int x, int y, int z, @NonNull Side side, Mob mob, double xPlaced, double yPlaced) {
+    public void onPlacedByMob(World world, TilePosc pos, @NonNull Side side, Mob mob, double xPlaced, double yPlaced) {
+        int x = pos.x();
+        int y = pos.y();
+        int z = pos.z();
         int metadata = world.getBlockMetadata(x, y, z);
         Direction direction = mob.getHorizontalPlacementDirection(side).opposite();
         metadata = getMetaWithDirection(metadata, direction);
@@ -62,7 +65,7 @@ public class BlockLogicChestMimic extends BlockLogicRotatable {
     }
 
     @Override
-    public int getPlacedBlockMetadata(@Nullable Player player, ItemStack stack, World world, int x, int y, int z, Side side, double xPlaced, double yPlaced) {
+    public int getPlacedData(@Nullable Player player, ItemStack stack, World world, TilePosc pos, Side side, double xPlaced, double yPlaced) {
         return stack.getMetadata();
     }
 
@@ -103,7 +106,10 @@ public class BlockLogicChestMimic extends BlockLogicRotatable {
 
     @SuppressWarnings("java:S2259")
     @Override
-    public void onActivatorInteract(World world, int x, int y, int z, TileEntityActivator activator, Direction direction) {
+    public void onActivatorInteracted(World world, TilePosc pos, TileEntityActivator activator, Direction direction) {
+        int x = pos.x();
+        int y = pos.y();
+        int z = pos.z();
         MobMimic mimic = summonMimic(world, x, y, z);
         moveToSafe(world, mimic, x, y, z, 0, 0);
 
@@ -120,7 +126,10 @@ public class BlockLogicChestMimic extends BlockLogicRotatable {
 
     @SuppressWarnings({"java:S3516", "java:S2259"})
     @Override
-    public boolean onBlockRightClicked(World world, int x, int y, int z, Player player, Side side, double xHit, double yHit) {
+    public boolean onInteracted(World world, TilePosc pos, Player player, Side side, double xHit, double yHit) {
+        int x = pos.x();
+        int y = pos.y();
+        int z = pos.z();
         ItemStack held = player.getHeldItem();
         if (held != null && held.getItem() instanceof ItemLabel) {
             TileEntity tileEntity = world.getTileEntity(x, y, z);

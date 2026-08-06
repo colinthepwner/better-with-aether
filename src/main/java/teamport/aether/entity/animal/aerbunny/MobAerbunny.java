@@ -12,7 +12,6 @@ import net.minecraft.core.entity.player.Player;
 import net.minecraft.core.item.ItemStack;
 import net.minecraft.core.item.Items;
 import net.minecraft.core.net.packet.PacketSetRiding;
-import net.minecraft.core.util.collection.NamespaceID;
 import net.minecraft.core.util.helper.DamageType;
 import net.minecraft.core.util.helper.MathHelper;
 import net.minecraft.core.world.IVehicle;
@@ -35,7 +34,7 @@ public class MobAerbunny extends MobAetherAnimal implements AetherRideable {
     public MobAerbunny(World world) {
         super(world);
         this.setSize(0.4F, 0.4F);
-        this.textureIdentifier = NamespaceID.getPermanent("aether", "aerbunny");
+        this.setTextureIdentifier("aether", "aerbunny");
         this.mobDrops.add(new WeightedRandomLootObject(Items.STRING.getDefaultStack(), 1));
     }
 

@@ -6,7 +6,6 @@ import net.minecraft.core.entity.Entity;
 import net.minecraft.core.entity.monster.Enemy;
 import net.minecraft.core.enums.LightLayer;
 import net.minecraft.core.item.Items;
-import net.minecraft.core.util.collection.NamespaceID;
 import net.minecraft.core.util.helper.MathHelper;
 import net.minecraft.core.world.World;
 import org.jspecify.annotations.NonNull;
@@ -25,7 +24,7 @@ public class MobCockatrice extends MobMonsterAether implements Enemy, AetherDeat
 
     public MobCockatrice(@Nullable World world) {
         super(world);
-        this.textureIdentifier = NamespaceID.getPermanent("aether", "cockatrice");
+        this.setTextureIdentifier("aether", "cockatrice");
         this.setSize(1.0F, 2.0F);
         this.mobDrops.add(new WeightedRandomLootObject(Items.FEATHER_CHICKEN.getDefaultStack(), 0, 2));
         this.scoreValue = 500;

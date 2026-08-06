@@ -23,6 +23,7 @@ import teamport.aether.helper.ParticleMaker;
 import turniplabs.halplibe.helper.EnvironmentHelper;
 
 import java.util.function.Supplier;
+import net.minecraft.core.world.pos.TilePosc;
 
 public class BlockLogicDungeonDoor extends BlockLogicRotatable {
     public final @Nullable Supplier<Item> droppedItem;
@@ -44,7 +45,10 @@ public class BlockLogicDungeonDoor extends BlockLogicRotatable {
     }
 
     @Override
-    public boolean onBlockRightClicked(World world, int x, int y, int z, Player player, Side side, double xHit, double yHit) {
+    public boolean onInteracted(World world, TilePosc pos, Player player, Side side, double xHit, double yHit) {
+        int x = pos.x();
+        int y = pos.y();
+        int z = pos.z();
         Direction dir = getDirectionFromMeta(world.getBlockMetadata(x, y, z));
         if (dir.side() != side) return false;
 

@@ -7,7 +7,6 @@ import net.minecraft.core.block.material.Materials;
 import net.minecraft.core.entity.Entity;
 import net.minecraft.core.entity.MobFlying;
 import net.minecraft.core.entity.animal.AmbientCreature;
-import net.minecraft.core.util.collection.NamespaceID;
 import net.minecraft.core.util.helper.DamageType;
 import net.minecraft.core.util.helper.MathHelper;
 import net.minecraft.core.util.phys.HitResult;
@@ -32,7 +31,7 @@ public class MobAerwhale extends MobFlying implements AmbientCreature {
         super(world);
         this.setSize(0.1F, 0.1F);
         this.viewScale = 100.0f;
-        this.textureIdentifier = NamespaceID.getPermanent("aether", "aerwhale");
+        this.setTextureIdentifier("aether", "aerwhale");
         this.fireImmune = true;
         this.moveSpeed = 0.5F;
         this.yRot = 360.0F * this.random.nextFloat();

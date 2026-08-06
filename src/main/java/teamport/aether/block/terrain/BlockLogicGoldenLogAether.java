@@ -9,6 +9,7 @@ import net.minecraft.core.world.World;
 import teamport.aether.item.AetherItems;
 import teamport.aether.item.item_tool.ItemToolAxeAether;
 import turniplabs.halplibe.helper.EnvironmentHelper;
+import net.minecraft.core.world.pos.TilePosc;
 
 public class BlockLogicGoldenLogAether extends BlockLogicLogAether {
 
@@ -17,8 +18,11 @@ public class BlockLogicGoldenLogAether extends BlockLogicLogAether {
     }
 
     @Override
-    public void onBlockDestroyedByPlayer(World world, int x, int y, int z, Side side, int meta, Player player, Item item) {
-        super.onBlockDestroyedByPlayer(world, x, y, z, side, meta, player, item);
+    public void onDestroyedByPlayer(World world, TilePosc pos, Side side, int meta, Player player, Item item) {
+        int x = pos.x();
+        int y = pos.y();
+        int z = pos.z();
+        super.onDestroyedByPlayer(world, pos, side, meta, player, item);
         ItemStack heldItem = player.getHeldItem();
         if (heldItem != null && meta == 0 && player.getGamemode().hasBlockConsumption()) {
             if (!EnvironmentHelper.isClientWorld() && heldItem.getItem() instanceof ItemToolAxeAether) {

@@ -3,7 +3,6 @@ package teamport.aether.entity.monster.fireminion;
 import net.minecraft.core.entity.Entity;
 import net.minecraft.core.entity.monster.Enemy;
 import net.minecraft.core.entity.player.Player;
-import net.minecraft.core.util.collection.NamespaceID;
 import net.minecraft.core.util.helper.DamageType;
 import net.minecraft.core.world.World;
 import org.jspecify.annotations.NonNull;
@@ -19,7 +18,7 @@ public class MobFireMinion extends MobMonsterAether implements Enemy, AetherDeat
 
     public MobFireMinion(@Nullable World world) {
         super(world);
-        this.textureIdentifier = NamespaceID.getPermanent("aether", "fire_minion");
+        this.setTextureIdentifier("aether", "fire_minion");
         this.moveSpeed = 4.0F;
         this.attackStrength = 10;
         this.fireImmune = true;

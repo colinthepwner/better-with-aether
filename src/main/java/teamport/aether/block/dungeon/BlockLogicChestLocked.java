@@ -13,6 +13,7 @@ import net.minecraft.core.item.ItemStack;
 import net.minecraft.core.sound.SoundCategory;
 import net.minecraft.core.util.helper.Side;
 import net.minecraft.core.world.World;
+import net.minecraft.core.world.pos.TilePosc;
 
 public class BlockLogicChestLocked extends BlockLogicRotatable {
     private final ItemStack key;
@@ -29,7 +30,10 @@ public class BlockLogicChestLocked extends BlockLogicRotatable {
 
     @SuppressWarnings("java:S3516")
     @Override
-    public boolean onBlockRightClicked(World world, int x, int y, int z, Player player, Side side, double xPlaced, double yPlaced) {
+    public boolean onInteracted(World world, TilePosc pos, Player player, Side side, double xPlaced, double yPlaced) {
+        int x = pos.x();
+        int y = pos.y();
+        int z = pos.z();
         if (this.locked && !player.gamemode.hasInvulnerablePlayer()) {
             ItemStack item = player.getHeldItem();
 
@@ -47,7 +51,7 @@ public class BlockLogicChestLocked extends BlockLogicRotatable {
     }
 
     @Override
-    public float blockStrength(World world, int x, int y, int z, Side side, Player player) {
+    public float getStrength(World world, TilePosc pos, Side side, Player player) {
         if (this.block.blockHardness < 0.0F) {
             return 0.0F;
         } else {

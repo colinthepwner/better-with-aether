@@ -16,6 +16,7 @@ import teamport.aether.item.AetherItems;
 import teamport.aether.mixin.accessors.ItemAccessor;
 
 import java.util.Random;
+import net.minecraft.core.world.pos.TilePosc;
 
 public class BlockLogicLogAether extends BlockLogicLog {
 
@@ -24,13 +25,19 @@ public class BlockLogicLogAether extends BlockLogicLog {
     }
 
     @Override
-    public void onBlockPlacedByMob(World world, int x, int y, int z, @NonNull Side side, Mob mob, double xPlaced, double yPlaced) {
+    public void onPlacedByMob(World world, TilePosc pos, @NonNull Side side, Mob mob, double xPlaced, double yPlaced) {
+        int x = pos.x();
+        int y = pos.y();
+        int z = pos.z();
         Axis axis = mob.getPlacementDirection(side, PlacementMode.SIDE).axis();
         world.setBlockMetadataWithNotify(x, y, z, BlockLogicAxisAligned.axisToMeta(axis) + 4);
     }
 
     @Override
-    public void onBlockDestroyedByPlayer(World world, int x, int y, int z, Side side, int meta, Player player, Item item) {
+    public void onDestroyedByPlayer(World world, TilePosc pos, Side side, int meta, Player player, Item item) {
+        int x = pos.x();
+        int y = pos.y();
+        int z = pos.z();
         ItemStack heldItem = player.getHeldItem();
         if (heldItem != null && heldItem.getItem().equals(AetherItems.TOOL_AXE_SKYROOT) && meta == 0 && player.getGamemode().hasBlockConsumption()) {
             this.harvestBlock(world, player, x, y, z, 1, world.getTileEntity(x, y, z));

@@ -8,7 +8,6 @@ import net.minecraft.core.block.tag.BlockTags;
 import net.minecraft.core.entity.player.Player;
 import net.minecraft.core.item.ItemStack;
 import net.minecraft.core.item.Items;
-import net.minecraft.core.util.collection.NamespaceID;
 import net.minecraft.core.world.World;
 import org.jspecify.annotations.NonNull;
 import teamport.aether.achievements.AetherAchievements;
@@ -30,7 +29,7 @@ public class MobPhyg extends MobAetherAnimalRideable {
     public MobPhyg(World world) {
         super(world);
         this.maxJumps = 1;
-        this.textureIdentifier = NamespaceID.getPermanent("aether", "phyg");
+        this.setTextureIdentifier("aether", "phyg");
         this.setSize(0.9F, 0.9F);
         this.rideFootSize = 1.0f;
 

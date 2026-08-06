@@ -6,7 +6,6 @@ import net.minecraft.core.entity.Entity;
 import net.minecraft.core.entity.monster.Enemy;
 import net.minecraft.core.entity.player.Player;
 import net.minecraft.core.item.Item;
-import net.minecraft.core.util.collection.NamespaceID;
 import net.minecraft.core.world.World;
 import org.jspecify.annotations.NonNull;
 import teamport.aether.helper.ParticleMaker;
@@ -24,7 +23,7 @@ public class MobSwetGold extends MobSwet implements Enemy {
         this.scoreValue = 400;
         this.setPos(this.x, this.y, this.z);
         this.jumpDelay = 15;
-        this.textureIdentifier = NamespaceID.getPermanent("aether", "swet_gold");
+        this.setTextureIdentifier("aether", "swet_gold");
         this.moveSpeed = 3.0F;
         this.mobDrops.add(new WeightedRandomLootObject(Blocks.GLOWSTONE.getDefaultStack(), 0));
     }

@@ -8,7 +8,6 @@ import net.minecraft.core.entity.Entity;
 import net.minecraft.core.entity.EntityLightning;
 import net.minecraft.core.entity.animal.Creature;
 import net.minecraft.core.item.ItemStack;
-import net.minecraft.core.util.collection.NamespaceID;
 import net.minecraft.core.util.helper.DamageType;
 import net.minecraft.core.util.helper.MathHelper;
 import net.minecraft.core.world.World;
@@ -43,7 +42,7 @@ public class MobWhirly extends MobAetherAnimal implements Creature {
     public MobWhirly(World world) {
         super(world);
         this.setSize(1.0F, 2.0F);
-        this.textureIdentifier = NamespaceID.getPermanent("aether", "whirly");
+        this.setTextureIdentifier("aether", "whirly");
         this.maxLifetime = this.random.nextInt(1024) + 1024;
         this.moveSpeed = 0.35F;
         this.footSize = 1.0f;

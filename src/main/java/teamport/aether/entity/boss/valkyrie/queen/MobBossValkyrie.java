@@ -11,7 +11,6 @@ import net.minecraft.core.block.material.Materials;
 import net.minecraft.core.entity.Entity;
 import net.minecraft.core.entity.player.Player;
 import net.minecraft.core.item.ItemStack;
-import net.minecraft.core.util.collection.NamespaceID;
 import net.minecraft.core.util.helper.DamageType;
 import net.minecraft.core.util.helper.MathHelper;
 import net.minecraft.core.world.World;
@@ -50,7 +49,7 @@ public class MobBossValkyrie extends MobBoss {
 
     public MobBossValkyrie(@Nullable World world) {
         super(world);
-        this.textureIdentifier = NamespaceID.getPermanent("aether", "boss_valkyrie");
+        this.setTextureIdentifier("aether", "boss_valkyrie");
         this.setSize(0.8F, 2.0F);
         this.scoreValue = 50000;
         this.mobDrops.add(new WeightedRandomLootObject(AetherItems.TOOL_SWORD_HOLY.getDefaultStack(), 1));

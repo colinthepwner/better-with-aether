@@ -10,7 +10,6 @@ import net.minecraft.core.enums.EnumBlockSoundEffectType;
 import net.minecraft.core.item.ItemDye;
 import net.minecraft.core.item.ItemStack;
 import net.minecraft.core.item.tool.ItemToolShears;
-import net.minecraft.core.util.collection.NamespaceID;
 import net.minecraft.core.util.helper.DyeColor;
 import net.minecraft.core.util.helper.MathHelper;
 import net.minecraft.core.world.World;
@@ -29,7 +28,7 @@ public class MobSheepuff extends MobAetherAnimal {
 
     public MobSheepuff(World world) {
         super(world);
-        this.textureIdentifier = NamespaceID.getPermanent("aether", "sheepuff");
+        this.setTextureIdentifier("aether", "sheepuff");
         this.growthTimer = this.random.nextInt(100) + 100;
         this.setSize(0.9F, 1.3F);
     }

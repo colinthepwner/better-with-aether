@@ -11,7 +11,6 @@ import net.minecraft.core.entity.player.Player;
 import net.minecraft.core.enums.LightLayer;
 import net.minecraft.core.item.ItemBucket;
 import net.minecraft.core.item.ItemStack;
-import net.minecraft.core.util.collection.NamespaceID;
 import net.minecraft.core.util.helper.DamageType;
 import net.minecraft.core.util.helper.MathHelper;
 import net.minecraft.core.util.phys.Vec3;
@@ -33,7 +32,7 @@ public class MobAechorPlant extends MobMonsterAether implements Enemy, AetherDea
 
     public MobAechorPlant(World world1) {
         super(world1);
-        this.textureIdentifier = NamespaceID.getPermanent("aether", "aechorplant");
+        this.setTextureIdentifier("aether", "aechorplant");
         this.sinage = this.random.nextFloat() * 6.0F;
         this.smokeTime = this.attackCooldown = 0;
         this.hasTarget = false;

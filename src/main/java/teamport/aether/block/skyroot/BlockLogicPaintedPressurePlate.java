@@ -5,6 +5,7 @@ import net.minecraft.core.block.BlockLogicPressurePlatePainted;
 import net.minecraft.core.block.material.Material;
 import net.minecraft.core.entity.Entity;
 import net.minecraft.core.world.World;
+import net.minecraft.core.world.pos.TilePosc;
 
 public class BlockLogicPaintedPressurePlate<T extends Entity> extends BlockLogicPressurePlatePainted<T> {
     protected final int unpaintedBlockID;
@@ -20,7 +21,10 @@ public class BlockLogicPaintedPressurePlate<T extends Entity> extends BlockLogic
     }
 
     @Override
-    public void removeDye(World world, int x, int y, int z) {
+    public void removeDye(World world, TilePosc pos) {
+        int x = pos.x();
+        int y = pos.y();
+        int z = pos.z();
         world.setBlockWithNotify(x, y, z, unpaintedBlockID);
     }
 }

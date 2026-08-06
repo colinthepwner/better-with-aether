@@ -25,12 +25,18 @@ public class BlockLogicOreGravitite extends BlockLogic {
     }
 
     @Override
-    public void onBlockPlacedByWorld(World world, int x, int y, int z) {
+    public void onPlacedByWorld(World world, TilePosc pos) {
+        int x = pos.x();
+        int y = pos.y();
+        int z = pos.z();
         world.scheduleBlockUpdate(x, y, z, this.block.id(), this.tickDelay());
     }
 
     @Override
-    public void onNeighborBlockChange(World world, int x, int y, int z, int blockId) {
+    public void onNeighborChanged(World world, TilePosc pos, Block<?> neighborBlock) {
+        int x = pos.x();
+        int y = pos.y();
+        int z = pos.z();
         world.scheduleBlockUpdate(x, y, z, this.block.id(), this.tickDelay());
     }
 

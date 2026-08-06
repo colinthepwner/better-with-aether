@@ -8,7 +8,6 @@ import net.minecraft.core.entity.monster.Enemy;
 import net.minecraft.core.entity.player.Player;
 import net.minecraft.core.enums.LightLayer;
 import net.minecraft.core.item.Item;
-import net.minecraft.core.util.collection.NamespaceID;
 import net.minecraft.core.util.helper.DamageType;
 import net.minecraft.core.util.helper.MathHelper;
 import net.minecraft.core.world.World;
@@ -39,7 +38,7 @@ public class MobSwet extends MobMonsterAether implements Enemy, AetherDeathMessa
         this.setSize(1.4F, 1.2F);
         this.setPos(this.x, this.y, this.z);
         this.jumpDelay = 20;
-        this.textureIdentifier = NamespaceID.getPermanent("aether", "swet");
+        this.setTextureIdentifier("aether", "swet");
         this.moveSpeed = 1.5F;
         this.mobDrops.add(new WeightedRandomLootObject(AetherBlocks.AERCLOUD_BLUE.getDefaultStack(), 0));
     }

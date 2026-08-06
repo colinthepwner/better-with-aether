@@ -12,7 +12,6 @@ import net.minecraft.core.entity.EntityLightning;
 import net.minecraft.core.entity.player.Player;
 import net.minecraft.core.net.command.TextFormatting;
 import net.minecraft.core.sound.SoundCategory;
-import net.minecraft.core.util.collection.NamespaceID;
 import net.minecraft.core.util.helper.DamageType;
 import net.minecraft.core.util.helper.MathHelper;
 import net.minecraft.core.util.phys.HitResult;
@@ -52,7 +51,7 @@ public class MobBossSunspirit extends MobBossFlying {
     public MobBossSunspirit(@Nullable World world) {
         super(world);
         this.setSize(2.25F, 3.0F);
-        this.textureIdentifier = NamespaceID.getPermanent("aether", "boss_sunspirit");
+        this.setTextureIdentifier("aether", "boss_sunspirit");
         this.fireImmune = true;
         this.maxHurtTime = 40;
         this.scoreValue = 100000;

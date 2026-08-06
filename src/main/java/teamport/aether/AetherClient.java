@@ -14,7 +14,6 @@ import net.minecraft.client.gui.hud.component.HudComponents;
 import net.minecraft.client.gui.hud.component.layout.LayoutAbsolute;
 import net.minecraft.client.gui.hud.component.layout.LayoutSnap;
 import net.minecraft.client.holiday.Holiday;
-import net.minecraft.client.render.colorizer.Colorizer;
 import net.minecraft.client.render.texture.stitcher.AtlasStitcher;
 import net.minecraft.client.render.texture.stitcher.TextureRegistry;
 import net.minecraft.client.render.worldtype.WorldTypeFXDispatcher;
@@ -37,7 +36,6 @@ import turniplabs.halplibe.util.ClientStartEntrypoint;
 
 import java.time.Month;
 
-import static net.minecraft.client.render.colorizer.Colorizers.add;
 import static net.minecraft.client.render.texture.stitcher.TextureRegistry.register;
 import static teamport.aether.AetherMod.LOGGER;
 import static teamport.aether.AetherMod.MOD_ID;
@@ -49,10 +47,6 @@ public class AetherClient implements ClientModInitializer, ClientStartEntrypoint
     public static HudComponent JUMP_BAR;
 
     public static final Holiday ANNIVERSARY_AETHER = new Holiday(Month.JULY, 22);
-
-    public static Colorizer grassAether;
-    public static Colorizer skyroot;
-    public static Colorizer oakGolden;
 
     public static AetherRemoteResourceDownloaderThread resourceDownloaderThread;
     @SuppressWarnings("unused")
@@ -98,10 +92,6 @@ public class AetherClient implements ClientModInitializer, ClientStartEntrypoint
         setupCustomBlockLight();
         AetherMobInfoRegistry.init();
         AetherGameSettings.init();
-
-        grassAether = add(new Colorizer("grassAether"));
-        skyroot = add(new Colorizer("skyroot"));
-        oakGolden = add(new Colorizer("oakGolden"));
 
         WorldTypeFXDispatcher.getInstance().addDispatch(new WorldTypeFXAether(AetherWorldTypes.AETHER_EXTENDED));
         WorldTypeFXDispatcher.getInstance().addDispatch(new WorldTypeFXAether(AetherWorldTypes.AETHER_DEFAULT));

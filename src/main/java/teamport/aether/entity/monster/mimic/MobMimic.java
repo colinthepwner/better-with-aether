@@ -22,7 +22,6 @@ import net.minecraft.core.item.tool.ItemToolAxe;
 import net.minecraft.core.item.tool.ItemToolPickaxe;
 import net.minecraft.core.net.command.TextFormatting;
 import net.minecraft.core.player.inventory.container.Container;
-import net.minecraft.core.util.collection.NamespaceID;
 import net.minecraft.core.util.helper.DamageType;
 import net.minecraft.core.util.helper.Direction;
 import net.minecraft.core.util.helper.DyeColor;
@@ -70,7 +69,7 @@ public class MobMimic extends MobMonsterAether implements Enemy, AetherDeathMess
         this.attackStrength = 5;
         this.scoreValue = 2000;
         this.mimicTime = 60 * Global.TICKS_PER_SECOND; //temp set to 2, was 120
-        this.textureIdentifier = NamespaceID.getPermanent("aether", "mimic");
+        this.setTextureIdentifier("aether", "mimic");
         this.setSkinVariant(this.getSkinVariant());
 
     }
@@ -96,7 +95,9 @@ public class MobMimic extends MobMonsterAether implements Enemy, AetherDeathMess
 
     @Override
     public @NotNull String getDefaultEntityTexture() {
-        return String.format("/assets/%s/textures/entity/%s/%s/0.png", this.textureIdentifier.namespace(), DEFAULT.getPathName(), this.textureIdentifier.value());
+        // <value>/<pathName>, matching getEntityTexture below -- the two were transposed here, so the
+        // default texture pointed at entity/skyroot/mimic/ instead of entity/mimic/skyroot/.
+        return String.format("/assets/%s/textures/entity/%s/%s/0.png", this.textureIdentifier.namespace(), this.textureIdentifier.value(), DEFAULT.getPathName());
     }
 
     @Override

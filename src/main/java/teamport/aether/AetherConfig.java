@@ -28,7 +28,8 @@ public class AetherConfig {
     /// and calls `dimensionList.get(i)` positionally, so a gap in the id space makes that lookup
     /// return null and the world fails to load. Raising this by hand past the next free slot will
     /// break world creation the same way.
-    public static int DIMENSION = 3;
+    public static final int DEFAULT_DIMENSION = 3;
+    public static int DIMENSION = DEFAULT_DIMENSION;
     public static int EXTRA_HEALTH = 20;
     public static double QUICK_SOIL_SPEED_CAP = 1.325F;
 
@@ -98,7 +99,7 @@ public class AetherConfig {
     }
 
     private static void loadProperties() {
-        DIMENSION = cfgGetValueOrDefault(GENERAL_CATEGORY + ".DIMENSION", DIMENSION);
+        DIMENSION = validateDimension(cfgGetValueOrDefault(GENERAL_CATEGORY + ".DIMENSION", DIMENSION));
         EXTRA_HEALTH = cfgGetValueOrDefault(GENERAL_CATEGORY + ".EXTRA_HEALTH", EXTRA_HEALTH);
         QUICK_SOIL_SPEED_CAP = cfgGetValueOrDefault(GENERAL_CATEGORY + ".QUICK_SOIL_SPEED_CAP", QUICK_SOIL_SPEED_CAP);
         ENCHANTER_SCREEN_ID = cfgGetValueOrDefault(GENERAL_CATEGORY + ".ENCHANTER_SCREEN_ID", ENCHANTER_SCREEN_ID);
@@ -117,6 +118,20 @@ public class AetherConfig {
         if (!REMOTE_RESOURCE_URL.endsWith("/")) {
             LOGGER.error("Remote resource URL lacks trailing slash!");
         }
+    }
+
+    /// The id space has to stay gap-free. `WorldTypeGroups.Group`'s constructor loops
+    /// `i = 0 .. dimensionList.size()-1` and looks each `i` up as a **key** with
+    /// `Objects.requireNonNull` on the result, so a hole anywhere below the Aether's id is a hard
+    /// NPE during world creation with nothing pointing back here. 3 is the next free slot after
+    /// Overworld 0, Nether 1 and Drift 2. Fall back to it rather than letting the crash happen.
+    private static int validateDimension(int configured) {
+        if (configured == DEFAULT_DIMENSION) return configured;
+        LOGGER.error(
+            "Config DIMENSION={} is not the next contiguous dimension id. The dimension id space must "
+                + "have no gaps or world creation fails with an NPE inside WorldTypeGroups. Falling back to {}.",
+            configured, DEFAULT_DIMENSION);
+        return DEFAULT_DIMENSION;
     }
 
     private static void assembleProperties(Toml properties) {

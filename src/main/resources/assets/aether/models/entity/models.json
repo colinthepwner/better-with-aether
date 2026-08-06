@@ -81,10 +81,13 @@
     "aether:valkyrie": {
       "main":"geometry.valkyrie"
     },
-    "aether:slider": {
+    "aether:boss_valkyrie": {
+      "main":"geometry.valkyrie"
+    },
+    "aether:boss_slider": {
       "main":"geometry.slider"
     },
-    "aether:sunspirit": {
+    "aether:boss_sunspirit": {
       "main":"geometry.sunspirit"
     },
     "aether:swet": {

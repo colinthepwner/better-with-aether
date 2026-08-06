@@ -4,6 +4,7 @@ import net.minecraft.core.block.Block;
 import net.minecraft.core.block.BlockLogicFence;
 import net.minecraft.core.util.helper.DyeColor;
 import net.minecraft.core.world.World;
+import net.minecraft.core.world.pos.TilePosc;
 
 public class BlockLogicPaintableFence extends BlockLogicFence {
     protected final Block<? extends BlockLogicPaintedFence> paintedBlock;
@@ -15,7 +16,10 @@ public class BlockLogicPaintableFence extends BlockLogicFence {
 
 
     @Override
-    public void setColor(World world, int x, int y, int z, DyeColor color) {
+    public void setColor(World world, TilePosc pos, DyeColor color) {
+        int x = pos.x();
+        int y = pos.y();
+        int z = pos.z();
         world.setBlock(x, y, z, paintedBlock.id());
         paintedBlock.getLogic().setColor(world, x, y, z, color);
     }

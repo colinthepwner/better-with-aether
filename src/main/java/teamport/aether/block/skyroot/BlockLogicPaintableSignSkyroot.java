@@ -13,6 +13,7 @@ import net.minecraft.core.item.Items;
 import net.minecraft.core.util.helper.DyeColor;
 import net.minecraft.core.util.helper.Side;
 import net.minecraft.core.world.World;
+import net.minecraft.core.world.pos.TilePosc;
 import teamport.aether.block.AetherBlocks;
 import teamport.aether.gui.AetherScreens;
 import teamport.aether.item.AetherItems;
@@ -29,7 +30,10 @@ public class BlockLogicPaintableSignSkyroot extends BlockLogicSign implements IP
     }
 
     @Override
-    public boolean onBlockRightClicked(World world, int x, int y, int z, Player player, Side side, double xPlaced, double yPlaced) {
+    public boolean onInteracted(World world, TilePosc pos, Player player, Side side, double xPlaced, double yPlaced) {
+        int x = pos.x();
+        int y = pos.y();
+        int z = pos.z();
         TileEntitySign signEntity = (TileEntitySign) world.getTileEntity(x, y, z);
         if (signEntity != null && player != null) {
             if (player.getHeldItem() != null && player.getHeldItem().itemID == Items.DUST_GLOWSTONE.id && !signEntity.isGlowing()) {
@@ -50,7 +54,10 @@ public class BlockLogicPaintableSignSkyroot extends BlockLogicSign implements IP
     }
 
     @Override
-    public void setColor(World world, int x, int y, int z, DyeColor color) {
+    public void setColor(World world, TilePosc pos, DyeColor color) {
+        int x = pos.x();
+        int y = pos.y();
+        int z = pos.z();
         world.setBlockRaw(x, y, z, this.isFreeStanding ? AetherBlocks.SIGN_POST_PLANKS_SKYROOT_PAINTED.id() : AetherBlocks.SIGN_WALL_PLANKS_SKYROOT_PAINTED.id());
         world.setBlockMetadataWithNotify(x, y, z, color.blockMeta << 4 | world.getBlockMetadata(x, y, z) & 15);
     }

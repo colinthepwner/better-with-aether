@@ -6,7 +6,6 @@ import net.minecraft.core.entity.Entity;
 import net.minecraft.core.entity.MobFlying;
 import net.minecraft.core.entity.monster.Enemy;
 import net.minecraft.core.entity.player.Player;
-import net.minecraft.core.util.collection.NamespaceID;
 import net.minecraft.core.util.helper.DamageType;
 import net.minecraft.core.util.helper.MathHelper;
 import net.minecraft.core.util.phys.AABB;
@@ -31,7 +30,7 @@ public class MobZephyr extends MobFlying implements Enemy, AetherDeathMessage {
 
     public MobZephyr(World world) {
         super(world);
-        this.textureIdentifier = NamespaceID.getPermanent("aether", "zephyr");
+        this.setTextureIdentifier("aether", "zephyr");
         this.setSize(5.0F, 4.0F);
         this.scoreValue = 500;
         this.mobDrops.add(new WeightedRandomLootObject(AetherBlocks.AERCLOUD_WHITE.getDefaultStack(), 0, 6));

@@ -73,7 +73,10 @@ public class BlockLogicEnchanter extends BlockLogicRotatable {
     }
 
     @Override
-    public boolean onBlockRightClicked(World world, int x, int y, int z, Player player, Side side, double xPlaced, double yPlaced) {
+    public boolean onInteracted(World world, TilePosc pos, Player player, Side side, double xPlaced, double yPlaced) {
+        int x = pos.x();
+        int y = pos.y();
+        int z = pos.z();
         if (!world.isClientSide) {
             TileEntityEnchanter tileEntityEnchanter = (TileEntityEnchanter) world.getTileEntity(x, y, z);
             ((AetherScreens) player).aether$displayEnchanterScreen(tileEntityEnchanter);

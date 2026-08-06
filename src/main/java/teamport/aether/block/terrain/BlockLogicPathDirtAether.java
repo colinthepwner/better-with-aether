@@ -44,8 +44,11 @@ public class BlockLogicPathDirtAether extends BlockLogic {
     }
 
     @Override
-    public void onNeighborBlockChange(World world, int x, int y, int z, int blockId) {
-        super.onNeighborBlockChange(world, x, y, z, blockId);
+    public void onNeighborChanged(World world, TilePosc pos, Block<?> neighborBlock) {
+        int x = pos.x();
+        int y = pos.y();
+        int z = pos.z();
+        super.onNeighborChanged(world, pos, neighborBlock);
         Material material = world.getBlockMaterial(x, y + 1, z);
         int id = world.getBlockId(x, y + 1, z);
         if (material.isSolid()

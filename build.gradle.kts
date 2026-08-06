@@ -52,6 +52,11 @@ loom {
     customMinecraftMetadata.set("https://downloads.betterthanadventure.net/bta-client/${libs.versions.btaChannel.get()}/v${libs.versions.bta.get()}/manifest.json")
     accessWidenerPath = file("src/main/resources/aether.classtweaker")
     runs {
+        // Gradle's own -D lands on the daemon, not the game, so the agent flag has to be a vmArg on
+        // the run config. Harmless when unset: AetherAgent.ENABLED gates everything.
+        named("client") {
+            if (providers.gradleProperty("aether.agent").orNull == "1") vmArg("-Daether.agent=1")
+        }
         prismAccountsFile.orNull?.let { file ->
             val account: Provider<Account> = providers.fileContents(layout.file(providers.provider { file }))
                 .asText
