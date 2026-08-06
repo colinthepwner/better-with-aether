@@ -1,9 +1,32 @@
-# Better with Aether
+# Better with Aether — unofficial BTA 8.0.1 fork
 
-[![GitHub release](https://img.shields.io/github/v/release/bta-team-port/better-with-aether?color=cyan)](https://github.com/bta-team-port/better-with-aether/releases)
-[![GitHub commit activity](https://img.shields.io/github/commit-activity/w/bta-team-port/better-with-aether?color=cyan)](https://github.com/bta-team-port/better-with-aether/graphs/code-frequency)
-[![GitHub last commit](https://img.shields.io/github/last-commit/bta-team-port/better-with-aether?color=cyan&cacheSeconds=1)](https://github.com/bta-team-port/better-with-aether/commits/7.3/)
-[![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/bta-team-port/better-with-aether/total?color=cyan)](https://tooomm.github.io/github-release-stats/?username=bta-team-port&repository=better-with-aether)
+> ## ⚠️ Read this first
+>
+> **This is an unofficial personal fork. It is not the official mod, and it is not finished.**
+>
+> I am not affiliated with, endorsed by, or speaking for any of the following:
+>
+> - the **Aether** team, who made the original Minecraft mod this is based on
+> - the **Better Than Adventure (BTA)** team, who make the game it runs on
+> - the **Better with Aether** team ([bta-team-port](https://github.com/bta-team-port/better-with-aether)), whose mod this is a fork of
+>
+> **Why this exists:** upstream Better with Aether targets BTA **7.3_04**. I wanted to play it on
+> BTA **8.0.1** sooner, so I ported it myself. That is the entire purpose of this fork.
+>
+> **It is a rough port.** It builds, boots on client and dedicated server, and the parts I tested
+> work — but it has had no real playtesting, no balance pass, and no review by anyone who actually
+> maintains the mod. Expect bugs, expect rough edges, and do not report problems you hit here to the
+> Aether team, the BTA team, or the Better with Aether team. They did not make this and cannot help
+> with it.
+>
+> **Please use the official release instead, whenever one exists.** If Better with Aether ships its
+> own BTA 8.0 build, use that — it will be better maintained, better tested and actually supported.
+> Check [the upstream repository](https://github.com/bta-team-port/better-with-aether/releases)
+> before using this.
+>
+> All credit for the mod itself goes to the Better with Aether team, and for the original Aether to
+> its authors. Licensed LGPL-3.0, same as upstream; see [LICENSE](LICENSE). Changes in this fork are
+> limited to porting it to the BTA 8.0.1 API — see [PORT-8.0.1.md](PORT-8.0.1.md).
 
 ## Welcome to the Hostile Paradise: The Aether, now Better than ever.
 
@@ -40,12 +63,15 @@ to [Better with Aether Repo](https://github.com/bta-team-port/better-with-aether
 
 ### REQUIRES:
 
-- BTA == 7.3_04
-- Halplibe >= [5.4.0](https://github.com/Turnip-Labs/bta-halplibe/releases/tag/v5.4.0)
-- Catalyst-Core >= [2.2.0](https://github.com/MartinSVK12/catalyst)
-- Catalyst-Effects = [2.5.3](https://github.com/MartinSVK12/catalyst)
-- UselessNumericals >= [1.1.0-7.3_04](https://github.com/gungun974/UselessNumerical/releases/tag/1.1.0-7.3_04)
-- DragonFly >= [1.7.0-alpha.7](https://modrinth.com/mod/dragonfly-model-library/version/1.7.0-alpha.7)
+*(This fork targets BTA 8.0.1. The upstream 7.3_04 requirements are in
+[upstream's README](https://github.com/bta-team-port/better-with-aether).)*
+
+- BTA == 8.0.1
+- Halplibe >= 6.1.4+8.0
+- Catalyst-Core >= 3.0.0-beta.1
+- Catalyst-Effects >= 3.0.0-beta.1
+
+DragonFly is **no longer a separate dependency** — BTA 8.0 ships it inside the game jar.
 
 ### Screenshots from the latest Release:
 
